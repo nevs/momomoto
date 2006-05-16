@@ -132,7 +132,7 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_create
-    row = Person.new.create
+    row = Person.create
     assert_equal(Person::Row, row.class)
     assert_equal( true, row.new_record? )
   end

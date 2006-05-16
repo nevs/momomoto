@@ -54,16 +54,15 @@ module Momomoto
     # fetch columns which are primary key columns
     def fetch_primary_keys( table_name, schema_name = nil ) # :nodoc:
       pkeys = []
-      keys = Momomoto::Information_schema::Table_constraints.new
       conditions = {:table_name=>table_name, :constraint_type => 'PRIMARY KEY'}
       conditions[:table_schema] = schema_name if schema_name
-      keys.select( conditions )
+      keys = Momomoto::Information_schema::Table_constraints.select( conditions )
       if keys.length != 0
-        cols = Momomoto::Information_schema::Key_column_usage.new
-        cols.select( { :table_name => keys[0].table_name, 
-                       :table_schema => keys[0].table_schema, 
-                       :constraint_name => keys[0].constraint_name,
-                       :constraint_schema => keys[0].constraint_schema } )
+        cols = Momomoto::Information_schema::Key_column_usage.select( 
+            { :table_name => keys[0].table_name, 
+              :table_schema => keys[0].table_schema, 
+              :constraint_name => keys[0].constraint_name,
+              :constraint_schema => keys[0].constraint_schema } )
         cols.each do | key |
           pkeys << key.column_name.to_sym
         end
@@ -74,10 +73,9 @@ module Momomoto
     # fetch column definitions from database
     def fetch_columns( table_name, schema_name = nil ) # :nodoc:
       columns = {}
-      cols = Momomoto::Information_schema::Columns.new
       conditions = { :table_name=>table_name }
       conditions[:table_schema] = schema_name if schema_name
-      cols.select( conditions )
+      cols = Momomoto::Information_schema::Columns.select( conditions )
       cols.each do  | col |
         columns[col.column_name.to_sym] = Momomoto::Datatype.const_get(col.data_type.gsub(' ','_').capitalize).new( col )
       end

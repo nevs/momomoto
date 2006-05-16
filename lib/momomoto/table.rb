@@ -6,59 +6,54 @@ module Momomoto
   # you can only write to a table if it has primary keys defined
   class Table < Base
 
-    attr_accessor :limit, :order
-
-    def initialize_class # :nodoc:
-      self.class.class_eval do 
-        unless class_variables.member?( '@@table_name' )
-          table_name( construct_table_name( self.name ) )
-        end
-        unless class_variables.member?( '@@schema_name' )
-          schema_name( construct_schema_name( self.name ) )
-        end
-        unless class_variables.member?( '@@columns' )
-          columns( database.fetch_columns( table_name() ) )
-        end
-
-        unless class_variables.member?( '@@primary_keys' )
-          primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )
-        end
-
-        # construct the Row class for the table
-        const_set( :Row, Class.new )
-        const_get(:Row).send(:define_method, :initialize) do | table, data |
-          instance_variable_set(:@table, table) 
-          instance_variable_set(:@data, data) 
-        end
-        const_get(:Row).send(:define_method, :new_record?) do 
-          instance_variable_get(:@new_record)
-        end
-
-        columns().each_with_index do | ( field_name, data_type ), index |
-          # mark primary key rows
-          if primary_keys.member?( field_name )
-            data_type.send(:instance_variable_set, :@primary_key, true)
-          end
-          # define getter and setter for row class
-          const_get(:Row).send(:define_method, field_name) do
-            data_type.filter_get( instance_variable_get(:@data)[index] )
-          end
-          const_get(:Row).send(:define_method, (field_name.to_s + '=').to_sym ) do | value |
-            instance_variable_get(:@data)[index] = data_type.filter_set( value )
-          end
-        end
-
-        # define write method for Rows if we found primary keys
-        if primary_keys.length > 0
-          const_get(:Row).send( :define_method, :write ) do
-            instance_variable_get(:@table).write( self )
-          end
-        else
-          undef_method(:write)
-          undef_method(:create)
-        end
-
+    def self.initialize_class # :nodoc:
+      unless class_variables.member?( '@@table_name' )
+        table_name( construct_table_name( self.name ) )
       end
+      unless class_variables.member?( '@@schema_name' )
+        schema_name( construct_schema_name( self.name ) )
+      end
+      unless class_variables.member?( '@@columns' )
+        columns( database.fetch_columns( table_name() ) )
+      end
+
+      unless class_variables.member?( '@@primary_keys' )
+        primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )
+      end
+
+      # construct the Row class for the table
+      const_set( :Row, Class.new )
+      const_get(:Row).send(:define_method, :initialize) do | table, data |
+        instance_variable_set(:@table, table) 
+        instance_variable_set(:@data, data) 
+      end
+      const_get(:Row).send(:define_method, :new_record?) do 
+        instance_variable_get(:@new_record)
+      end
+
+      columns().each_with_index do | ( field_name, data_type ), index |
+        # mark primary key rows
+        if primary_keys.member?( field_name )
+          data_type.send(:instance_variable_set, :@primary_key, true)
+        end
+        # define getter and setter for row class
+        const_get(:Row).send(:define_method, field_name) do
+          data_type.filter_get( instance_variable_get(:@data)[index] )
+        end
+        const_get(:Row).send(:define_method, (field_name.to_s + '=').to_sym ) do | value |
+          instance_variable_get(:@data)[index] = data_type.filter_set( value )
+        end
+      end
+
+      # define write method for Rows if we found primary keys
+      if primary_keys.length > 0
+        const_get(:Row).send( :define_method, :write ) do
+          instance_variable_get(:@table).write( self )
+        end
+      end
+
+      # mark class as initialized
+      send(:class_variable_set, :@@initialized, true)
 
     end
 
@@ -97,29 +92,25 @@ module Momomoto
       end
     end
 
-    # class method for selecting
-    def self.select( conditions = {}, options = {} )
-      klass = self.new
-      klass.select( conditions, options )
-    end
-
     ## Searches for records and returns the number of records found
-    def select( conditions = {}, options = {} )
-      sql = "SELECT " + self.class.columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
-      sql += self.class.schema_name + '.' if self.class.schema_name
-      sql += self.class.table_name
+    def self.select( conditions = {}, options = {} )
+      initialize_class unless class_variables.member?('@@initialized')
+      sql = "SELECT " + columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
+      sql += schema_name + '.' if schema_name
+      sql += table_name
       sql += compile_where( conditions )
       sql += " LIMIT #{options[:limit]}" if options[:limit]
       sql += " ORDER BY #{options[:order]}" if options[:order]
-      @data = []
-      self.class.database.execute( sql ).each do | row |
-        @data << self.class.const_get(:Row).new( self, row )
+      data = []
+      database.execute( sql ).each do | row |
+        data << const_get(:Row).new( self, row )
       end
-      self
+      data
     end
 
-    def create( fields = {} )
-      new_row = self.class.const_get(:Row).new( self, [] )
+    def self.create( fields = {} )
+      initialize_class unless class_variables.member?('@@initialized')
+      new_row = const_get(:Row).new( self, [] )
       new_row.send(:instance_variable_set, :@new_record, true)
       fields.each do | key, value |
         new_row.send( key, value )
@@ -129,13 +120,13 @@ module Momomoto
 
     ## Tries to find a specific record and creates a new one if it does not find it
     #  raises an exception if multiple records are found
-    def select_or_create( conditions, options )
+    def self.select_or_create( conditions, options )
       
     end
 
     # write row back to database
-    def write( row ) # :nodoc:
-      raise CriticalError unless row.class == self.class.const_get(:Row)
+    def self.write( row ) # :nodoc:
+      raise CriticalError unless row.class == const_get(:Row)
       if row.new_record?
         insert( row )
       else
@@ -144,39 +135,40 @@ module Momomoto
     end
 
     # create an insert statement for a row
-    def insert( row ) # :nodoc:
+    def self.insert( row ) # :nodoc:
       fields, values = [], []
-      self.class.columns.each do | field_name, datatype |
+      columns.each do | field_name, datatype |
         # check for set primary key fields or fetch respective default values
         if datatype.primary_key? 
           if row.send( field_name).nil? && datatype.default
-            row.send( "#{field_name}=", self.class.database.execute("SELECT #{datatype.default};")[0][0] )
+            row.send( "#{field_name}=", database.execute("SELECT #{datatype.default};")[0][0] )
           end
           if row.send( field_name ).nil?
-            raise Momomoto::CriticalError, "Primary key fields need to be set or must have a default"
+            raise Error, "Primary key fields need to be set or must have a default"
           end
         end
         next if row.send( field_name ).nil?
         fields << field_name
         values << datatype.escape( row.send( field_name ))
       end
-      raise CriticalError, "insert with all fields nil" if fields.empty?
-      sql = "INSERT INTO #{self.class.table_name}(#{fields.join(', ')}) VALUES (#{values.join(', ')});"
-      self.class.database.execute( sql )
+      raise Error, "insert with all fields nil" if fields.empty?
+      sql = "INSERT INTO #{table_name}(#{fields.join(', ')}) VALUES (#{values.join(', ')});"
+      database.execute( sql )
     end
 
     # create an update statement for a row
-    def update( row ) # :nodoc:
+    def self.update( row ) # :nodoc:
+      raise CriticalError, 'Updating is only allowed for tables with primary keys' if primary_keys.empty?
       setter, conditions = [], {}
-      self.class.columns.each do | field_name, data_type |
+      columns.each do | field_name, data_type |
         setter << "#{field_name} = #{data_type.escape(row.send( field_name ))}"
       end
-      self.class.primary_keys.each do | field_name |
-        raise "Primary key fields must not be empty!" if not row.send( field_name )
+      primary_keys.each do | field_name |
+        raise Error, "Primary key fields must not be empty!" if not row.send( field_name )
         conditions[field_name] = row.send( field_name )
       end
-      sql = "UPDATE #{self.class.table_name} SET #{setter.join(', ')} #{compile_where(conditions)};"
-      self.class.database.execute( sql )
+      sql = "UPDATE #{table_name} SET #{setter.join(', ')} #{compile_where(conditions)};"
+      database.execute( sql )
     end
 
   end

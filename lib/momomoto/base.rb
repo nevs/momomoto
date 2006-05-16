@@ -9,7 +9,6 @@ module Momomoto
 
   ## Momomoto base class for Table, Procedure and Join
   class Base
-    include Enumerable
 
     def initialize( values = {}, options = {} )
       if [Base, Table, Procedure, Join].member?( self.class )
@@ -58,42 +57,27 @@ module Momomoto
       end
     end
 
-    # iterate over resultset
-    def each( &block )
-      @data.each( &block )
-    end
-
-    # get a specific resultset
-    def []( index )
-      @data[ index ]
-    end
-
-    # return the number of records in the current resultset
-    def length
-      @data.length
-    end
-
     protected
     
     # get the database connection
     def self.database # :nodoc:
       @@database
     rescue
-      raise Momomoto::CriticalError, "No database connection setup."
+      raise Error, "No database connection setup."
     end
 
     # compiles the where-clause of the query
-    def compile_where( conditions ) # :nodoc:
+    def self.compile_where( conditions ) # :nodoc:
       where = ''
       conditions.each do | key , value |
-        raise CriticalError unless self.class.columns.member?( key )
+        raise CriticalError unless columns.member?( key )
         where = where_append( where,  "#{key} = #{Datatype::Text.escape(value)}" )
       end
       where
     end
 
     # append where string
-    def where_append( where, append ) # :nodoc:
+    def self.where_append( where, append ) # :nodoc:
       ( where.empty? ? ' WHERE ' : where + ' AND ' ) + append
     end
 
