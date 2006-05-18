@@ -40,7 +40,7 @@ module Momomoto
         const_get(:Row).send(:define_method, field_name) do
           data_type.filter_get( instance_variable_get(:@data)[index] )
         end
-        const_get(:Row).send(:define_method, (field_name.to_s + '=').to_sym ) do | value |
+        const_get(:Row).send(:define_method, (field_name.to_s + '=') ) do | value |
           instance_variable_get(:@data)[index] = data_type.filter_set( value )
         end
       end
@@ -121,7 +121,9 @@ module Momomoto
     ## Tries to find a specific record and creates a new one if it does not find it
     #  raises an exception if multiple records are found
     def self.select_or_create( conditions, options )
-      
+      rows = select( conditions, options )  
+      raise Error, 'Multiple values found in select_or_create' if rows.length > 1
+      rows.empty? ? [ create ] : rows
     end
 
     # write row back to database

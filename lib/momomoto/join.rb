@@ -49,36 +49,6 @@ module Momomoto
       self
     end
 
-    def self.base_table_name( name = nil )
-      if name
-        self.base_table_name=( name )
-      else
-        send( :class_variable_get, :@@base_table_name )
-      end
-    end
-
-    def self.base_table_name=( name )
-      send( :class_variable_set, :@@base_table_name, name )
-    end
-
-    def self.join( *join_rules )
-      if join_rules.empty?
-        send(:class_variable_get, :@@join)
-      else
-        send(:join=, *join_rules)
-      end
-    end
-
-    def self.join=( *join_rules )
-      rules = []
-      join_rules.each do | rule |
-        rule.each do | key, value |
-          rules.push({key=>value})
-        end
-      end
-      send(:class_variable_set, :@@join, rules )
-    end
-
   end
 
 end
