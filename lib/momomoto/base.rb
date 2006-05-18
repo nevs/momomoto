@@ -61,9 +61,7 @@ module Momomoto
     
     # get the database connection
     def self.database # :nodoc:
-      @@database
-    rescue
-      raise Error, "No database connection setup."
+      Momomoto::Database.instance
     end
 
     # compiles the where-clause of the query

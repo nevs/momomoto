@@ -6,6 +6,8 @@ rescue LoadError
   require 'postgres'
 end
 
+require 'singleton'
+
 require 'momomoto/information_schema/columns'
 require 'momomoto/information_schema/table_constraints'
 require 'momomoto/information_schema/key_column_usage'
@@ -15,25 +17,26 @@ module Momomoto
 
   ## Momomoto Connection class
   class Database
+    include Singleton
 
     # establish connection to the database
     # expects a hash with the following keys: host, port, database, 
     # username, password, pgoptions and pgtty
-    def initialize( config )
+    def config( config )
       # we also accept String keys in the config hash 
       config.each do | key, value |
         config[key.to_sym] = value unless key.kind_of?( Symbol )
         config[key.to_sym] = value.to_s if value.kind_of?(Symbol)
       end
-
-      @connection = connect( config )
-      Momomoto::Base.send( :class_variable_set, :@@database, self )
+      @config = config
     end
 
-    def connect( config )
-      PGconn.connect( config[:host], config[:port], config[:pgoptions],
-                      config[:pgtty], config[:database], config[:username],
-                      config[:password])
+
+    def connect
+      @connection.close if @connection
+      @connection = PGconn.connect( @config[:host], @config[:port], @config[:pgoptions],
+                      @config[:pgtty], @config[:database], @config[:username],
+                      @config[:password])
     rescue => e
       raise CriticalError, "Connection to database failed: #{e}"
     end
@@ -41,6 +44,7 @@ module Momomoto
     # terminate this connection
     def disconnect
       @connection.close
+      @connection = nil
     end
 
     # execute a query
@@ -52,6 +56,7 @@ module Momomoto
     end
 
     # fetch columns which are primary key columns
+    # should work with any SQL2003 compliant DBMS
     def fetch_primary_keys( table_name, schema_name = nil ) # :nodoc:
       pkeys = []
       conditions = {:table_name=>table_name, :constraint_type => 'PRIMARY KEY'}
@@ -71,6 +76,7 @@ module Momomoto
     end
 
     # fetch column definitions from database
+    # should work with any SQL2003 compliant DBMS
     def fetch_columns( table_name, schema_name = nil ) # :nodoc:
       columns = {}
       conditions = { :table_name=>table_name }

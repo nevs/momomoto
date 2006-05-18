@@ -63,11 +63,12 @@ end
 class TestTable < Test::Unit::TestCase
 
   def setup
-    @connection = Momomoto::Database.new('database'=>'pentabarf','username'=>'pentabarf')
+    Momomoto::Database.instance.config('database'=>'pentabarf','username'=>'pentabarf')
+    Momomoto::Database.instance.connect
   end
 
   def teardown
-    @connection.disconnect
+    Momomoto::Database.instance.disconnect
   end
 
   def test_table_initialize
@@ -135,6 +136,11 @@ class TestTable < Test::Unit::TestCase
     row = Person.create
     assert_equal(Person::Row, row.class)
     assert_equal( true, row.new_record? )
+    sven = Person.create(:login_name=>'sven', :first_name=>'Sven',:last_name=>'Klemm')
+    assert_equal(sven.login_name, 'sven')
+    assert_equal(sven.first_name, 'Sven')
+    assert_equal(sven.last_name, 'Klemm')
   end
 
 end
+

@@ -7,11 +7,12 @@ require 'test/unit'
 class TestInformationSchema < Test::Unit::TestCase
 
   def setup
-    @connection = Momomoto::Database.new('database'=>'pentabarf','username'=>'pentabarf')
+    Momomoto::Database.instance.config('database'=>'pentabarf','username'=>'pentabarf')
+    Momomoto::Database.instance.connect
   end
 
   def teardown
-    @connection.disconnect
+    Momomoto::Database.instance.disconnect
   end
 
   # test for working information_schema.columns class

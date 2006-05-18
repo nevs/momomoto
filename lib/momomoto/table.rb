@@ -22,7 +22,7 @@ module Momomoto
       end
 
       # construct the Row class for the table
-      const_set( :Row, Class.new )
+      const_set( :Row, Class.new( BlankSlate ) )
       const_get(:Row).send(:define_method, :initialize) do | table, data |
         instance_variable_set(:@table, table) 
         instance_variable_set(:@data, data) 
@@ -113,7 +113,7 @@ module Momomoto
       new_row = const_get(:Row).new( self, [] )
       new_row.send(:instance_variable_set, :@new_record, true)
       fields.each do | key, value |
-        new_row.send( key, value )
+        new_row.send( "#{key}=", value )
       end
       new_row
     end
