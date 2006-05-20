@@ -133,13 +133,14 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_create
-    row = Person.create
-    assert_equal(Person::Row, row.class)
-    assert_equal( true, row.new_record? )
+    anonymous = Person.create
+    assert_equal(Person::Row, anonymous.class)
+    assert_equal( true, anonymous.new_record? )
+    assert_nil( anonymous.first_name )
     sven = Person.create(:login_name=>'sven', :first_name=>'Sven',:last_name=>'Klemm')
-    assert_equal(sven.login_name, 'sven')
-    assert_equal(sven.first_name, 'Sven')
-    assert_equal(sven.last_name, 'Klemm')
+    assert_equal( 'sven', sven.login_name )
+    assert_equal( 'Sven', sven.first_name )
+    assert_equal( true, sven.new_record? )
   end
 
 end
