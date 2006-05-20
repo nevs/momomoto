@@ -18,8 +18,8 @@ module Momomoto
       @join_rules = join_rules
       join_rules.each do | rule |
         rule.keys.each do | table, join_columns |
-          metaclass.send( :define_method, table.table_name ) do 
-            table 
+          metaclass.instance_eval do
+            define_method( table.table_name ) do table end
           end
         end
       end

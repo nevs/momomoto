@@ -15,7 +15,8 @@ QUERY_REPEAT = 10
 ITERATION_REPEAT = 10
 
 puts "==Momomoto==========================================================================="
-Momomoto::Database.new('database'=>'pentabarf','username'=>'pentabarf')
+Momomoto::Database.instance.config('database'=>'pentabarf','username'=>'pentabarf')
+Momomoto::Database.instance.connect
 Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
   a = nil
   times = []  

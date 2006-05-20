@@ -23,32 +23,46 @@ module Momomoto
 
       # construct the Row class for the table
       const_set( :Row, Class.new( BlankSlate ) )
-      const_get(:Row).send(:define_method, :initialize) do | table, data |
-        instance_variable_set(:@table, table) 
-        instance_variable_set(:@data, data) 
-      end
-      const_get(:Row).send(:define_method, :new_record?) do 
-        instance_variable_get(:@new_record)
+      const_get(:Row).instance_eval do
+
+        define_method( :initialize ) do | table, data |
+          instance_variable_set(:@table, table) 
+          instance_variable_set(:@data, data) 
+        end
+
+        define_method( :new_record? ) do
+          instance_variable_get(:@new_record)
+        end
+
+        define_method( :new_record? ) do
+          instance_variable_get(:@new_record)
+        end
+
       end
 
-      columns().each_with_index do | ( field_name, data_type ), index |
+
+      columns.each_with_index do | ( field_name, data_type ), index |
         # mark primary key rows
         if primary_keys.member?( field_name )
           data_type.instance_variable_set( :@primary_key, true )
         end
         # define getter and setter for row class
-        const_get(:Row).send(:define_method, field_name) do
-          data_type.filter_get( instance_variable_get(:@data)[index] )
-        end
-        const_get(:Row).send(:define_method, (field_name.to_s + '=') ) do | value |
-          instance_variable_get(:@data)[index] = data_type.filter_set( value )
+        const_get(:Row).instance_eval do
+          define_method( field_name ) do
+            data_type.filter_get( instance_variable_get(:@data)[index] )
+          end
+          define_method( "#{field_name}=" ) do | value |
+            instance_variable_get(:@data)[index] = data_type.filter_set( value )
+          end
         end
       end
 
       # define write method for Rows if we found primary keys
       if primary_keys.length > 0
-        const_get(:Row).send( :define_method, :write ) do
-          instance_variable_get(:@table).write( self )
+        const_get(:Row).instance_eval do
+          define_method( :write ) do
+            instance_variable_get(:@table).write( self )
+          end
         end
       end
 
