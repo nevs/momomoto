@@ -53,7 +53,7 @@ module Momomoto
       end
 
       # mark class as initialized
-      send(:class_variable_set, :@@initialized, true)
+      class_variable_set( :@@initialized, true)
 
     end
 

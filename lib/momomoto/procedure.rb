@@ -15,14 +15,14 @@ module Momomoto
 
     # set the procedure_name of the table this class operates on
     def self.procedure_name=( procedure_name )
-      send(:class_variable_set, :@@procedure_name, procedure_name)
+      class_variable_set( :@@procedure_name, procedure_name )
     end
 
     # get the procedure_name of the table this class operates on
     def self.procedure_name( procedure_name = nil )
       return self.procedure_name=( procedure_name ) if procedure_name
       begin
-        send(:class_variable_get, :@@procedure_name)
+        class_variable_get( :@@procedure_name )
       rescue NameError
         construct_procedure_name( self.name )
       end

@@ -10,6 +10,10 @@ module Momomoto
   ## Momomoto base class for Table, Procedure and Join
   class Base
 
+    def class_variable_set( variable, value ) # :nodoc:
+      self.class.send( :class_variable_set, variable, value )
+    end
+
     def initialize( values = {}, options = {} )
       if [Base, Table, Procedure, Join].member?( self.class )
         raise CriticalError, "This is a virtual class and should never be initialized." 
@@ -17,7 +21,7 @@ module Momomoto
       unless self.class.class_variables.member?('@@initialized')
         initialize_class
         # mark class as initialized
-        self.class.send(:class_variable_set, :@@initialized, true)
+        class_variable_set( :@@initialized, true )
       end
     end
 
@@ -29,14 +33,14 @@ module Momomoto
 
     # set the columns of the table this class operates on
     def self.columns=( columns )
-      send(:class_variable_set, :@@columns, columns)
+      class_variable_set( :@@columns, columns)
     end
 
     # get the columns of the table this class operates on
     def self.columns( columns = nil )
       return self.columns=( columns ) if columns
       begin
-        send(:class_variable_get, :@@columns)
+        class_variable_get( :@@columns )
       rescue NameError
         nil
       end
@@ -44,14 +48,14 @@ module Momomoto
 
     # set the schema name of the table this class operates on
     def self.schema_name=( schema_name )
-      send(:class_variable_set, :@@schema_name, schema_name)
+      class_variable_set( :@@schema_name, schema_name )
     end
 
     # get the schema name of the table this class operates on
     def self.schema_name( schema_name  = nil )
       return self.schema_name=( schema_name ) if schema_name
       begin
-        send(:class_variable_get, :@@schema_name)
+        class_variable_get( :@@schema_name )
       rescue NameError
         construct_schema_name( self.name )
       end
