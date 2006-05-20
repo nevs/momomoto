@@ -15,14 +15,7 @@ module Momomoto
     end
 
     def initialize( values = {}, options = {} )
-      if [Base, Table, Procedure, Join].member?( self.class )
-        raise CriticalError, "This is a virtual class and should never be initialized." 
-      end
-      unless self.class.class_variables.member?('@@initialized')
-        initialize_class
-        # mark class as initialized
-        class_variable_set( :@@initialized, true )
-      end
+      raise CriticalError, "This is a virtual class and should never be initialized." 
     end
 
     # guesses the schema name of the table this class works on

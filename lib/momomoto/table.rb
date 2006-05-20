@@ -34,7 +34,7 @@ module Momomoto
       columns().each_with_index do | ( field_name, data_type ), index |
         # mark primary key rows
         if primary_keys.member?( field_name )
-          data_type.send(:instance_variable_set, :@primary_key, true)
+          data_type.instance_variable_set( :@primary_key, true )
         end
         # define getter and setter for row class
         const_get(:Row).send(:define_method, field_name) do
@@ -64,14 +64,14 @@ module Momomoto
 
     # set the table_name of the table this class operates on
     def self.table_name=( table_name )
-      send(:class_variable_set, :@@table_name, table_name)
+      class_variable_set( :@@table_name, table_name )
     end
 
     # get the table_name of the table this class operates on
     def self.table_name( table_name = nil )
       return self.table_name=( table_name ) if table_name
       begin
-        send(:class_variable_get, :@@table_name)
+        class_variable_get( :@@table_name )
       rescue NameError
         construct_table_name( self.name )
       end
@@ -79,14 +79,14 @@ module Momomoto
 
     # set the primary key fields of the table
     def self.primary_keys=( keys ) # :nodoc:
-      send(:class_variable_set, :@@primary_keys, keys)
+      class_variable_set( :@@primary_keys, keys )
     end
 
     # get the primary key fields of the table
     def self.primary_keys( keys = nil )
       return self.primary_keys=( keys ) if keys
       begin
-        send(:class_variable_get, :@@primary_keys)
+        class_variable_get( :@@primary_keys )
       rescue
         self.primary_keys=( database.fetch_primary_keys( table_name(), schema_name()) )
       end
@@ -111,7 +111,7 @@ module Momomoto
     def self.create( fields = {} )
       initialize_class unless class_variables.member?('@@initialized')
       new_row = const_get(:Row).new( self, [] )
-      new_row.send(:instance_variable_set, :@new_record, true)
+      new_row.instance_variable_set( :@new_record, true )
       fields.each do | key, value |
         new_row.send( "#{key}=", value )
       end
@@ -142,7 +142,7 @@ module Momomoto
       columns.each do | field_name, datatype |
         # check for set primary key fields or fetch respective default values
         if datatype.primary_key? 
-          if row.send( field_name).nil? && datatype.default
+          if row.send( field_name ).nil? && datatype.default
             row.send( "#{field_name}=", database.execute("SELECT #{datatype.default};")[0][0] )
           end
           if row.send( field_name ).nil?
