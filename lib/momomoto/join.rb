@@ -16,6 +16,7 @@ module Momomoto
     def initialize( base_table, *join_rules )
       @base_table = base_table
       @join_rules = join_rules
+
       join_rules.each do | rule |
         rule.keys.each do | table, join_columns |
           metaclass.instance_eval do
@@ -25,7 +26,7 @@ module Momomoto
       end
     end
 
-    def metaclass
+    def metaclass # :nodoc:
       class << self; self; end
     end
 

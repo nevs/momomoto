@@ -33,10 +33,40 @@ module Momomoto
         input.nil? ? "NULL" : "'" + PGconn.escape( input.to_s ) + "'"
       end
 
+      def compile_rule( field_name, value )
+        case value
+          when String, Symbol, Numeric then
+            "#{field_name} = #{escape(value)}"
+          when Array then
+            raise Error, "empty array conditions are not allowed" if value.empty?
+            "#{field_name} IN (#{value.map{ | v | escape(v) }.join(', ') })"
+          when Hash then
+            raise Error, "empty hash conditions are not allowed" if value.empty?
+            rules = []
+            value.each do | op, v |
+              rules << "#{field_name} #{self.class.operator_sign(op)} #{escape(v)}"
+            end
+            rules.join( " AND " )
+        end
+      end
+
+      def self.operator_sign( op )
+        case op
+          when :le then '<='
+          when :lt then '<'
+          when :ge then '>='
+          when :gt then '>'
+          when :eq then '='
+          when :ne then '!='
+          else
+            raise CriticalError, "unsupported operator"
+        end
+      end
+
       def escape( input )
         self.class.escape( input )
       end
-    
+ 
     end
 
     class Bigint < Base; end

@@ -65,8 +65,8 @@ module Momomoto
     def self.compile_where( conditions ) # :nodoc:
       where = ''
       conditions.each do | key , value |
-        raise CriticalError unless columns.member?( key )
-        where = where_append( where,  "#{key} = #{Datatype::Text.escape(value)}" )
+        raise CriticalError unless columns.keys.member?( key )
+        where = where_append( where, columns[key].compile_rule( key, value ) )
       end
       where
     end
