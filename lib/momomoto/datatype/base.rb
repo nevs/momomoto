@@ -69,24 +69,6 @@ module Momomoto
  
     end
 
-    class Bigint < Base; end
-    class Boolean < Base; end
-    class Bytea < Base; end
-    class Character < Base; end
-    class Character_varying < Base; end
-    class Date < Base; end
-    class Inet < Base; end
-    class Integer < Base; end
-    class Interval < Base; end
-    class Numeric < Base; end
-    class Real < Base; end
-    class Smallint < Base; end
-    class Text < Base; end
-    class Time_with_time_zone < Base; end
-    class Time_without_time_zone < Base; end
-    class Timestamp_with_time_zone < Base; end
-    class Timestamp_without_time_zone < Base; end
-
   end
 end
 
