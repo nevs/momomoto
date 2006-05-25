@@ -46,6 +46,9 @@ module Momomoto
             data_type.filter_get( instance_variable_get(:@data)[index] )
           end
           define_method( "#{field_name}=" ) do | value |
+            if not new_record? and table.primary_keys.member?( field_name )
+              raise Error, 'setting primary keys is only allowed for new records' 
+            end
             instance_variable_get(:@data)[index] = data_type.filter_set( value )
           end
         end
