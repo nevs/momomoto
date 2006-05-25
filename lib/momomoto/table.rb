@@ -22,7 +22,7 @@ module Momomoto
       end
 
       # construct the Row class for the table
-      const_set( :Row, Class.new( BlankSlate ) )
+      const_set( :Row, Class.new( BlankSlate ) ) if not const_defined?( :Row )
       const_get(:Row).instance_eval do
 
         define_method( :initialize ) do | table, data |
