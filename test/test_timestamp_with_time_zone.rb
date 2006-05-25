@@ -1,6 +1,14 @@
 
 class TestTimestamp_with_time_zone < Test::Unit::TestCase
 
+  def test_default
+    row = Momomoto::Information_schema::Columns.create
+    row.column_default = 'default-value'
+    a = Momomoto::Datatype::Timestamp_with_time_zone.new( row )
+    assert_equal( 'default-value', a.default )
+    assert_equal( nil, Momomoto::Datatype::Timestamp_with_time_zone.new.default )
+  end
+
   def test_operator_sign
     dt = Momomoto::Datatype::Timestamp_with_time_zone
     assert_equal( '<=', dt.operator_sign( :le ) )

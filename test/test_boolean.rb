@@ -1,6 +1,14 @@
 
 class TestBoolean < Test::Unit::TestCase
 
+  def test_default
+    row = Momomoto::Information_schema::Columns.create
+    row.column_default = 'default-value'
+    a = Momomoto::Datatype::Boolean.new( row )
+    assert_equal( 'default-value', a.default )
+    assert_equal( nil, Momomoto::Datatype::Boolean.new.default )
+  end
+
   def test_operator_sign
     dt = Momomoto::Datatype::Boolean
     assert_equal( '<=', dt.operator_sign( :le ) )
