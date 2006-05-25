@@ -30,11 +30,11 @@ module Momomoto
         @primary_key = false
       end
       
-      def filter_set( value )
+      def filter_set( value ) # :nodoc:
         value.nil? ? nil : value.to_s.gsub('\\', '')
       end
 
-      def filter_get( value )
+      def filter_get( value ) # :nodoc:
         value
       end
 
@@ -45,17 +45,21 @@ module Momomoto
       def compile_rule( field_name, value )
         case value
           when String, Symbol, Numeric then
-            "#{field_name} = #{escape(value)}"
+            "#{field_name} = #{escape(filter_set(value))}"
           when Array then
             raise Error, "empty array conditions are not allowed" if value.empty?
-            "#{field_name} IN (#{value.map{ | v | escape(v) }.join(', ') })"
+            raise Error, "nil values not allowed in compile_rule" if value.member?( nil )
+            "#{field_name} IN (#{value.map{ | v | escape(filter_set(v)) }.join(', ') })"
           when Hash then
             raise Error, "empty hash conditions are not allowed" if value.empty?
             rules = []
             value.each do | op, v |
-              rules << "#{field_name} #{self.class.operator_sign(op)} #{escape(v)}"
+              raise Error, "nil values not allowed in compile_rule" if v == nil
+              rules << "#{field_name} #{self.class.operator_sign(op)} #{escape(filter_set(v))}"
             end
             rules.join( " AND " )
+          else
+            raise Error, "Unsupported class: #{value.class}"
         end
       end
 

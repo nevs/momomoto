@@ -34,15 +34,48 @@ class TestDatatype < Test::Unit::TestCase
   end
 
   def test_primary_key
+    DATATYPES.each do | type |
+      t = type.new
+      assert_equal( false, t.primary_key? )
+      t.primary_key = true
+      assert_equal( true, t.primary_key? )
+      t.primary_key = nil
+      assert_equal( false, t.primary_key? )
+    end
   end
 
   def test_filter_set
+    DATATYPES.each do | type |
+      t = type.new
+      assert_equal( nil, t.filter_set( nil ))
+    end
   end
 
   def test_filter_get
   end
 
   def test_compile_rule
+    DATATYPES.each do | type |
+      t = type.new
+      assert_raise( Momomoto::Error ) do
+        t.compile_rule( :field_name, nil )
+      end
+      assert_raise( Momomoto::Error ) do
+        t.compile_rule( :field_name, [] )
+      end
+      assert_raise( Momomoto::Error ) do
+        t.compile_rule( :field_name, [nil, nil] )
+      end
+      assert_raise( Momomoto::Error ) do
+        t.compile_rule( :field_name, {} )
+      end
+      assert_raise( Momomoto::Error ) do
+        t.compile_rule( :field_name, {:eq=>nil} )
+      end
+      assert_raise( Momomoto::Error ) do
+        t.compile_rule( :field_name, {nil=>nil} )
+      end
+    end
   end
 
   def test_operator_sign
