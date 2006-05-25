@@ -17,7 +17,7 @@ module Momomoto
 
       def initialize( row = nil )
         @not_null = row.respond_to?(:is_nullable) && row.is_nullable == "NO"
-        @default = row.column_default if row.respond_to?( :column_default )
+        @default = row.respond_to?( :column_default) && row.column_default
         @primary_key = false
       end
       

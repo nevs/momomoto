@@ -6,7 +6,7 @@ class TestDate < Test::Unit::TestCase
     row.column_default = 'default-value'
     a = Momomoto::Datatype::Date.new( row )
     assert_equal( 'default-value', a.default )
-    assert_equal( nil, Momomoto::Datatype::Date.new.default )
+    assert_equal( false, Momomoto::Datatype::Date.new.default )
   end
 
   def test_operator_sign

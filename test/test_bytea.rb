@@ -6,7 +6,7 @@ class TestBytea < Test::Unit::TestCase
     row.column_default = 'default-value'
     a = Momomoto::Datatype::Bytea.new( row )
     assert_equal( 'default-value', a.default )
-    assert_equal( nil, Momomoto::Datatype::Bytea.new.default )
+    assert_equal( false, Momomoto::Datatype::Bytea.new.default )
   end
 
   def test_operator_sign

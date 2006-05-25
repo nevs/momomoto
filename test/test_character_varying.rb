@@ -6,7 +6,7 @@ class TestCharacter_varying < Test::Unit::TestCase
     row.column_default = 'default-value'
     a = Momomoto::Datatype::Character_varying.new( row )
     assert_equal( 'default-value', a.default )
-    assert_equal( nil, Momomoto::Datatype::Character_varying.new.default )
+    assert_equal( false, Momomoto::Datatype::Character_varying.new.default )
   end
 
   def test_operator_sign

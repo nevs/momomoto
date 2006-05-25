@@ -6,7 +6,7 @@ class TestNumeric < Test::Unit::TestCase
     row.column_default = 'default-value'
     a = Momomoto::Datatype::Numeric.new( row )
     assert_equal( 'default-value', a.default )
-    assert_equal( nil, Momomoto::Datatype::Numeric.new.default )
+    assert_equal( false, Momomoto::Datatype::Numeric.new.default )
   end
 
   def test_operator_sign

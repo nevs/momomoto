@@ -6,7 +6,7 @@ class TestText < Test::Unit::TestCase
     row.column_default = 'default-value'
     a = Momomoto::Datatype::Text.new( row )
     assert_equal( 'default-value', a.default )
-    assert_equal( nil, Momomoto::Datatype::Text.new.default )
+    assert_equal( false, Momomoto::Datatype::Text.new.default )
   end
 
   def test_not_null

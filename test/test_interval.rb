@@ -6,7 +6,7 @@ class TestInterval < Test::Unit::TestCase
     row.column_default = 'default-value'
     a = Momomoto::Datatype::Interval.new( row )
     assert_equal( 'default-value', a.default )
-    assert_equal( nil, Momomoto::Datatype::Interval.new.default )
+    assert_equal( false, Momomoto::Datatype::Interval.new.default )
   end
 
   def test_operator_sign
