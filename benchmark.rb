@@ -34,15 +34,11 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
     ITERATION_REPEAT.times do a.each do | row | temp = row end end
   end
 
-  times << b.report("iterating #{ITERATION_REPEAT} times with element access") do
-    ITERATION_REPEAT.times do
-      a.each do | row | 
-        row.table_catalog
-        row.table_schema
-        row.table_name
-        row.column_name
-        row.ordinal_position
-      end
+  repeat = ITERATION_REPEAT * a.length
+  times << b.report("accessing an element #{repeat} times") do
+    a = a[0]
+    repeat.times do 
+      a.table_catalog
     end
   end
 
@@ -80,15 +76,11 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
     ITERATION_REPEAT.times do a.each do | row | temp = row end end
   end
 
-  times << b.report("iterating #{ITERATION_REPEAT} times with element access") do
-    ITERATION_REPEAT.times do
-      a.each do | row | 
-        row.table_catalog
-        row.table_schema
-        row.table_name
-        row.column_name
-        row.ordinal_position
-      end
+  repeat = ITERATION_REPEAT * a.length
+  times << b.report("accessing an element #{repeat} times") do
+    a = a[0]
+    repeat.times do 
+      a.table_catalog
     end
   end
 
@@ -123,15 +115,11 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
     ITERATION_REPEAT.times do a.each do | row | temp = row end end
   end
 
-  times << b.report("iterating #{ITERATION_REPEAT} times with element access") do
-    ITERATION_REPEAT.times do
-      a.each do | row | 
-        row[0]
-        row[1]
-        row[2]
-        row[3]
-        row[4]
-      end
+  repeat = ITERATION_REPEAT * a.length
+  times << b.report("accessing an element #{repeat} times") do
+    a = a[0]
+    repeat.times do 
+      a[0]
     end
   end
 
