@@ -5,14 +5,17 @@ module Momomoto
   # it must not be used directly but you should inherit from this class
   # you can only write to a table if it has primary keys defined
   class Table < Base
-
+  
     def self.initialize_class # :nodoc:
+  
       unless class_variables.member?( '@@table_name' )
         table_name( construct_table_name( self.name ) )
       end
+  
       unless class_variables.member?( '@@schema_name' )
         schema_name( construct_schema_name( self.name ) )
       end
+
       unless class_variables.member?( '@@columns' )
         columns( database.fetch_columns( table_name() ) )
       end
@@ -48,12 +51,11 @@ module Momomoto
         end
       end
 
-      # define write method for Rows if we found primary keys
+      # define write and delete method for Rows if we found primary keys
       if primary_keys.length > 0
         row.instance_eval do
-          define_method( :write ) do
-            table.write( self )
-          end
+          define_method( :write ) do table.write( self ) end
+          define_method( :delete ) do table.delete( self ) end
         end
       end
     end
@@ -171,6 +173,17 @@ module Momomoto
         conditions[field_name] = row.send( field_name )
       end
       sql = "UPDATE #{table_name} SET #{setter.join(', ')} #{compile_where(conditions)};"
+      database.execute( sql )
+    end
+
+    def self.delete( row )
+      raise Error, "this is a new record" if row.new_record?
+      conditions = {}
+      primary_keys.each do | field_name |
+        raise Error, "Primary key fields must not be empty!" if not row.send( field_name )
+        conditions[field_name] = row.send( field_name )
+      end
+      sql = "DELETE FROM #{table_name} #{compile_where(conditions)};"
       database.execute( sql )
     end
 
