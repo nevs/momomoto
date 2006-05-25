@@ -21,7 +21,8 @@ module Momomoto
         primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )
       end
 
-      initialize_row
+      const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
+      initialize_row( const_get( :Row ), self )
 
       # mark class as initialized
       class_variable_set( :@@initialized, true)
@@ -29,25 +30,15 @@ module Momomoto
     end
 
     # construct the Row class for the table
-    def self.initialize_row # :nodoc:
+    def self.initialize_row( row, table ) # :nodoc:
 
-      const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
-      const_get(:Row).instance_eval do
-
-        define_method( :initialize ) do | table, data |
-          instance_variable_set(:@table, table) 
-          instance_variable_set(:@data, data) 
-        end
-
-        define_method( :new_record? ) do
-          instance_variable_get(:@new_record)
-        end
-
+      if not row.ancestors.include?( Momomoto::Row )
+        raise CriticalError, "Row is not inherited from Momomoto::Row" 
       end
 
       columns.each_with_index do | ( field_name, data_type ), index |
         # define getter and setter for row class
-        const_get(:Row).instance_eval do
+        row.instance_eval do
           define_method( field_name ) do
             data_type.filter_get( instance_variable_get(:@data)[index] )
           end
@@ -59,9 +50,9 @@ module Momomoto
 
       # define write method for Rows if we found primary keys
       if primary_keys.length > 0
-        const_get(:Row).instance_eval do
+        row.instance_eval do
           define_method( :write ) do
-            instance_variable_get(:@table).write( self )
+            table.write( self )
           end
         end
       end
@@ -113,14 +104,14 @@ module Momomoto
       sql += " ORDER BY #{options[:order]}" if options[:order]
       data = []
       database.execute( sql ).each do | row |
-        data << const_get(:Row).new( self, row )
+        data << const_get(:Row).new( row )
       end
       data
     end
 
     def self.create( fields = {} )
       initialize_class unless class_variables.member?('@@initialized')
-      new_row = const_get(:Row).new( self, [] )
+      new_row = const_get(:Row).new( [] )
       new_row.instance_variable_set( :@new_record, true )
       fields.each do | key, value |
         new_row.send( "#{key}=", value )
