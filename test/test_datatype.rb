@@ -52,6 +52,10 @@ class TestDatatype < Test::Unit::TestCase
   end
 
   def test_filter_get
+    DATATYPES.each do | type |
+      t = type.new
+      assert_equal( nil, t.filter_get( nil ))
+    end
   end
 
   def test_compile_rule
@@ -91,6 +95,10 @@ class TestDatatype < Test::Unit::TestCase
   end
 
   def test_escape
+    DATATYPES.each do | type |
+      t = type.new
+      assert_equal( 'NULL', t.escape( nil ))
+    end
   end
 
 end
