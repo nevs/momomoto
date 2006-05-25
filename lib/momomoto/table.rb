@@ -21,7 +21,16 @@ module Momomoto
         primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )
       end
 
-      # construct the Row class for the table
+      initialize_row
+
+      # mark class as initialized
+      class_variable_set( :@@initialized, true)
+
+    end
+
+    # construct the Row class for the table
+    def self.initialize_row # :nodoc:
+
       const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
       const_get(:Row).instance_eval do
 
@@ -34,18 +43,9 @@ module Momomoto
           instance_variable_get(:@new_record)
         end
 
-        define_method( :new_record? ) do
-          instance_variable_get(:@new_record)
-        end
-
       end
 
-
       columns.each_with_index do | ( field_name, data_type ), index |
-        # mark primary key rows
-        if primary_keys.member?( field_name )
-          data_type.primary_key = true
-        end
         # define getter and setter for row class
         const_get(:Row).instance_eval do
           define_method( field_name ) do
@@ -65,10 +65,6 @@ module Momomoto
           end
         end
       end
-
-      # mark class as initialized
-      class_variable_set( :@@initialized, true)
-
     end
 
     # guesses the table name of the table this class works on

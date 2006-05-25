@@ -44,7 +44,7 @@ module Momomoto
 
       def compile_rule( field_name, value )
         case value
-          when String, Symbol, Numeric then
+          when String, Symbol, Numeric, Integer then
             "#{field_name} = #{escape(filter_set(value))}"
           when Array then
             raise Error, "empty array conditions are not allowed" if value.empty?
