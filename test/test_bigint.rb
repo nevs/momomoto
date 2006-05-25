@@ -9,6 +9,16 @@ class TestBigint < Test::Unit::TestCase
     assert_equal( false, Momomoto::Datatype::Bigint.new.default )
   end
 
+  def test_not_null
+    row = Momomoto::Information_schema::Columns.create
+    row.is_nullable = "YES"
+    assert_equal( false, Momomoto::Datatype::Bigint.new( row ).not_null? )
+    row.is_nullable = "NO"
+    assert_equal( true, Momomoto::Datatype::Bigint.new( row ).not_null? )
+    row.is_nullable = nil
+    assert_equal( false, Momomoto::Datatype::Bigint.new( row ).not_null? )
+  end
+
   def test_operator_sign
     dt = Momomoto::Datatype::Bigint
     assert_equal( '<=', dt.operator_sign( :le ) )

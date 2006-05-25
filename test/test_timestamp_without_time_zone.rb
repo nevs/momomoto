@@ -9,6 +9,16 @@ class TestTimestamp_without_time_zone < Test::Unit::TestCase
     assert_equal( false, Momomoto::Datatype::Timestamp_without_time_zone.new.default )
   end
 
+  def test_not_null
+    row = Momomoto::Information_schema::Columns.create
+    row.is_nullable = "YES"
+    assert_equal( false, Momomoto::Datatype::Timestamp_without_time_zone.new( row ).not_null? )
+    row.is_nullable = "NO"
+    assert_equal( true, Momomoto::Datatype::Timestamp_without_time_zone.new( row ).not_null? )
+    row.is_nullable = nil
+    assert_equal( false, Momomoto::Datatype::Timestamp_without_time_zone.new( row ).not_null? )
+  end
+
   def test_operator_sign
     dt = Momomoto::Datatype::Timestamp_without_time_zone
     assert_equal( '<=', dt.operator_sign( :le ) )

@@ -10,6 +10,13 @@ class TestText < Test::Unit::TestCase
   end
 
   def test_not_null
+    row = Momomoto::Information_schema::Columns.create
+    row.is_nullable = "YES"
+    assert_equal( false, Momomoto::Datatype::Text.new( row ).not_null? )
+    row.is_nullable = "NO"
+    assert_equal( true, Momomoto::Datatype::Text.new( row ).not_null? )
+    row.is_nullable = nil
+    assert_equal( false, Momomoto::Datatype::Text.new( row ).not_null? )
   end
 
   def test_primary_key
