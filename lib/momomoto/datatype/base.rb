@@ -57,7 +57,7 @@ module Momomoto
           when :ge then '>='
           when :gt then '>'
           when :eq then '='
-          when :ne then '!='
+          when :ne then '<>'
           else
             raise CriticalError, "unsupported operator"
         end
