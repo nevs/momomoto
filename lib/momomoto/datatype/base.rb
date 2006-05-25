@@ -3,11 +3,20 @@ module Momomoto
   module Datatype
     # base class for all datatypes
     class Base
-      attr_reader :default
+      # get the default value for this column
+      # returns false if none exists 
+      def default
+        @default
+      end
 
       # is this column a not null column
       def not_null?
         @not_null
+      end
+
+      # mark this datatype as primary key
+      def primary_key=( pk ) # :nodoc:
+        @primary_key = !!pk
       end
 
       # is this column a primary key

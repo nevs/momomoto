@@ -44,7 +44,7 @@ module Momomoto
       columns.each_with_index do | ( field_name, data_type ), index |
         # mark primary key rows
         if primary_keys.member?( field_name )
-          data_type.instance_variable_set( :@primary_key, true )
+          data_type.primary_key = true
         end
         # define getter and setter for row class
         const_get(:Row).instance_eval do
