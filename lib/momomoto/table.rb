@@ -39,6 +39,8 @@ module Momomoto
         raise CriticalError, "Row is not inherited from Momomoto::Row" 
       end
 
+      row.instance_eval do class_variable_set( :@@table, table ) end
+
       columns.each_with_index do | ( field_name, data_type ), index |
         # define getter and setter for row class
         row.instance_eval do
