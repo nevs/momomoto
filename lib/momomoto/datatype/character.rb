@@ -1,6 +1,6 @@
 module Momomoto
   module Datatype
-    class Character < Base
+    class Character < Text
     
     end
   end

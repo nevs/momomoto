@@ -1,7 +1,7 @@
 module Momomoto
   module Datatype
 
-    class Bigint < Base
+    class Bigint < Integer
     
     end
 

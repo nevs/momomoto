@@ -1,6 +1,6 @@
 module Momomoto
   module Datatype
-    class Smallint < Base
+    class Smallint < Integer
     
     end
   end

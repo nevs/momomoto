@@ -17,6 +17,9 @@ module Momomoto
       @base_table = base_table
       @join_rules = join_rules
 
+      metaclass.instance_eval do
+        define_method( base_table.table_name ) do base_table end
+      end
       join_rules.each do | rule |
         rule.keys.each do | table, join_columns |
           metaclass.instance_eval do
