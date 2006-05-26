@@ -4,13 +4,13 @@ $LOAD_PATH.unshift( File.join( File.dirname( __FILE__ ), '..', 'lib' ) )
 require 'momomoto'
 require 'test/unit'
 
-class TestInteger < Test::Unit::TestCase
+class TestNumeric < Test::Unit::TestCase
 
   def test_filter_set
-    t = Momomoto::Datatype::Integer.new
+    t = Momomoto::Datatype::Numeric.new
     assert_equal( nil, t.filter_set( nil ) )
-    assert_equal( 1, t.filter_set( 1 ) )
-    assert_equal( 1, t.filter_set( '1' ) )
+    assert_equal( 1.0, t.filter_set( 1 ) )
+    assert_equal( 1.0, t.filter_set( '1' ) )
   end
 
 end

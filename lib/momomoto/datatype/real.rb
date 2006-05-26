@@ -1,6 +1,6 @@
 module Momomoto
   module Datatype
-    class Real < Base
+    class Real < Numeric
     
     end
   end

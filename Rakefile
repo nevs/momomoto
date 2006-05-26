@@ -10,6 +10,5 @@ end
 
 Rcov::RcovTask.new do | t |
   t.test_files = FileList['test/test*.rb']
-  t.rcov_opts << '--test-unit-only'
 end
 

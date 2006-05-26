@@ -1,4 +1,9 @@
 
+$LOAD_PATH.unshift( File.join( File.dirname( __FILE__ ), '..', 'lib' ) )
+
+require 'momomoto'
+require 'test/unit'
+
 class TestBoolean < Test::Unit::TestCase
 
   def test_filter_set
