@@ -6,6 +6,10 @@ module Momomoto
         value == nil ? nil : value.to_i
       end
       
+      def filter_get( value )
+        value == nil ? nil : value.to_i
+      end
+      
     end
   end
 end

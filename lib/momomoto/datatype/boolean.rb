@@ -16,6 +16,14 @@ module Momomoto
           end
         end
       end
+
+      def filter_get( value )
+        case value
+          when true, 't', 1 then true
+          when false, 'f', 0 then false
+          else nil
+        end
+      end
     
       def self.escape( input )
         case input 

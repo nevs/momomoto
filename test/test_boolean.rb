@@ -30,5 +30,17 @@ class TestBoolean < Test::Unit::TestCase
     assert_equal( false, t.filter_set( 0 ) )
   end
 
+  def test_filter_get
+    t = Momomoto::Datatype::Boolean.new
+    assert_equal( nil, t.filter_set( nil ))
+    assert_equal( nil, t.filter_set( '' ))
+    assert_equal( true, t.filter_set( 't' ))
+    assert_equal( true, t.filter_set( true ))
+    assert_equal( true, t.filter_set( 1 ))
+    assert_equal( false, t.filter_set( 'f' ))
+    assert_equal( false, t.filter_set( false ))
+    assert_equal( false, t.filter_set( 0 ))
+  end
+
 end
 
