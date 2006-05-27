@@ -54,6 +54,21 @@ module Momomoto
       end
     end
 
+    # begin a transaction
+    def begin
+      database.execute( "BEGIN;" )
+    end
+
+    # commit the current transaction
+    def commit
+      database.execute( "COMMIT;" )
+    end
+
+    # roll the transaction back
+    def rollback
+      database.execute( "ROLLBACK;" )
+    end
+
     protected
     
     # get the database connection
