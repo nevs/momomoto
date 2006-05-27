@@ -116,7 +116,7 @@ module Momomoto
       data
     end
 
-    def self.create( fields = {} )
+    def self.new( fields = {} )
       initialize_class unless class_variables.member?('@@initialized')
       new_row = const_get(:Row).new( [] )
       new_row.instance_variable_set( :@new_record, true )

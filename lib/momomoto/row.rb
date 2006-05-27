@@ -7,7 +7,7 @@ module Momomoto
       class_variable_get( :@@table )
     end
 
-    def initialize( data )
+    def initialize( data = [] )
       @data = data
     end
 
