@@ -107,8 +107,8 @@ module Momomoto
       sql += schema_name + '.' if schema_name
       sql += table_name
       sql += compile_where( conditions )
-      sql += " LIMIT #{options[:limit]}" if options[:limit]
       sql += " ORDER BY #{options[:order]}" if options[:order]
+      sql += " LIMIT #{options[:limit]}" if options[:limit]
       data = []
       database.execute( sql ).each do | row |
         data << const_get(:Row).new( row )

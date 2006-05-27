@@ -65,6 +65,7 @@ module Momomoto
     def self.compile_where( conditions ) # :nodoc:
       where = ''
       conditions.each do | key , value |
+        key = key.to_sym if key.kind_of?( String )
         raise CriticalError unless columns.keys.member?( key )
         where = where_append( where, columns[key].compile_rule( key, value ) )
       end

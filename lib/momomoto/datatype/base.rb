@@ -44,7 +44,7 @@ module Momomoto
         input.nil? ? "NULL" : "'" + PGconn.escape( input.to_s ) + "'"
       end
 
-      def compile_rule( field_name, value )
+      def compile_rule( field_name, value ) # :nodoc:
         case value
           when nil then
             raise Error, "nil values not allowed here"
