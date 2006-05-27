@@ -1,6 +1,6 @@
 module Momomoto
   module Datatype
-    class Interval < Base
+    class Interval < Time_without_time_zone
     
     end
   end

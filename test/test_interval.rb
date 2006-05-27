@@ -7,7 +7,7 @@ require 'test/unit'
 class TestTimeWithoutTimeZone < Test::Unit::TestCase
 
   def test_filter_get
-    t = Momomoto::Datatype::Time_without_time_zone.new
+    t = Momomoto::Datatype::Interval.new
     assert_equal( nil, t.filter_get( nil ) )
     assert_equal( nil, t.filter_set( '' ) )
     assert_instance_of( Time, t.filter_get( "00:00:00" ) )
@@ -17,7 +17,7 @@ class TestTimeWithoutTimeZone < Test::Unit::TestCase
   end
 
   def test_filter_set
-    t = Momomoto::Datatype::Time_without_time_zone.new
+    t = Momomoto::Datatype::Interval.new
     assert_equal( nil, t.filter_set( nil ) )
     assert_equal( nil, t.filter_set( '' ) )
     assert_instance_of( Time, t.filter_set( "00:00:00" ) )
