@@ -1,3 +1,4 @@
+
 module Momomoto
   module Datatype
     class Bytea < Base
@@ -5,3 +6,4 @@ module Momomoto
     end
   end
 end
+
