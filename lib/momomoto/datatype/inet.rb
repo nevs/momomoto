@@ -1,6 +1,6 @@
 module Momomoto
   module Datatype
-    class Inet < Base
+    class Inet < Text
     
     end
   end

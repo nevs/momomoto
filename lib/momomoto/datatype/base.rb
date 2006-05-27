@@ -44,8 +44,8 @@ module Momomoto
 
       def compile_rule( field_name, value )
         case value
-          when String, Symbol, Numeric, Integer, Fixnum then
-            "#{field_name} = #{escape(filter_set(value))}"
+          when nil then
+            raise Error, "nil values not allowed here"
           when Array then
             raise Error, "empty array conditions are not allowed" if value.empty?
             raise Error, "nil values not allowed in compile_rule" if value.member?( nil )
@@ -59,7 +59,7 @@ module Momomoto
             end
             rules.join( " AND " )
           else
-            raise Error, "Unsupported class: #{value.class}"
+            "#{field_name} = #{escape(filter_set(value))}"
         end
       end
 
