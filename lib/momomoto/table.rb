@@ -129,6 +129,11 @@ module Momomoto
     ## Tries to find a specific record and creates a new one if it does not find it
     #  raises an exception if multiple records are found
     def self.select_or_new( conditions = {}, options = {} )
+      if block_given?
+        primary_keys.each do | field | 
+          conditions[ field ] = yield( field ) if not conditions[ field ]
+        end
+      end
       rows = select( conditions, options )  
       raise Error, 'Multiple values found in select_or_create' if rows.length > 1
       rows.empty? ? new( conditions ) : rows.first
