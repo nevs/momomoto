@@ -55,17 +55,26 @@ module Momomoto
     end
 
     # begin a transaction
-    def begin
+    def self.begin
       database.execute( "BEGIN;" )
+      if block_given?
+        begin
+          yield
+        rescue Momomoto::Error => e
+          rollback
+          raise e
+        end
+        commit
+      end
     end
 
     # commit the current transaction
-    def commit
+    def self.commit
       database.execute( "COMMIT;" )
     end
 
     # roll the transaction back
-    def rollback
+    def self.rollback
       database.execute( "ROLLBACK;" )
     end
 
