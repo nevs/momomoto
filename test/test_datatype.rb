@@ -10,12 +10,6 @@ class TestDatatype < Test::Unit::TestCase
     Momomoto::Datatype.const_get( t ) 
   end
 
-  def setup
-  end
-
-  def teardown
-  end
-
   def test_default
     DATATYPES.each do | type |
       row = Momomoto::Information_schema::Columns.create
@@ -66,23 +60,11 @@ class TestDatatype < Test::Unit::TestCase
   def test_compile_rule
     DATATYPES.each do | type |
       t = type.new
-      assert_raise( Momomoto::Error ) do
-        t.compile_rule( :field_name, nil )
-      end
-      assert_raise( Momomoto::Error ) do
-        t.compile_rule( :field_name, [] )
-      end
-      assert_raise( Momomoto::Error ) do
-        t.compile_rule( :field_name, [nil, nil] )
-      end
-      assert_raise( Momomoto::Error ) do
-        t.compile_rule( :field_name, {} )
-      end
-      assert_raise( Momomoto::Error ) do
-        t.compile_rule( :field_name, {:eq=>nil} )
-      end
-      assert_raise( Momomoto::Error ) do
-        t.compile_rule( :field_name, {nil=>nil} )
+      tests = [ nil, [], [nil], [nil,nil], {}, {:eq=>nil}, {nil=>nil}]
+      tests.each do | test |
+        assert_raise( Momomoto::Error ) do
+          t.compile_rule( :field_name, test )
+        end
       end
     end
   end

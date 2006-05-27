@@ -20,5 +20,14 @@ class TestSmallint < Test::Unit::TestCase
     assert_equal( 1, t.filter_get( '1' ) )
   end
 
+  def test_compile_rule
+    t = Momomoto::Datatype::Smallint.new
+    input = [ 1, '1', [1], ['1'], [1,2,3],['1','2','3'], {:eq=>1}, {:eq=>'1'}, {:lt=>10, :gt=>5}, {:lt=>'10', :gt=>'5'} ]
+  
+    input.each do | test_input |
+      assert_instance_of( String, t.compile_rule( :field, test_input ) )
+    end
+  end
+
 end
 

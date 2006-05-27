@@ -22,11 +22,11 @@ class TestInteger < Test::Unit::TestCase
 
   def test_compile_rule
     t = Momomoto::Datatype::Integer.new
-    assert_instance_of( String, t.compile_rule( :field, 1 ) )
-    assert_instance_of( String, t.compile_rule( :field, [1] ) )
-    assert_instance_of( String, t.compile_rule( :field, [1,2,3] ) )
-    assert_instance_of( String, t.compile_rule( :field, { :eq => 1 } ) )
-    assert_instance_of( String, t.compile_rule( :field, { :lt => 10, :gt => 5} ) )
+    input = [ 1, '1', [1], ['1'], [1,2,3],['1','2','3'], {:eq=>1}, {:eq=>'1'}, {:lt=>10, :gt=>5}, {:lt=>'10', :gt=>'5'} ]
+  
+    input.each do | test_input |
+      assert_instance_of( String, t.compile_rule( :field, test_input ) )
+    end
   end
 
 end
