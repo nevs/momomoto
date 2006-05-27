@@ -49,10 +49,13 @@ module Momomoto
 
     # execute a query
     def execute( sql ) # :nodoc:
+      puts sql if Momomoto::DEBUG
       result = @connection.exec( sql )
       rows = result.entries
       result.clear
       rows
+     rescue => e
+      raise CriticalError, e.to_s
     end
 
     # fetch columns which are primary key columns

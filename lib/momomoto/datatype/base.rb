@@ -1,5 +1,8 @@
 
 module Momomoto
+
+  DEBUG = false
+
   module Datatype
     # base class for all datatypes
     class Base
