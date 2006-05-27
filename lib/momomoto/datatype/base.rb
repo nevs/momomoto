@@ -30,10 +30,12 @@ module Momomoto
         @primary_key = false
       end
       
+      # values are filtered by this function when being set
       def filter_set( value ) # :nodoc:
-        value.nil? ? nil : value.to_s.gsub('\\', '')
+        value
       end
 
+      # values are filtered by this function when being get
       def filter_get( value ) # :nodoc:
         value
       end
