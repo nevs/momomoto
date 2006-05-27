@@ -10,14 +10,14 @@ class TestBigint < Test::Unit::TestCase
     t = Momomoto::Datatype::Bigint.new
     assert_equal( nil, t.filter_set( nil ) )
     assert_equal( 1, t.filter_set( 1 ) )
-    assert_equal( 1, t.filter_set( '1' ) )
+    assert_equal( 2, t.filter_set( '2' ) )
   end
 
   def test_filter_get
     t = Momomoto::Datatype::Bigint.new
     assert_equal( nil, t.filter_get( nil ) )
     assert_equal( 1, t.filter_get( 1 ) )
-    assert_equal( 1, t.filter_get( '1' ) )
+    assert_equal( 2, t.filter_get( '2' ) )
   end
 
   def test_compile_rule
