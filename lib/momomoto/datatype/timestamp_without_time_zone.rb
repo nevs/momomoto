@@ -8,11 +8,12 @@ module Momomoto
       def filter_get( value )
         case value
           when nil, '' then nil
-          when String then DateTime.strptime( value, '%Y-%m-%d %H:%M:%S')
+          when DateTime then value
+          when String then DateTime.parse( value )
           else raise Error
         end
        rescue => e
-        raise Error, "Error while parsing Time"
+        raise Error, "Error while parsing Timestamp"
       end
 
       def filter_set( value )
