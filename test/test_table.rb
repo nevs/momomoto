@@ -71,10 +71,6 @@ class TestTable < Test::Unit::TestCase
     Momomoto::Database.instance.disconnect
   end
 
-  def test_table_initialize
-    assert_raise( Momomoto::CriticalError ) { Momomoto::Table.new }
-  end
-
   def test_columns_getter
     assert_nil( ColumnsGetter1.columns, 'Checking columns getter' )
     assert_equal( {:a=>Momomoto::Datatype::Text}, ColumnsGetter2.columns, 'Checking columns getter' )
@@ -132,12 +128,12 @@ class TestTable < Test::Unit::TestCase
     assert_equal('name3', TableNameSetter2.table_name, 'Checking table_name setter.' )
   end
 
-  def test_create
-    anonymous = Person.create
+  def test_new
+    anonymous = Person.new
     assert_equal(Person::Row, anonymous.class)
     assert_equal( true, anonymous.new_record? )
     assert_nil( anonymous.first_name )
-    sven = Person.create(:login_name=>'sven', :first_name=>'Sven',:last_name=>'Klemm')
+    sven = Person.new(:login_name=>'sven', :first_name=>'Sven',:last_name=>'Klemm')
     assert_equal( 'sven', sven.login_name )
     assert_equal( 'Sven', sven.first_name )
     assert_equal( true, sven.new_record? )

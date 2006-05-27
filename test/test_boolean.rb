@@ -7,7 +7,7 @@ require 'test/unit'
 class TestBoolean < Test::Unit::TestCase
 
   def test_filter_set
-    row = Momomoto::Information_schema::Columns.create
+    row = Momomoto::Information_schema::Columns.new
     row.is_nullable = "YES"
     t = Momomoto::Datatype::Boolean.new( row )
     [nil,''].each do | input | assert_equal( nil, t.filter_set( input ) ) end

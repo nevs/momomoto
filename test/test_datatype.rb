@@ -12,7 +12,7 @@ class TestDatatype < Test::Unit::TestCase
 
   def test_default
     DATATYPES.each do | type |
-      row = Momomoto::Information_schema::Columns.create
+      row = Momomoto::Information_schema::Columns.new
       row.column_default = 'default-value'
       a = type.new( row )
       assert_equal( 'default-value', a.default )
@@ -22,7 +22,7 @@ class TestDatatype < Test::Unit::TestCase
 
   def test_not_null
     DATATYPES.each do | type |
-      row = Momomoto::Information_schema::Columns.create
+      row = Momomoto::Information_schema::Columns.new
       row.is_nullable = "YES"
       assert_equal( false, type.new( row ).not_null? )
       row.is_nullable = "NO"
