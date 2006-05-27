@@ -128,10 +128,10 @@ module Momomoto
 
     ## Tries to find a specific record and creates a new one if it does not find it
     #  raises an exception if multiple records are found
-    def self.select_or_new( conditions, options )
+    def self.select_or_new( conditions = {}, options = {} )
       rows = select( conditions, options )  
       raise Error, 'Multiple values found in select_or_create' if rows.length > 1
-      rows.empty? ? [ create ] : rows
+      rows.empty? ? new( conditions ) : rows.first
     end
 
     # write row back to database
@@ -181,7 +181,7 @@ module Momomoto
       database.execute( sql )
     end
 
-    def self.delete( row )
+    def self.delete( row ) # :nodoc:
       raise Error, "this is a new record" if row.new_record?
       conditions = {}
       primary_keys.each do | field_name |
