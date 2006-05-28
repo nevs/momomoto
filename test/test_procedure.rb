@@ -1,9 +1,4 @@
 
-$LOAD_PATH.unshift( File.join( File.dirname( __FILE__ ), '..', 'lib' ) )
-
-require 'momomoto'
-require 'test/unit'
-
 class TestProcedure < Test::Unit::TestCase
 
   def test_procedure_name_getter

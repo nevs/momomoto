@@ -1,13 +1,7 @@
 
-$LOAD_PATH.unshift( File.join( File.dirname( __FILE__ ), '..', 'lib' ) )
-
-require 'momomoto'
-require 'test/unit'
-
 class TestInformationSchema < Test::Unit::TestCase
 
   def setup
-    Momomoto::Database.instance.config('database'=>'pentabarf','username'=>'pentabarf')
     Momomoto::Database.instance.connect
   end
 

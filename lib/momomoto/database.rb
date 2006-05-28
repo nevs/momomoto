@@ -31,13 +31,17 @@ module Momomoto
       @config = config
     end
 
+    def initialize # :nodoc:
+      @config = {}
+      @connection = nil
+    end
 
     def connect
       @connection.close if @connection
+      @transaction_active = false
       @connection = PGconn.connect( @config[:host], @config[:port], @config[:pgoptions],
                       @config[:pgtty], @config[:database], @config[:username],
                       @config[:password])
-      @transaction_active = false
     rescue => e
       raise CriticalError, "Connection to database failed: #{e}"
     end

@@ -1,9 +1,4 @@
 
-$LOAD_PATH.unshift( File.join( File.dirname( __FILE__ ), '..', 'lib' ) )
-
-require 'momomoto'
-require 'test/unit'
-
 module Schema1; end
 
 module Schema1::Schema2; end
@@ -63,7 +58,6 @@ end
 class TestTable < Test::Unit::TestCase
 
   def setup
-    Momomoto::Database.instance.config('database'=>'pentabarf','username'=>'pentabarf')
     Momomoto::Database.instance.connect
   end
 
@@ -90,7 +84,7 @@ class TestTable < Test::Unit::TestCase
     assert_equal([:person_id], Person.primary_keys())
   end
 
-  def test_primary_key_getter
+  def test_primary_key_setter
     Person.send( :primary_keys=, [:key_id] )
     assert_equal([:key_id], Person.primary_keys())
   end
@@ -140,8 +134,8 @@ class TestTable < Test::Unit::TestCase
     assert_equal(Person::Row, anonymous.class)
     assert_equal( true, anonymous.new_record? )
     assert_nil( anonymous.first_name )
-    sven = Person.new(:login_name=>'sven', :first_name=>'Sven',:last_name=>'Klemm')
-    assert_equal( 'sven', sven.login_name )
+    sven = Person.new(:first_name=>'Sven',:last_name=>'Klemm')
+    assert_equal( 'Klemm', sven.last_name )
     assert_equal( 'Sven', sven.first_name )
     assert_equal( true, sven.new_record? )
   end

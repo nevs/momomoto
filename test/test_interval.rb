@@ -1,10 +1,5 @@
 
-$LOAD_PATH.unshift( File.join( File.dirname( __FILE__ ), '..', 'lib' ) )
-
-require 'momomoto'
-require 'test/unit'
-
-class TestTimeWithoutTimeZone < Test::Unit::TestCase
+class TestInterval < Test::Unit::TestCase
 
   def test_filter_get
     t = Momomoto::Datatype::Interval.new

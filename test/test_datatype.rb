@@ -1,9 +1,4 @@
 
-$LOAD_PATH.unshift( File.join( File.dirname( __FILE__ ), '..', 'lib' ) )
-
-require 'momomoto'
-require 'test/unit'
-
 class TestDatatype < Test::Unit::TestCase
 
   DATATYPES = Momomoto::Datatype.constants.map do | t | 
