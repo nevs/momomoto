@@ -6,6 +6,22 @@ module Momomoto
   # you can only write to a table if it has primary keys defined
   class Table < Base
   
+    # set the columns of the table this class operates on
+    def self.columns=( columns )
+      class_variable_set( :@@columns, columns)
+    end
+
+    # get the columns of the table this class operates on
+    def self.columns( columns = nil )
+      return self.columns=( columns ) if columns
+      begin
+        class_variable_get( :@@columns )
+      rescue NameError
+        initialize_class
+        self.columns=( columns )
+      end
+    end
+
     def self.initialize_class # :nodoc:
   
       unless class_variables.member?( '@@table_name' )

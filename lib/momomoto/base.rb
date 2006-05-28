@@ -24,21 +24,6 @@ module Momomoto
       schema ? schema.downcase.gsub(/[^a-z_0-9]/, '') : nil
     end
 
-    # set the columns of the table this class operates on
-    def self.columns=( columns )
-      class_variable_set( :@@columns, columns)
-    end
-
-    # get the columns of the table this class operates on
-    def self.columns( columns = nil )
-      return self.columns=( columns ) if columns
-      begin
-        class_variable_get( :@@columns )
-      rescue NameError
-        nil
-      end
-    end
-
     # set the schema name of the table this class operates on
     def self.schema_name=( schema_name )
       class_variable_set( :@@schema_name, schema_name )
