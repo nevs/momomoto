@@ -54,32 +54,6 @@ module Momomoto
       end
     end
 
-    # begin a transaction
-    # executes the block and commits the transaction if a block is given
-    # otherwise simply starts a new transaction
-    def self.begin
-      database.execute( "BEGIN;" )
-      if block_given?
-        begin
-          yield
-        rescue => e
-          rollback
-          raise e
-        end
-        commit
-      end
-    end
-
-    # commit the current transaction
-    def self.commit
-      database.execute( "COMMIT;" )
-    end
-
-    # roll the transaction back
-    def self.rollback
-      database.execute( "ROLLBACK;" )
-    end
-
     protected
     
     # get the database connection

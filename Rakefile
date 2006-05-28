@@ -12,3 +12,6 @@ Rcov::RcovTask.new do | t |
   t.test_files = FileList['test/test*.rb']
 end
 
+task :coverage => [:rcov] do 
+  sh "scp -r coverage pulsar:public_html"
+end

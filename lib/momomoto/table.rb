@@ -128,6 +128,8 @@ module Momomoto
 
     ## Tries to find a specific record and creates a new one if it does not find it
     #  raises an exception if multiple records are found
+    #  You can pass a block which has to deliver the respective values for the 
+    #  primary key fields
     def self.select_or_new( conditions = {}, options = {} )
       if block_given?
         primary_keys.each do | field | 

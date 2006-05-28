@@ -37,6 +37,7 @@ module Momomoto
       @connection = PGconn.connect( @config[:host], @config[:port], @config[:pgoptions],
                       @config[:pgtty], @config[:database], @config[:username],
                       @config[:password])
+      @transaction_active = false
     rescue => e
       raise CriticalError, "Connection to database failed: #{e}"
     end
@@ -45,6 +46,7 @@ module Momomoto
     def disconnect
       @connection.close
       @connection = nil
+      @transaction_active = true
     end
 
     # execute a query
@@ -89,6 +91,40 @@ module Momomoto
         columns[col.column_name.to_sym] = Momomoto::Datatype.const_get(col.data_type.gsub(' ','_').capitalize).new( col )
       end
       columns
+    end
+
+    # begin a transaction
+    def begin
+      execute( "BEGIN;" )
+      @transaction_active = true
+    end
+
+    # executes the block and commits the transaction if a block is given
+    # otherwise simply starts a new transaction
+    def transaction
+      raise Error if @transaction_active
+      self.begin
+      begin
+        yield
+      rescue => e
+        rollback
+        raise e
+      end
+      commit
+    end
+
+    # commit the current transaction
+    def commit
+      raise Error if not @transaction_active
+      execute( "COMMIT;" )
+      @transaction_active = false
+    end
+
+    # roll the transaction back
+    def rollback
+      raise Error if not @transaction_active
+      execute( "ROLLBACK;" )
+      @transaction_active = false
     end
 
   end
