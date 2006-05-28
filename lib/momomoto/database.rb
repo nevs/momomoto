@@ -131,6 +131,10 @@ module Momomoto
       PGconn.escape( input )
     end
 
+    def self.escape_bytea( input )
+      PGconn.escape_bytea( input )
+    end
+
   end
 
 end
