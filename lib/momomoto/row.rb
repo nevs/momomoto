@@ -9,6 +9,7 @@ module Momomoto
 
     def initialize( data = [] )
       @data = data
+      @new_record = false
     end
 
     def new_record?

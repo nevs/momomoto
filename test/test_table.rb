@@ -36,9 +36,6 @@ class ColumnsSetter2 < Momomoto::Table
   columns( {:b => Momomoto::Datatype::Text})
 end
 
-class Person < Momomoto::Table
-end
-
 class TableNameGetter1 < Momomoto::Table; end
 
 class TableNameGetter2 < Momomoto::Table
@@ -80,13 +77,17 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_primary_key_getter
-    a = Person.new
-    assert_equal([:person_id], Person.primary_keys())
+    a = Class.new( Momomoto::Table )
+    a.primary_keys( [:pk] )
+    assert_equal( [:pk], a.primary_keys )
   end
 
   def test_primary_key_setter
-    Person.send( :primary_keys=, [:key_id] )
-    assert_equal([:key_id], Person.primary_keys())
+    a = Class.new( Momomoto::Table )
+    a.primary_keys( [:pk] )
+    assert_equal( [:pk], a.primary_keys )
+    a.primary_keys= [:pk2]
+    assert_equal( [:pk2], a.primary_keys )
   end
 
   def test_schema_name_getter
@@ -145,6 +146,10 @@ class TestTable < Test::Unit::TestCase
     r.first_name = 'Sven'
     r.write
     assert_equal( 1, Person.select(:person_id => 7).length )
+    r.delete
+    assert_equal( 0, Person.select(:person_id => 7).length )
+    r = Person.select_or_new({:person_id => 7})
+    assert_instance_of( Person::Row, r )
   end
 
 
