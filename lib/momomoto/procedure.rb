@@ -5,12 +5,9 @@ module Momomoto
   # it must not be used directly but you should inherit from this class
   class Procedure < Base
 
-    def initialize_class
-      self.class.class_eval do 
-        unless class_variables.member?( '@@table_name' )
-          table_name( construct_table_name( self.name ) )
-        end
-      end
+    # guesses the procedure name of the procedure this class works on
+    def self.construct_procedure_name( classname ) # :nodoc:
+      classname.split('::').last.downcase.gsub(/[^a-z_0-9]/, '')
     end
 
     # set the procedure_name of the table this class operates on

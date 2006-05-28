@@ -119,7 +119,11 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_full_name
-    assert_equal( "schema1.schemanamegetter2", Schema1::SchemaNameGetter2.full_name )
+    a = Class.new( Momomoto::Table )
+    a.table_name( 'abc' )
+    assert_equal( 'abc', a.full_name )
+    a.schema_name( 'def' )
+    assert_equal( 'def.abc', a.full_name )
   end
 
   def test_table_name_setter
