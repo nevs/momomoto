@@ -6,7 +6,7 @@ module Momomoto
     class Time_without_time_zone < Base
 
       def self.escape( value )
-        value == nil ? 'NULL' : "'#{PGconn.escape(value.strftime('%H:%M:%S'))}'"
+        value == nil ? 'NULL' : "'#{Database.escape_string(value.strftime('%H:%M:%S'))}'"
       end
     
       def filter_get( value )

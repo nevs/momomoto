@@ -127,6 +127,10 @@ module Momomoto
       @transaction_active = false
     end
 
+    def self.escape_string( input )
+      PGconn.escape( input )
+    end
+
   end
 
 end

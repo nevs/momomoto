@@ -34,5 +34,12 @@ class TestDatabase < Test::Unit::TestCase
     assert_raise( Momomoto::Error ) do db.commit end
   end
 
+  def test_transaction
+    db = Momomoto::Database.instance
+    assert_nothing_raised do 
+      db.transaction do end
+    end
+  end
+
 end
 

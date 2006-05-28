@@ -44,7 +44,7 @@ module Momomoto
       end
 
       def self.escape( input )
-        input.nil? ? "NULL" : "'" + PGconn.escape( input.to_s ) + "'"
+        input.nil? ? "NULL" : "'" + Database.escape_string( input.to_s ) + "'"
       end
 
       def compile_rule( field_name, value ) # :nodoc:
