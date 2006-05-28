@@ -72,13 +72,6 @@ module Momomoto
         end
       end
 
-      # define write and delete method for Rows if we found primary keys
-      if primary_keys.length > 0
-        row.instance_eval do
-          define_method( :write ) do table.write( self ) end
-          define_method( :delete ) do table.delete( self ) end
-        end
-      end
     end
 
     # guesses the table name of the table this class works on
@@ -209,6 +202,7 @@ module Momomoto
     end
 
     def self.delete( row ) # :nodoc:
+      raise CriticalError, 'Deleting is only allowed for tables with primary keys' if primary_keys.empty?
       raise Error, "this is a new record" if row.new_record?
       conditions = {}
       primary_keys.each do | field_name |

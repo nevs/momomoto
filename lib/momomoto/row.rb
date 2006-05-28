@@ -15,6 +15,16 @@ module Momomoto
       @new_record
     end
 
+    # write the row to the database
+    def write
+      class_variable_get( :@@table ).write( self )
+    end
+
+    # delete the row
+    def delete
+      class_variable_get( :@@table ).delete( self )
+    end
+
   end
 
 end
