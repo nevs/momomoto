@@ -13,10 +13,16 @@ Rake::TestTask.new do | t |
 end
 
 Rcov::RcovTask.new do | t |
-  t.test_files = FileList['test/test*.rb']
+  t.test_files = FileList['test/test*.rb'].unshift( 'test_setup.rb' )
 end
 
-task :coverage => [:rcov] do
+desc "copy the coverage information to pentabarf.org"
+task :coverage => [:rcov] do | t |
   sh "scp -r coverage pulsar:public_html"
+end
+
+desc "run benchmark"
+task( :bench ) do | t |
+  sh "ruby benchmark.rb"
 end
 
