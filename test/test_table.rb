@@ -72,7 +72,6 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_columns_getter
-    assert_nil( ColumnsGetter1.columns, 'Checking columns getter' )
     assert_equal( {:a=>Momomoto::Datatype::Text}, ColumnsGetter2.columns, 'Checking columns getter' )
     assert_equal( {:b=>Momomoto::Datatype::Text}, ColumnsGetter3.columns, 'Checking columns getter' )
   end

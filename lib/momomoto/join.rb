@@ -34,7 +34,7 @@ module Momomoto
     end
 
     def select( conditions = {}, options = {} )
-      sql = "SELECT " + self.class.columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
+      sql = "SELECT " + @base_table.columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
       sql += self.class.schema_name + '.' if self.class.schema_name
       sql += self.class.base_table_name
       self.class.join.each do | rules |
