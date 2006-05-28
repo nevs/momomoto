@@ -140,5 +140,14 @@ class TestTable < Test::Unit::TestCase
     assert_equal( true, sven.new_record? )
   end
 
+  def test_select_or_new
+    r = Person.select_or_new({:person_id => 7})
+    r.first_name = 'Sven'
+    r.write
+    assert_equal( 1, Person.select(:person_id => 7).length )
+  end
+
+
+
 end
 

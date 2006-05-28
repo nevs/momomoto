@@ -183,6 +183,7 @@ module Momomoto
       end
       raise Error, "insert with all fields nil" if fields.empty?
       sql = "INSERT INTO #{table_name}(#{fields.join(', ')}) VALUES (#{values.join(', ')});"
+      row.instance_variable_set( :@new_record, false )
       database.execute( sql )
     end
 
@@ -210,6 +211,7 @@ module Momomoto
         conditions[field_name] = row.send( field_name )
       end
       sql = "DELETE FROM #{table_name} #{compile_where(conditions)};"
+      row.instance_variable_set( :@new_record, true )
       database.execute( sql )
     end
 

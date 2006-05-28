@@ -17,12 +17,12 @@ module Momomoto
 
     # write the row to the database
     def write
-      class_variable_get( :@@table ).write( self )
+      self.class.table.write( self )
     end
 
     # delete the row
     def delete
-      class_variable_get( :@@table ).delete( self )
+      self.class.table.delete( self )
     end
 
   end
