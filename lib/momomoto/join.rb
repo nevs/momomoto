@@ -4,6 +4,8 @@ module Momomoto
   # this class implements the join functionality it is an abstract class
   # it must not be used directly but you should inherit from this class
   class Join < Base
+
+    attr_reader :base_table, :join_rules
  
     # constructor of the join class
     # base_table is the base table of the join
@@ -34,16 +36,22 @@ module Momomoto
     end
 
     def select( conditions = {}, options = {} )
-      sql = "SELECT " + @base_table.columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
-      sql += self.class.schema_name + '.' if self.class.schema_name
-      sql += self.class.base_table_name
-      self.class.join.each do | rules |
+      sql = "SELECT " + base_table.columns.keys.map{ | field | "#{base_table.table_name}.\"#{field}\"" }.join( "," ) 
+      join_rules.each do | rules |
+        rules.each do | table, fields |
+          sql += ','
+          sql += table.columns.keys.map{ | field | "#{table.table_name}.\"#{field}\"" }.join( ',' )
+        end
+      end
+      sql += " FROM "
+      sql += base_table.full_name
+      join_rules.each do | rules |
         rules.each do | table_name, fields |
           fields = fields.class === Array ? fields : [fields]
           sql += " INNER JOIN #{table_name} USING(#{fields.join(', ')})"
         end
       end
-      sql += compile_where( conditions )
+      sql += self.class.compile_where( conditions )
       sql += " LIMIT #{options[:limit]}" if options[:limit]
       sql += " ORDER BY #{options[:order]}" if options[:order]
       @data = []

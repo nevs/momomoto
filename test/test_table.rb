@@ -118,6 +118,10 @@ class TestTable < Test::Unit::TestCase
     assert_equal('name3', TableNameGetter3.table_name, 'Checking table_name getter of unitialized class.' )
   end
 
+  def test_full_name
+    assert_equal( "schema1.schemanamegetter2", Schema1::SchemaNameGetter2.full_name )
+  end
+
   def test_table_name_setter
     TableNameSetter1.table_name = 'name1'
     assert_equal('name1', TableNameSetter1.table_name, 'Checking table_name setter.' )

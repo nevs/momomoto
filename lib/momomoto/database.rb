@@ -57,6 +57,7 @@ module Momomoto
       result.clear
       rows
      rescue => e
+      puts sql
       raise CriticalError, e.to_s
     end
 

@@ -18,7 +18,7 @@ module Momomoto
         class_variable_get( :@@columns )
       rescue NameError
         initialize_class
-        self.columns=( columns )
+        class_variable_get( :@@columns )
       end
     end
 
@@ -101,6 +101,11 @@ module Momomoto
       end
     end
 
+    # get the full name of a table including schema if set
+    def self.full_name
+      "#{ schema_name ? schema_name + '.' : ''}#{table_name}"
+    end
+
     # set the primary key fields of the table
     def self.primary_keys=( keys ) # :nodoc:
       class_variable_set( :@@primary_keys, keys )
@@ -120,8 +125,7 @@ module Momomoto
     def self.select( conditions = {}, options = {} )
       initialize_class unless class_variables.member?('@@initialized')
       sql = "SELECT " + columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
-      sql += schema_name + '.' if schema_name
-      sql += table_name
+      sql += full_name
       sql += compile_where( conditions )
       sql += " ORDER BY #{options[:order]}" if options[:order]
       sql += " LIMIT #{options[:limit]}" if options[:limit]
