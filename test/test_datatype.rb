@@ -27,17 +27,6 @@ class TestDatatype < Test::Unit::TestCase
     end
   end
 
-  def test_primary_key
-    DATATYPES.each do | type |
-      t = type.new
-      assert_equal( false, t.primary_key? )
-      t.primary_key = true
-      assert_equal( true, t.primary_key? )
-      t.primary_key = nil
-      assert_equal( false, t.primary_key? )
-    end
-  end
-
   def test_filter_set
     DATATYPES.each do | type |
       t = type.new

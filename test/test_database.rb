@@ -41,6 +41,12 @@ class TestDatabase < Test::Unit::TestCase
     end
   end
 
+  def test_fetch_primary_keys
+    db = Momomoto::Database.instance
+    pk = db.fetch_primary_keys( 'test_nodefault' )
+    assert_equal( 1, pk.length )
+  end
+
   def test_rollback
     db = Momomoto::Database.instance
     db.begin

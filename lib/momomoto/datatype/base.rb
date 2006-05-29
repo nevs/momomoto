@@ -17,20 +17,9 @@ module Momomoto
         @not_null
       end
 
-      # mark this datatype as primary key
-      def primary_key=( pk ) # :nodoc:
-        @primary_key = !!pk
-      end
-
-      # is this column a primary key
-      def primary_key?
-        @primary_key
-      end
-
       def initialize( row = nil )
         @not_null = row.respond_to?(:is_nullable) && row.is_nullable == "NO"
         @default = row.respond_to?( :column_default) && row.column_default
-        @primary_key = false
       end
       
       # values are filtered by this function when being set

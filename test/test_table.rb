@@ -143,6 +143,14 @@ class TestTable < Test::Unit::TestCase
       r.write
       r.delete
     end
+    self.class.const_set(:Test_nodefault, Class.new( Momomoto::Table ) )
+    Test_nodefault.schema_name = nil
+    a = Test_nodefault.new
+    a.data = 'chunky bacon'
+    assert_equal( [:id], Test_nodefault.primary_keys )
+    assert_raise( Momomoto::Error ) do
+      a.write
+    end
   end
 
 end

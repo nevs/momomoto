@@ -28,3 +28,9 @@ CREATE TABLE test_bytea(
     PRIMARY KEY(id)
 );
 
+CREATE TABLE test_nodefault (
+    id INTEGER,
+    data TEXT,
+    PRIMARY KEY(id)
+);
+

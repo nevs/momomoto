@@ -169,11 +169,11 @@ module Momomoto
       fields, values = [], []
       columns.each do | field_name, datatype |
         # check for set primary key fields or fetch respective default values
-        if primary_keys.member?( field_name )
-          if row.send( field_name ).nil? && datatype.default
+        if primary_keys.member?( field_name ) && row.send( field_name ) == nil
+          if datatype.default
             row.send( "#{field_name}=", database.execute("SELECT #{datatype.default};")[0][0] )
           end
-          if row.send( field_name ).nil?
+          if row.send( field_name ) == nil
             raise Error, "Primary key fields need to be set or must have a default"
           end
         end
