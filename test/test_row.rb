@@ -16,5 +16,19 @@ class TestRow < Test::Unit::TestCase
     assert_equal( Momomoto::Information_schema::Key_column_usage, Momomoto::Information_schema::Key_column_usage::Row.table )
   end
 
+  def test_inheritence
+    self.class.const_set( :Person, Class.new( Momomoto::Table ) )
+    Person.const_set( :Row, Class.new )
+    assert_raise( Momomoto::CriticalError ) do Person.select end
+  end
+
+  def test_setter
+    a = Class.new( Momomoto::Table )
+    a.table_name = 'person'
+    r = a.select_or_new( :person_id => 13 )
+    r.write
+    assert_raise( Momomoto::Error ) do r.person_id = 14 end
+  end
+
 end
 

@@ -23,19 +23,6 @@ class SchemaNameSetter2 < Momomoto::Table
   schema_name( 'schema2' )
 end
 
-class ColumnsGetter1 < Momomoto::Table; end
-class ColumnsGetter2 < Momomoto::Table
-  self.columns=( {:a => Momomoto::Datatype::Text} )
-end
-class ColumnsGetter3 < Momomoto::Table
-  columns( {:b => Momomoto::Datatype::Text})
-end
-
-class ColumnsSetter1 < Momomoto::Table; end
-class ColumnsSetter2 < Momomoto::Table
-  columns( {:b => Momomoto::Datatype::Text})
-end
-
 class TableNameGetter1 < Momomoto::Table; end
 
 class TableNameGetter2 < Momomoto::Table
@@ -63,23 +50,28 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_columns_getter
-    assert_equal( {:a=>Momomoto::Datatype::Text}, ColumnsGetter2.columns, 'Checking columns getter' )
-    assert_equal( {:b=>Momomoto::Datatype::Text}, ColumnsGetter3.columns, 'Checking columns getter' )
+    c1 = Class.new( Momomoto::Table )
+    c1.columns =  {:a=>Momomoto::Datatype::Text}
+    assert_equal( {:a=>Momomoto::Datatype::Text}, c1.columns )
   end
 
   def test_columns_setter
-    ColumnsSetter1.columns = {:a => Momomoto::Datatype::Text}
-    assert_equal( {:a=>Momomoto::Datatype::Text}, ColumnsSetter1.columns, 'Checking columns getter' )
-    assert_equal( {:b=>Momomoto::Datatype::Text}, ColumnsSetter2.columns, 'Checking columns getter' )
-    ColumnsSetter2.columns = {:c => Momomoto::Datatype::Text}
-    assert_equal( {:a=>Momomoto::Datatype::Text}, ColumnsSetter1.columns, 'Checking columns getter' )
-    assert_equal( {:c=>Momomoto::Datatype::Text}, ColumnsSetter2.columns, 'Checking columns getter' )
+    c1 = Class.new( Momomoto::Table )
+    c1.columns =  {:a=>Momomoto::Datatype::Text}
+    assert_equal( {:a=>Momomoto::Datatype::Text}, c1.columns )
+    c1.columns =  {:b=>Momomoto::Datatype::Text}
+    assert_equal( {:b=>Momomoto::Datatype::Text}, c1.columns )
+    c1.columns({:c=>Momomoto::Datatype::Text})
+    assert_equal( {:c=>Momomoto::Datatype::Text}, c1.columns )
   end
 
   def test_primary_key_getter
     a = Class.new( Momomoto::Table )
     a.primary_keys( [:pk] )
     assert_equal( [:pk], a.primary_keys )
+    self.class.const_set( :Person, Class.new( Momomoto::Table ) )
+    Person.schema_name = nil
+    assert_nothing_raised do Person.primary_keys end
   end
 
   def test_primary_key_setter
