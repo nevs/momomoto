@@ -3,6 +3,7 @@ module Momomoto
   module Information_schema
     class Key_column_usage < Momomoto::Table
       primary_keys( [] )
+      schema_name( "information_schema" )
       columns( { :constraint_catalog        => Momomoto::Datatype::Character_varying.new,
                  :constraint_schema         => Momomoto::Datatype::Character_varying.new,
                  :constraint_name           => Momomoto::Datatype::Character_varying.new,

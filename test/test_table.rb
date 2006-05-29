@@ -1,22 +1,4 @@
 
-module Schema1; end
-
-module Schema1::Schema2; end
-
-class SchemaNameGetter1 < Momomoto::Table; end
-
-class Schema1::SchemaNameGetter2 < Momomoto::Table; end
-
-class Schema1::Schema2::SchemaNameGetter3 < Momomoto::Table; end
-
-class SchemaNameGetter4 < Momomoto::Table
-  schema_name( 'schema4' )
-end
-
-class SchemaNameGetter5 < Momomoto::Table
-  self.schema_name=( 'schema5' )
-end
-
 class TestTable < Test::Unit::TestCase
 
   def setup
@@ -61,11 +43,10 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_schema_name_getter
-    assert_equal( nil, SchemaNameGetter1.schema_name, 'Checking schema getter' )
-    assert_equal( 'schema1', Schema1::SchemaNameGetter2.schema_name )
-    assert_equal( 'schema2', Schema1::Schema2::SchemaNameGetter3.schema_name )
-    assert_equal( 'schema4', SchemaNameGetter4.schema_name )
-    assert_equal( 'schema5', SchemaNameGetter5.schema_name )
+    self.class.const_set( :S, Class.new( Momomoto::Table ) )
+    assert_equal( nil, S.schema_name )
+    S.schema_name = "chunky"
+    assert_equal( "chunky", S.schema_name )
   end
 
   def test_schema_name_setter

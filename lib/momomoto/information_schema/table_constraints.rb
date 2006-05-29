@@ -3,6 +3,7 @@ module Momomoto
   module Information_schema
     class Table_constraints < Momomoto::Table
       primary_keys( [] )
+      schema_name( "information_schema" )
       columns( { :constraint_catalog        => Momomoto::Datatype::Text.new,
                  :constraint_schema         => Momomoto::Datatype::Text.new,
                  :constraint_name           => Momomoto::Datatype::Text.new,

@@ -3,6 +3,7 @@ module Momomoto
   module Information_schema
     class Columns < Momomoto::Table
       primary_keys( [] )
+      schema_name( "information_schema" )
       columns( { :table_catalog             => Momomoto::Datatype::Text.new,
                  :table_schema              => Momomoto::Datatype::Text.new,
                  :table_name                => Momomoto::Datatype::Text.new,
