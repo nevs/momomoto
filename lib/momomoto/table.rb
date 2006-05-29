@@ -169,7 +169,7 @@ module Momomoto
       fields, values = [], []
       columns.each do | field_name, datatype |
         # check for set primary key fields or fetch respective default values
-        if datatype.primary_key? 
+        if primary_keys.member?( field_name )
           if row.send( field_name ).nil? && datatype.default
             row.send( "#{field_name}=", database.execute("SELECT #{datatype.default};")[0][0] )
           end

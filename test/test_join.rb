@@ -13,13 +13,13 @@ class TestJoin < Test::Unit::TestCase
   end
 
   def test_initialize
-    a = Momomoto::Join.new( Person, {Event_Person=>:person_id}) 
+    a = Momomoto::Join.new( Person, {Event_Person=>:person_id})
     assert_equal( true, a.respond_to?( :event_person ) )
     assert_equal( true, a.respond_to?( :person ) )
   end
 
   def test_select
-    a = Momomoto::Join.new( Person, {Event_Person=>:person_id}) 
+    a = Momomoto::Join.new( Person, {Event_Person=>:person_id})
     a.select
   end
 

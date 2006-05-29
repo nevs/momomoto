@@ -1,11 +1,5 @@
 
-begin
-  require 'postgres'
-rescue LoadError
-  require 'rubygems'
-  require 'postgres'
-end
-
+require 'postgres'
 require 'singleton'
 
 require 'momomoto/information_schema/columns'
@@ -61,8 +55,7 @@ module Momomoto
       result.clear
       rows
      rescue => e
-      puts sql
-      raise CriticalError, e.to_s
+      raise CriticalError, "#{e}: #{sql}"
     end
 
     # fetch columns which are primary key columns

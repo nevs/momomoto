@@ -6,6 +6,7 @@ task(:default => :test)
 
 Rake::TestTask.new do | t |
   t.pattern = 'test/test_*.rb'
+  t.ruby_opts << '-rauto_gem'
   t.ruby_opts << '-I.'
   t.ruby_opts << '-rtest_setup'
   t.verbose = false

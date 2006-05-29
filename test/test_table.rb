@@ -17,28 +17,6 @@ class SchemaNameGetter5 < Momomoto::Table
   self.schema_name=( 'schema5' )
 end
 
-class SchemaNameSetter1 < Momomoto::Table; end
-
-class SchemaNameSetter2 < Momomoto::Table
-  schema_name( 'schema2' )
-end
-
-class TableNameGetter1 < Momomoto::Table; end
-
-class TableNameGetter2 < Momomoto::Table
-  self.table_name=( 'name2')
-end
-
-class TableNameGetter3 < Momomoto::Table
-  table_name( 'name3' )
-end
-
-class TableNameSetter1 < Momomoto::Table; end
-
-class TableNameSetter2 < Momomoto::Table
-  table_name( 'name2' )
-end
-
 class TestTable < Test::Unit::TestCase
 
   def setup
@@ -91,18 +69,31 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_schema_name_setter
-    SchemaNameSetter1.schema_name = 'schema1'
-    assert_equal( 'schema1', SchemaNameSetter1.schema_name )
-    assert_equal( 'schema2', SchemaNameSetter2.schema_name )
-    SchemaNameSetter2.schema_name = 'schema3'
-    assert_equal( 'schema1', SchemaNameSetter1.schema_name )
-    assert_equal( 'schema3', SchemaNameSetter2.schema_name )
+    a = Class.new( Momomoto::Table )
+    b = Class.new( Momomoto::Table )
+    a.schema_name = :chunky
+    b.schema_name = :bacon
+    assert_equal( :chunky, a.schema_name )
+    assert_equal( :bacon, b.schema_name )
+    a.schema_name( :ratbert )
+    assert_equal( :ratbert, a.schema_name )
+    assert_equal( :bacon, b.schema_name )
   end
 
   def test_table_name_getter
-    assert_equal('tablenamegetter1', TableNameGetter1.table_name, 'Checking table_name getter of unitialized class.' )
-    assert_equal('name2', TableNameGetter2.table_name, 'Checking table_name getter of unitialized class.' )
-    assert_equal('name3', TableNameGetter3.table_name, 'Checking table_name getter of unitialized class.' )
+    t = Class.new( Momomoto::Table )
+    t.table_name = "chunky"
+    assert_equal( "chunky", t.table_name )
+  end
+
+  def test_table_name_setter
+    t = Class.new( Momomoto::Table )
+    t.table_name = "chunky"
+    assert_equal( "chunky", t.table_name )
+    t.table_name = "bacon"
+    assert_equal( "bacon", t.table_name )
+    t.table_name( "fox" )
+    assert_equal( "fox", t.table_name )
   end
 
   def test_full_name
@@ -111,15 +102,6 @@ class TestTable < Test::Unit::TestCase
     assert_equal( 'abc', a.full_name )
     a.schema_name( 'def' )
     assert_equal( 'def.abc', a.full_name )
-  end
-
-  def test_table_name_setter
-    TableNameSetter1.table_name = 'name1'
-    assert_equal('name1', TableNameSetter1.table_name, 'Checking table_name setter.' )
-    assert_equal('name2', TableNameSetter2.table_name, 'Checking for side effects of table_name setter.' )
-    TableNameSetter2.table_name = 'name3'
-    assert_equal('name1', TableNameSetter1.table_name, 'Checking table_name setter.' )
-    assert_equal('name3', TableNameSetter2.table_name, 'Checking table_name setter.' )
   end
 
   def test_new
@@ -140,11 +122,27 @@ class TestTable < Test::Unit::TestCase
     assert_equal( 1, Person.select(:person_id => 7).length )
     r.delete
     assert_equal( 0, Person.select(:person_id => 7).length )
-    r = Person.select_or_new({:person_id => 7})
-    assert_instance_of( Person::Row, r )
+    r2 = Person.select_or_new do | field_name |
+      assert( Person.columns.keys.member?( field_name ))
+      r.send( field_name )
+    end
+    r2.write
+    assert_equal( 1, Person.select(:person_id => 7).length )
+    r2.delete
+    assert_equal( 0, Person.select(:person_id => 7).length )
   end
 
-
+  def test_write
+    r = Person.new
+    r.first_name = 'Chunky'
+    r.last_name = 'Bacon'
+    r.write
+    assert_not_nil( r.person_id )
+    assert_nothing_raised do
+      r.delete
+      r.write
+    end
+  end
 
 end
 

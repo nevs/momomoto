@@ -55,10 +55,7 @@ module Momomoto
       sql += " LIMIT #{options[:limit]}" if options[:limit]
       sql += " ORDER BY #{options[:order]}" if options[:order]
       @data = []
-      self.class.database.execute( sql ).each do | row |
-        @data << self.class.const_get(:Row).new( self, row )
-      end
-      self
+      self.class.database.execute( sql )
     end
 
   end
