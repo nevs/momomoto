@@ -141,6 +141,7 @@ class TestTable < Test::Unit::TestCase
     assert_nothing_raised do
       r.delete
       r.write
+      r.delete
     end
   end
 
