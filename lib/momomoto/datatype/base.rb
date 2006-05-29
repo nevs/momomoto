@@ -76,6 +76,8 @@ module Momomoto
           when :gt then '>'
           when :eq then '='
           when :ne then '<>'
+          when :like then 'LIKE'
+          when :ilike then 'ILIKE'
           else
             raise CriticalError, "unsupported operator"
         end
