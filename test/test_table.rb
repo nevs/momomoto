@@ -105,6 +105,9 @@ class TestTable < Test::Unit::TestCase
     Person.select( nil, {:limit => 3, :order => [:first_name, :last_name]} )
     Person.select( nil, {:limit => 3, :order => ['first_name', :last_name]} )
     Person.select( nil, {:limit => 3, :order => ['first_name', 'last_name']} )
+    assert_raise( Momomoto::Error ) do 
+      Person.select( nil, {:limit=>'4f4'} )
+    end
     assert_raise( Momomoto::Error ) do
       Person.select( nil, {:order=>:chunky})
     end
