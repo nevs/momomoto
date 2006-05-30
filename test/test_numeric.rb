@@ -6,6 +6,9 @@ class TestNumeric < Test::Unit::TestCase
     assert_equal( nil, t.filter_set( nil ) )
     assert_equal( 1.0, t.filter_set( 1 ) )
     assert_equal( 1.0, t.filter_set( '1' ) )
+    assert_raise( Momomoto::Error ) do
+      t.filter_get( '1f2' )
+    end
   end
 
   def test_filter_get

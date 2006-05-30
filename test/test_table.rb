@@ -96,6 +96,29 @@ class TestTable < Test::Unit::TestCase
     assert_equal( true, sven.new_record? )
   end
 
+  def test_select
+    r = Person.select( nil, {:limit => 3})
+    assert_equal( 3, r.length )
+    Person.select( nil, {:limit => 3, :order => :person_id})
+    Person.select( nil, {:limit => 3, :order => "person_id"})
+    Person.select( nil, {:limit => 3, :order => ["person_id"]})
+    Person.select( nil, {:limit => 3, :order => [:first_name, :last_name]} )
+    Person.select( nil, {:limit => 3, :order => ['first_name', :last_name]} )
+    Person.select( nil, {:limit => 3, :order => ['first_name', 'last_name']} )
+    assert_raise( Momomoto::Error ) do
+      Person.select( nil, {:order=>:chunky})
+    end
+    assert_raise( Momomoto::Error ) do
+      Person.select( nil, {:order=>[:chunky,:bacon]})
+    end
+    assert_raise( Momomoto::Error ) do
+      Person.select( nil, {:order=>Object.new})
+    end
+    assert_raise( Momomoto::Error ) do
+      Person.select( nil, {:order=>[Object.new, Object.new]})
+    end
+  end
+
   def test_select_or_new
     r = Person.select_or_new({:person_id => 7})
     r.first_name = 'Sven'
@@ -124,6 +147,9 @@ class TestTable < Test::Unit::TestCase
       r.write
       r.delete
     end
+  end
+
+  def test_write2
     self.class.const_set(:Test_nodefault, Class.new( Momomoto::Table ) )
     Test_nodefault.schema_name = nil
     a = Test_nodefault.new

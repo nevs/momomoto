@@ -120,13 +120,24 @@ module Momomoto
       sql = "SELECT " + columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
       sql += full_name
       sql += compile_where( conditions )
-      sql += " ORDER BY #{options[:order]}" if options[:order]
-      sql += " LIMIT #{options[:limit]}" if options[:limit]
+      sql += compile_order( options[:order] ) if options[:order]
+      sql += " LIMIT #{Integer(options[:limit])}" if options[:limit]
       data = []
       database.execute( sql ).each do | row |
         data << const_get(:Row).new( row )
       end
       data
+    end
+
+    # compiles the sql statement defining the table order
+    def self.compile_order( order ) # :nodoc:
+      order = [ order ] if not order.kind_of?( Array )
+      order = order.map do | field |
+        field = field.to_s
+        raise Error if not columns.keys.member?( field.to_sym )
+        "lower(#{field})"
+      end
+      " ORDER BY #{order.join(',')}"
     end
 
     def self.new( fields = {} )

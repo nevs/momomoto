@@ -50,6 +50,7 @@ module Momomoto
 
     # compiles the where-clause of the query
     def self.compile_where( conditions ) # :nodoc:
+      conditions = {} if not conditions
       where = ''
       conditions.each do | key , value |
         key = key.to_sym if key.kind_of?( String )
