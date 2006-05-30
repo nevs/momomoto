@@ -24,7 +24,10 @@ module Momomoto
       
       # values are filtered by this function when being set
       def filter_set( value ) # :nodoc:
-        value
+        case value
+          when nil, '' then nil
+          else value
+        end
       end
 
       # values are filtered by this function when being get

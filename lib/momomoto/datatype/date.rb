@@ -7,7 +7,7 @@ module Momomoto
 
       def filter_get( value )
         case value
-          when nil then nil
+          when nil,'' then nil
           when ::Date then value
           when String then ::Date.parse( value, '%Y-%m-%d' )
           else raise Error

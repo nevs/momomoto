@@ -8,7 +8,10 @@ module Momomoto
       end
 
       def filter_set( value )
-        value
+        case value
+          when nil, '' then nil
+          else value
+        end
       end
 
       def self.escape( input )

@@ -3,7 +3,12 @@ module Momomoto
     class Integer < Base
     
       def filter_get( value )
-        value == nil ? nil : value.to_i
+        case value
+          when nil, '' then nil
+          else Integer( value )
+        end
+       rescue => e
+        raise Error, e.to_s
       end
       
       def filter_set( value )

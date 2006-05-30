@@ -13,6 +13,7 @@ class TestInteger < Test::Unit::TestCase
     assert_equal( nil, t.filter_get( nil ) )
     assert_equal( 1, t.filter_get( 1 ) )
     assert_equal( 1, t.filter_get( '1' ) )
+    assert_raise( Momomoto::Error ) do t.filter_set( "1a2" ) end
   end
 
   def test_compile_rule

@@ -4,7 +4,12 @@ module Momomoto
     class Numeric < Base
     
       def filter_get( value )
-        value == nil ? nil : value.to_f
+        case value
+          when nil, '' then nil
+          else Float( value )
+        end
+       rescue => e
+        raise Error, e.to_s
       end
       
       def filter_set( value )
