@@ -1,18 +1,24 @@
 
-
 class TestBase < Test::Unit::TestCase
 
-  def test_base_initialize
-    assert_raise( Momomoto::CriticalError ) { Momomoto::Base.new }
+  def setup
+    Momomoto::Database.instance.connect
   end
 
-  def test_class_variable_set
-    TestBase.const_set( :CVST, Class.new( Momomoto::Base ) )
-    CVST.send(:define_method, :initialize) do end
-    a = CVST.new
-    assert_raise( NameError ) do a.class.send( :class_variable_get,  :@@sven ) end
-    a.class_variable_set( :@@sven, true )
-    assert_equal( true, a.class.send( :class_variable_get, :@@sven ) )
+  def teardown
+    Momomoto::Database.instance.disconnect
+  end
+
+  def test_compile_where
+    t = Class.new( Momomoto::Table )
+    t.table_name = 'person'
+    t.columns
+    assert_equal( " WHERE person_id = '1'" , t.compile_where( :person_id => '1' ) )
+    assert_equal( " WHERE person_id IN ('1')" , t.compile_where( :person_id => ['1'] ) )
+    assert_equal( " WHERE person_id IN ('1','2')" , t.compile_where( :person_id => ['1',2] ) )
+    assert_equal( " WHERE first_name = '1'" , t.compile_where( :first_name => '1' ) )
+    assert_equal( " WHERE first_name = 'chu''nky'" , t.compile_where( :first_name => "chu'nky" ) )
+    assert_equal( " WHERE first_name IN ('chu''nky','bac''n')" , t.compile_where( :first_name => ["chu'nky","bac'n"] ) )
   end
 
 end

@@ -42,12 +42,12 @@ module Momomoto
         end
       end
 
-      # set the columns of this procedure returns 
+      # get the columns of the resultset this procedure returns
       def columns=( columns )
         class_variable_set( :@@columns, columns)
       end
 
-      # get the columns of this procedure returns
+      # get the columns of the resultset this procedure returns
       def columns( columns = nil )
         return self.columns=( columns ) if columns
         begin

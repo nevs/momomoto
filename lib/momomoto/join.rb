@@ -35,6 +35,10 @@ module Momomoto
       class << self; self; end
     end
 
+    def class_variable_set( variable, value ) # :nodoc:
+      self.class.send( :class_variable_set, variable, value )
+    end
+
     def select( conditions = {}, options = {} )
       sql = "SELECT " + base_table.columns.keys.map{ | field | "#{base_table.table_name}.\"#{field}\"" }.join( "," ) 
       join_rules.each do | rules |

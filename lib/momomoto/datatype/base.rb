@@ -46,7 +46,7 @@ module Momomoto
           when Array then
             raise Error, "empty array conditions are not allowed" if value.empty?
             raise Error, "nil values not allowed in compile_rule" if value.member?( nil )
-            "#{field_name} IN (#{value.map{ | v | escape(filter_set(v)) }.join(', ') })"
+            "#{field_name} IN (#{value.map{ | v | escape(filter_set(v)) }.join(',') })"
           when Hash then
             raise Error, "empty hash conditions are not allowed" if value.empty?
             rules = []
