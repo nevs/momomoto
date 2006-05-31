@@ -6,6 +6,8 @@ class TestBigint < Test::Unit::TestCase
     assert_equal( nil, t.filter_set( nil ) )
     assert_equal( 1, t.filter_set( 1 ) )
     assert_equal( 2, t.filter_set( '2' ) )
+    assert_equal( 4294967296, t.filter_set( '4294967296' ) )
+    assert_equal( 5294967296, t.filter_set( '5294967296' ) )
   end
 
   def test_filter_get
@@ -13,6 +15,9 @@ class TestBigint < Test::Unit::TestCase
     assert_equal( nil, t.filter_get( nil ) )
     assert_equal( 1, t.filter_get( 1 ) )
     assert_equal( 2, t.filter_get( '2' ) )
+    assert_equal( 2, t.filter_get( '2' ) )
+    assert_equal( 4294967296, t.filter_get( '4294967296' ) )
+    assert_equal( 5294967296, t.filter_get( '5294967296' ) )
   end
 
   def test_compile_rule
