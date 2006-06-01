@@ -52,9 +52,53 @@ module Momomoto
         where
       end
 
+      # compiles the sql statement defining the limit
+      def compile_limit( limit )
+        " LIMIT #{Integer(limit)}"
+       rescue => e
+        raise Error, e.to_s
+      end
+
+      # compiles the sql statement defining the table order
+      def compile_order( order ) # :nodoc:
+        order = [ order ] if not order.kind_of?( Array )
+        order = order.map do | field |
+          field = field.to_s
+          raise Error if not columns.keys.member?( field.to_sym )
+          "lower(#{field})"
+        end
+        " ORDER BY #{order.join(',')}"
+      end
+
       # append where string
       def where_append( where, append ) # :nodoc:
         ( where.empty? ? ' WHERE ' : where + ' AND ' ) + append
+      end
+
+      # construct the Row class for the table
+      def initialize_row( row, table ) # :nodoc:
+
+        if not row.ancestors.include?( Momomoto::Row )
+          raise CriticalError, "Row is not inherited from Momomoto::Row" 
+        end
+
+        row.instance_eval do class_variable_set( :@@table, table ) end
+
+        columns.each_with_index do | ( field_name, data_type ), index |
+          # define getter and setter for row class
+          row.instance_eval do
+            define_method( field_name ) do
+              data_type.filter_get( instance_variable_get(:@data)[index] )
+            end
+            define_method( "#{field_name}=" ) do | value |
+              if not new_record? and table.primary_keys.member?( field_name )
+                raise Error, 'setting primary keys is only allowed for new records' 
+              end
+              instance_variable_get(:@data)[index] = data_type.filter_set( value )
+            end
+          end
+        end
+
       end
 
     end

@@ -19,12 +19,12 @@ module Momomoto
         begin
           class_variable_get( :@@columns )
         rescue NameError
-          initialize_class
+          initialize_table
           class_variable_get( :@@columns )
         end
       end
 
-      def initialize_class # :nodoc:
+      def initialize_table # :nodoc:
   
         unless class_variables.member?( '@@table_name' )
           table_name( construct_table_name( self.name ) )
@@ -47,32 +47,6 @@ module Momomoto
 
         # mark class as initialized
         class_variable_set( :@@initialized, true)
-
-      end
-
-      # construct the Row class for the table
-      def initialize_row( row, table ) # :nodoc:
-
-        if not row.ancestors.include?( Momomoto::Row )
-          raise CriticalError, "Row is not inherited from Momomoto::Row" 
-        end
-
-        row.instance_eval do class_variable_set( :@@table, table ) end
-
-        columns.each_with_index do | ( field_name, data_type ), index |
-          # define getter and setter for row class
-          row.instance_eval do
-            define_method( field_name ) do
-              data_type.filter_get( instance_variable_get(:@data)[index] )
-            end
-            define_method( "#{field_name}=" ) do | value |
-              if not new_record? and table.primary_keys.member?( field_name )
-                raise Error, 'setting primary keys is only allowed for new records' 
-              end
-              instance_variable_get(:@data)[index] = data_type.filter_set( value )
-            end
-          end
-        end
 
       end
 
@@ -118,7 +92,7 @@ module Momomoto
 
       ## Searches for records and returns the number of records found
       def select( conditions = {}, options = {} )
-        initialize_class unless class_variables.member?('@@initialized')
+        initialize_table unless class_variables.member?('@@initialized')
         sql = "SELECT " + columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
         sql += full_name
         sql += compile_where( conditions )
@@ -131,26 +105,8 @@ module Momomoto
         data
       end
 
-      # compiles the sql statement defining the limit
-      def compile_limit( limit )
-        " LIMIT #{Integer(limit)}"
-       rescue => e
-        raise Error, e.to_s
-      end
-
-      # compiles the sql statement defining the table order
-      def compile_order( order ) # :nodoc:
-        order = [ order ] if not order.kind_of?( Array )
-        order = order.map do | field |
-          field = field.to_s
-          raise Error if not columns.keys.member?( field.to_sym )
-          "lower(#{field})"
-        end
-        " ORDER BY #{order.join(',')}"
-      end
-
       def new( fields = {} )
-        initialize_class unless class_variables.member?('@@initialized')
+        initialize_table unless class_variables.member?('@@initialized')
         new_row = const_get(:Row).new( [] )
         new_row.instance_variable_set( :@new_record, true )
         fields.each do | key, value |
