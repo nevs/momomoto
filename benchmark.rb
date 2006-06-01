@@ -28,7 +28,7 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
     QUERY_REPEAT.times do a = Momomoto::Information_schema::Columns.select end
   end
 
-  times << b.report("iterating #{ITERATION_REPEAT} times over the resultset") do
+  times << b.report("iterating #{ITERATION_REPEAT} times over #{a.length} rows") do
     ITERATION_REPEAT.times do a.each do | row | temp = row end end
   end
 
@@ -59,7 +59,7 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
     QUERY_REPEAT.times do a = Columns.find_all end
   end
 
-  times << b.report("iterating #{ITERATION_REPEAT} times over the resultset") do
+  times << b.report("iterating #{ITERATION_REPEAT} times over #{a.length} rows") do
     ITERATION_REPEAT.times do a.each do | row | temp = row end end
   end
 
@@ -88,7 +88,7 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
     QUERY_REPEAT.times do a = conn.exec("SELECT * FROM information_schema.columns;").entries end
   end
 
-  times << b.report("iterating #{ITERATION_REPEAT} times over the resultset") do
+  times << b.report("iterating #{ITERATION_REPEAT} times over #{a.length} rows") do
     ITERATION_REPEAT.times do a.each do | row | temp = row end end
   end
 
