@@ -7,6 +7,34 @@ module Momomoto
 
     class << self
 
+      def initialize_procedure # :nodoc:
+  
+        unless class_variables.member?( '@@procedure_name' )
+          procedure_name( construct_procedure_name( self.name ) )
+        end
+  
+        unless class_variables.member?( '@@schema_name' )
+          schema_name( construct_schema_name( self.name ) )
+        end
+
+        unless class_variables.member?( '@@parameter' )
+          parameter( database.fetch_procedure_parameter( procedure_name ) )
+          raise CriticalError if not parameter
+        end
+
+        unless class_variables.member?( '@@columns' )
+          columns( database.fetch_procedure_columns( procedure_name ) )
+          raise CriticalError if not columns
+        end
+
+        const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
+        initialize_row( const_get( :Row ), self )
+
+        # mark class as initialized
+        class_variable_set( :@@initialized, true)
+
+      end
+
       # guesses the procedure name of the procedure this class works on
       def construct_procedure_name( classname ) # :nodoc:
         classname.split('::').last.downcase.gsub(/[^a-z_0-9]/, '')
@@ -25,6 +53,11 @@ module Momomoto
         rescue NameError
           construct_procedure_name( self.name )
         end
+      end
+
+      # get the full name of a table including schema if set
+      def full_name
+        "#{ schema_name ? schema_name + '.' : ''}#{procedure_name}"
       end
 
       # set the parameter this procedures accepts
@@ -55,6 +88,31 @@ module Momomoto
         rescue NameError
           nil
         end
+      end
+
+      def compile_parameter( params )
+        sql = ''
+        parameter.each do | field_name, datatype |
+          raise Error, "parameter #{field_name} not specified" if not params[field_name]
+          sql += datatype.escape( params[field_name] )
+        end
+        sql
+      end
+
+      # execute the stored procedure
+      def call( params = {}, conditions = {}, options = {} )
+        initialize_procedure unless class_variables.member?('@@initialized')
+        sql = "SELECT #{columns.keys.join(',')} FROM "
+        sql += "#{full_name}(#{compile_parameter(params)})"
+        sql += compile_where( conditions )
+        sql += compile_order( options[:order] ) if options[:order]
+        sql += compile_limit( options[:limit] ) if options[:limit]
+        sql += ';'
+        data = []
+        database.execute( sql ).each do | row |
+          data << const_get(:Row).new( row )
+        end
+        data
       end
 
     end

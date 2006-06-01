@@ -32,7 +32,10 @@ module Momomoto
 
       # values are filtered by this function when being get
       def filter_get( value ) # :nodoc:
-        value
+        case value
+          when nil, '' then nil
+          else value
+        end
       end
 
       def self.escape( input )

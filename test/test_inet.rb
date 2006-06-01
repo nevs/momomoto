@@ -1,5 +1,5 @@
 
-class TestInterval < Test::Unit::TestCase
+class TestInet < Test::Unit::TestCase
 
   def test_filter_get
     t = Momomoto::Datatype::Inet.new

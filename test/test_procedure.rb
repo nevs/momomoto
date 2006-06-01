@@ -1,6 +1,14 @@
 
 class TestProcedure < Test::Unit::TestCase
 
+  def setup
+    Momomoto::Database.instance.connect
+  end
+
+  def teardown
+    Momomoto::Database.instance.disconnect
+  end
+
   def test_procedure_name
     self.class.const_set( :Proc1, Class.new( Momomoto::Procedure ) )
     assert_equal( 'proc1', Proc1.procedure_name )
@@ -36,6 +44,20 @@ class TestProcedure < Test::Unit::TestCase
     p.parameter( :alice )
     assert_equal( :alice, p.parameter )
     assert_equal( :bacon, p2.parameter )
+  end
+
+  def test_call
+    self.class.const_set(:Test_parameter, Class.new( Momomoto::Procedure ) )
+    assert_equal( "test_parameter", Test_parameter.procedure_name )
+    Test_parameter.parameter(:person_id => Momomoto::Datatype::Integer.new)
+    assert_not_nil( Test_parameter.parameter )
+    Test_parameter.columns(
+        :person_id => Momomoto::Datatype::Integer.new,
+        :first_name => Momomoto::Datatype::Text.new,
+        :last_name => Momomoto::Datatype::Text.new )
+    assert_not_nil( Test_parameter.columns )
+    Test_parameter.call( :person_id => 5 )
+    Test_parameter.call({:person_id => 5},{:person_id => 5},{:order=>:person_id,:limit=>10} )
   end
 
 end
