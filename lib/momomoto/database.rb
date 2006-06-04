@@ -49,11 +49,8 @@ module Momomoto
 
     # execute a query
     def execute( sql ) # :nodoc:
-      puts sql if Momomoto::DEBUG
-      result = @connection.exec( sql )
-      rows = result.entries
-      result.clear
-      rows
+      puts sql if Momomoto.debug
+      @connection.query( sql )
      rescue => e
       raise CriticalError, "#{e}: #{sql}"
     end

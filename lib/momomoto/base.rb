@@ -2,6 +2,12 @@
 ## Momomoto is a database abstraction layer
 module Momomoto
 
+  class << self
+
+    attr_accessor :debug
+  
+  end
+
   ## base exception for all exceptions thrown by Momomoto
   class Error < StandardError; end
 

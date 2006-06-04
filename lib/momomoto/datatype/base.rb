@@ -1,8 +1,6 @@
 
 module Momomoto
 
-  DEBUG = false
-
   module Datatype
     # base class for all datatypes
     class Base
@@ -24,24 +22,19 @@ module Momomoto
       
       # values are filtered by this function when being set
       def filter_set( value ) # :nodoc:
-        case value
-          when nil, '' then nil
-          else value
-        end
+        value
       end
 
       # values are filtered by this function when being get
       def filter_get( value ) # :nodoc:
-        case value
-          when nil, '' then nil
-          else value
-        end
+        value
       end
 
       def self.escape( input )
         input.nil? ? "NULL" : "'" + Database.escape_string( input.to_s ) + "'"
       end
 
+      # this functions is used for compiling the where clause
       def compile_rule( field_name, value ) # :nodoc:
         case value
           when nil then
@@ -49,17 +42,17 @@ module Momomoto
           when Array then
             raise Error, "empty array conditions are not allowed" if value.empty?
             raise Error, "nil values not allowed in compile_rule" if value.member?( nil )
-            "#{field_name} IN (#{value.map{ | v | escape(filter_set(v)) }.join(',') })"
+            field_name.to_s + ' IN (' + value.map{ | v | escape(filter_set(v)) }.join(',') + ')'
           when Hash then
             raise Error, "empty hash conditions are not allowed" if value.empty?
             rules = []
             value.each do | op, v |
               raise Error, "nil values not allowed in compile_rule" if v == nil
-              rules << "#{field_name} #{self.class.operator_sign(op)} #{escape(filter_set(v))}"
+              rules << field_name.to_s + ' ' + self.class.operator_sign(op) + ' ' + escape(filter_set(v))
             end
             rules.join( " AND " )
           else
-            "#{field_name} = #{escape(filter_set(value))}"
+            field_name.to_s + ' = ' + escape(filter_set(value))
         end
       end
 
