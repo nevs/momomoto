@@ -8,14 +8,11 @@ module Momomoto
       end
 
       def filter_set( value )
-        case value
-          when nil, '' then nil
-          else value
-        end
+        value.nil? ? nil : Database.unescape_bytea( Database.escape_bytea( value ) )
       end
 
       def self.escape( input )
-        input.nil? ? "NULL" : "'" + Database.escape_bytea( input ) + "'"
+        input.nil? ? "NULL" : "'" + Database.escape_bytea( input.gsub( "''", "'" ) ) + "'"
       end
     
     end

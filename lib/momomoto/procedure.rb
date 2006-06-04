@@ -55,7 +55,7 @@ module Momomoto
         end
       end
 
-      # get the full name of a table including schema if set
+      # get the full name of the procedure including schema if set
       def full_name
         "#{ schema_name ? schema_name + '.' : ''}#{procedure_name}"
       end
@@ -91,12 +91,12 @@ module Momomoto
       end
 
       def compile_parameter( params )
-        sql = ''
+        args = []
         parameter.each do | field_name, datatype |
-          raise Error, "parameter #{field_name} not specified" if not params[field_name]
-          sql += datatype.escape( params[field_name] )
+          raise Error, "parameter #{field_name} not specified" if not params.include?( field_name )
+          args << datatype.escape( params[field_name] )
         end
-        sql
+        args.join(',')
       end
 
       # execute the stored procedure

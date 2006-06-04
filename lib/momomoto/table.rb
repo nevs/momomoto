@@ -158,7 +158,7 @@ module Momomoto
           values << datatype.escape( row.send( field_name ))
         end
         raise Error, "insert with all fields nil" if fields.empty?
-        sql = "INSERT INTO #{table_name}(#{fields.join(', ')}) VALUES (#{values.join(', ')});"
+        sql = "INSERT INTO " + full_name + '(' + fields.join(',') + ') VALUES (' + values.join(',') + ');'
         row.instance_variable_set( :@new_record, false )
         database.execute( sql )
       end
@@ -168,13 +168,13 @@ module Momomoto
         raise CriticalError, 'Updating is only allowed for tables with primary keys' if primary_keys.empty?
         setter, conditions = [], {}
         columns.each do | field_name, data_type |
-          setter << "#{field_name} = #{data_type.escape(row.send( field_name ))}"
+          setter << field_name.to_s + ' = ' + data_type.escape(row.send(field_name))
         end
         primary_keys.each do | field_name |
           raise Error, "Primary key fields must not be empty!" if not row.send( field_name )
           conditions[field_name] = row.send( field_name )
         end
-        sql = "UPDATE #{table_name} SET #{setter.join(', ')} #{compile_where(conditions)};"
+        sql = 'UPDATE ' + full_name + ' SET ' + setter.join(',') + compile_where( conditions ) + ';'
         database.execute( sql )
       end
 
@@ -196,4 +196,5 @@ module Momomoto
   end
 
 end
+
 

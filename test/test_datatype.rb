@@ -31,7 +31,6 @@ class TestDatatype < Test::Unit::TestCase
     DATATYPES.each do | type |
       t = type.new
       assert_equal( nil, t.filter_set( nil ), t.class.name )
-      assert_equal( nil, t.filter_set( '' ), t.class.name )
     end
   end
 
