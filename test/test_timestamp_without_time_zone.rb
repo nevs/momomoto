@@ -1,6 +1,17 @@
 
 class TestTimestampWithoutTimeZone < Test::Unit::TestCase
 
+  def test_invalid
+    c = Class.new( Momomoto::Table )
+    c.table_name = 'test_timestamp_without_time_zone'
+    [ :x, 2.3 ].each do | value |
+      r = c.new
+      assert_raise( Momomoto::Error ) do
+        r.data = value
+      end
+    end
+  end
+
   def test_samples
     c = Class.new( Momomoto::Table )
     c.table_name = 'test_timestamp_without_time_zone'

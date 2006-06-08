@@ -5,7 +5,7 @@ module Momomoto
   module Datatype
     class Date < Base
 
-      def filter_get( value )
+      def filter_set( value )
         case value
           when nil,'' then nil
           when ::Date then value
@@ -14,10 +14,6 @@ module Momomoto
         end
        rescue => e 
         raise Error, "parse Error in Date #{e}"
-      end
-    
-      def filter_set( value )
-        filter_get( value )
       end
     
     end

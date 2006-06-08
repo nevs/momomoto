@@ -19,7 +19,7 @@ Rcov::RcovTask.new do | t |
 end
 
 desc "copy the coverage information to pentabarf.org"
-task :coverage => [:rcov] do | t |
+task :coverage do | t |
   sh "scp -r coverage pulsar:public_html"
 end
 

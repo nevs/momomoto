@@ -13,6 +13,17 @@ class TestInteger < Test::Unit::TestCase
     end
   end
 
+  def test_invalid
+    c = Class.new( Momomoto::Table )
+    c.table_name = 'test_integer'
+    [ "2005-5-43", "a"].each do | value |
+      r = c.new
+      assert_raise( Momomoto::Error ) do
+        r.data = value
+      end
+    end
+  end
+
   def test_compile_rule
     t = Momomoto::Datatype::Integer.new
     input = [ 1, '1', [1], ['1'], [1,2,3],['1','2','3'], {:eq=>1}, {:eq=>'1'}, {:lt=>10, :gt=>5}, {:lt=>'10', :gt=>'5'} ]

@@ -27,20 +27,6 @@ class TestDatatype < Test::Unit::TestCase
     end
   end
 
-  def test_filter_set
-    DATATYPES.each do | type |
-      t = type.new
-      assert_equal( nil, t.filter_set( nil ), t.class.name )
-    end
-  end
-
-  def test_filter_get
-    DATATYPES.each do | type |
-      t = type.new
-      assert_equal( nil, t.filter_get( nil ))
-    end
-  end
-
   def test_compile_rule
     DATATYPES.each do | type |
       t = type.new
