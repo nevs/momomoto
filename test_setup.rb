@@ -6,3 +6,15 @@ require 'lib/momomoto'
 
 Momomoto::Database.instance.config(:database=>:test)
 
+class Test::Unit::TestCase
+
+  def setup
+    Momomoto::Database.instance.connect
+  end
+
+  def teardown
+    Momomoto::Database.instance.disconnect
+  end
+
+end
+

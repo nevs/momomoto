@@ -1,12 +1,14 @@
 
 class TestDate < Test::Unit::TestCase
 
-  def setup
-    Momomoto::Database.instance.connect
-  end
-
-  def teardown
-    Momomoto::Database.instance.disconnect
+  def test_nil
+    c = Class.new( Momomoto::Table )
+    c.table_name = 'test_date'
+    r = c.new( :data => nil )
+    assert_equal( nil, r.data )
+    r.write
+    r2 = c.select( :id => r.id ).first
+    assert_equal( nil, r2.data )
   end
 
   def test_samples

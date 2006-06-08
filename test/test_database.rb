@@ -1,14 +1,6 @@
 
 class TestDatabase < Test::Unit::TestCase
 
-  def setup
-    Momomoto::Database.instance.connect
-  end
-
-  def teardown
-    Momomoto::Database.instance.disconnect
-  end
-
   def test_begin
     db = Momomoto::Database.instance
     assert_nothing_raised do db.begin end

@@ -1,14 +1,6 @@
 
 class TestTable < Test::Unit::TestCase
 
-  def setup
-    Momomoto::Database.instance.connect
-  end
-
-  def teardown
-    Momomoto::Database.instance.disconnect
-  end
-
   def test_columns_getter
     c1 = Class.new( Momomoto::Table )
     c1.columns =  {:a=>Momomoto::Datatype::Text}

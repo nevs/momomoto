@@ -29,5 +29,6 @@ CREATE TABLE test_boolean( id SERIAL, data BOOLEAN, PRIMARY KEY(id));
 CREATE TABLE test_character( id SERIAL, data CHARACTER(1000), PRIMARY KEY(id));
 CREATE TABLE test_character_varying( id SERIAL, data VARCHAR(1000), PRIMARY KEY(id));
 CREATE TABLE test_date( id SERIAL, data DATE, PRIMARY KEY(id));
+CREATE TABLE test_integer( id SERIAL, data INTEGER, PRIMARY KEY(id));
 
 

@@ -1,14 +1,6 @@
 
 class TestCharacter_varying < Test::Unit::TestCase
 
-  def setup
-    Momomoto::Database.instance.connect
-  end
-
-  def teardown
-    Momomoto::Database.instance.disconnect
-  end
-
   def test_samples
     c = Class.new( Momomoto::Table )
     c.table_name = 'test_character_varying'

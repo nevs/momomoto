@@ -1,14 +1,6 @@
 
 class TestBytea < Test::Unit::TestCase
 
-  def setup
-    Momomoto::Database.instance.connect
-  end
-
-  def teardown
-    Momomoto::Database.instance.disconnect
-  end
-
   def test_escaping_null
     c = Class.new( Momomoto::Table )
     c.table_name = 'test_bytea'

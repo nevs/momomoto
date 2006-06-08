@@ -1,14 +1,6 @@
 
 class TestInformationSchema < Test::Unit::TestCase
 
-  def setup
-    Momomoto::Database.instance.connect
-  end
-
-  def teardown
-    Momomoto::Database.instance.disconnect
-  end
-
   # test for working information_schema.columns class
   def test_information_schema_columns
     a = Momomoto::Information_schema::Columns.select(:table_schema => 'pg_catalog', :table_name => 'pg_tables')

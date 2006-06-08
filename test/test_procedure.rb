@@ -1,14 +1,6 @@
 
 class TestProcedure < Test::Unit::TestCase
 
-  def setup
-    Momomoto::Database.instance.connect
-  end
-
-  def teardown
-    Momomoto::Database.instance.disconnect
-  end
-
   def test_procedure_name
     self.class.const_set( :Proc1, Class.new( Momomoto::Procedure ) )
     assert_equal( 'proc1', Proc1.procedure_name )

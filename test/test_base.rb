@@ -1,14 +1,6 @@
 
 class TestBase < Test::Unit::TestCase
 
-  def setup
-    Momomoto::Database.instance.connect
-  end
-
-  def teardown
-    Momomoto::Database.instance.disconnect
-  end
-
   def test_compile_where
     t = Class.new( Momomoto::Table )
     t.table_name = 'person'
