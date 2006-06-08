@@ -1,24 +1,37 @@
 
 class TestBoolean < Test::Unit::TestCase
 
-  def test_filter_set
-    row = Momomoto::Information_schema::Columns.new
-    row.is_nullable = "YES"
-    t = Momomoto::Datatype::Boolean.new( row )
-    [nil,''].each do | input | assert_equal( nil, t.filter_set( input ) ) end
-    [true,'t',1].each do | input | assert_equal( true, t.filter_set( input ) ) end
-    [false,'f',0].each do | input | assert_equal( false, t.filter_set( input ) ) end
-    row.is_nullable = "NO"
-    t = Momomoto::Datatype::Boolean.new( row )
-    [true,'t',1].each do | input | assert_equal( true, t.filter_set( input ) ) end
-    [nil,'',false,'f',0].each do | input | assert_equal( false, t.filter_set( input ) ) end
+  def setup
+    Momomoto::Database.instance.connect
   end
 
-  def test_filter_get
-    t = Momomoto::Datatype::Boolean.new
-    [nil,''].each do | input | assert_equal( nil, t.filter_get( input ) ) end
-    [true,'t',1].each do | input | assert_equal( true, t.filter_get( input ) ) end
-    [false,'f',0].each do | input | assert_equal( false, t.filter_get( input ) ) end
+  def teardown
+    Momomoto::Database.instance.disconnect
+  end
+
+  def test_samples
+    c = Class.new( Momomoto::Table )
+    c.table_name = 'test_boolean'
+    [nil,true,false].each do | value |
+      r = c.new( :data => value )
+      assert_equal( value, r.data )
+      r.write
+      r2 = c.select(:id=>r.id).first
+      assert_equal( value, r2.data )
+    end
+    r = c.new
+    [nil,''].each do | input |
+      r.data = input
+      assert_equal( nil, r.data )
+    end
+    [true,'t',1].each do | input |
+      r.data = input
+      assert_equal( true, r.data )
+    end
+    [false,'f',0].each do | input |
+      r.data = input
+      assert_equal( false, r.data )
+    end
   end
 
 end

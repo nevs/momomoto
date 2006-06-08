@@ -34,3 +34,15 @@ CREATE TABLE test_nodefault (
     PRIMARY KEY(id)
 );
 
+CREATE TABLE test_bigint(
+    id SERIAL,
+    data BIGINT,
+    PRIMARY KEY(id)
+);
+
+CREATE TABLE test_boolean(
+    id SERIAL,
+    data BOOLEAN,
+    PRIMARY KEY(id)
+);
+
