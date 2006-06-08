@@ -93,8 +93,14 @@ module Momomoto
         columns.each_with_index do | ( field_name, data_type ), index |
           # define getter and setter for row class
           row.instance_eval do
-            define_method( field_name ) do
-              data_type.filter_get( instance_variable_get(:@data)[index] )
+            if data_type.respond_to?( :filter_get )
+              define_method( field_name ) do
+                data_type.filter_get( instance_variable_get(:@data)[index] )
+              end
+            else
+              define_method( field_name ) do
+                instance_variable_get(:@data)[index]
+              end
             end
             define_method( "#{field_name}=" ) do | value |
               if not new_record? and table.primary_keys.member?( field_name )

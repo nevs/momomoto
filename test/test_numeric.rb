@@ -10,6 +10,7 @@ class TestNumeric < Test::Unit::TestCase
       r.write
       r2 = c.select(:id=>r.id).first
       assert_equal( number, r2.data )
+      assert( number == r2.data )
     end
   end
 

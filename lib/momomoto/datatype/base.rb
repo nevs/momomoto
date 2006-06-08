@@ -25,11 +25,6 @@ module Momomoto
         value
       end
 
-      # values are filtered by this function when being get
-      def filter_get( value ) # :nodoc:
-        value
-      end
-
       def escape( input )
         input.nil? ? "NULL" : "'" + Database.escape_string( input.to_s ) + "'"
       end
