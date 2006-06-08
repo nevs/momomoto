@@ -1,13 +1,16 @@
 
 class TestTimeWithTimeZone < Test::Unit::TestCase
 
-  def test_filter_set
-    t = Momomoto::Datatype::Time_with_time_zone.new
-    assert_equal( nil, t.filter_set( nil ) )
-    assert_equal( nil, t.filter_set( '' ) )
-    assert_instance_of( Time, t.filter_set( "00:00:00" ) )
-    assert_instance_of( Time, t.filter_set( "01:00:00" ) )
-    assert_instance_of( Time, t.filter_set( "23:00:00" ) )
+  def test_samples
+    c = Class.new( Momomoto::Table )
+    c.table_name = 'test_time_with_time_zone'
+    [Time.parse("00:00:00"),Time.parse("01:00:00"),Time.parse("23:00")].each do | value |
+      r = c.new( :data => value )
+      assert_equal( value, r.data )
+      r.write
+      r2 = c.select(:id=>r.id).first
+      assert_equal( value, r2.data )
+    end
   end
 
 end

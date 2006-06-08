@@ -30,5 +30,14 @@ CREATE TABLE test_character( id SERIAL, data CHARACTER(1000), PRIMARY KEY(id));
 CREATE TABLE test_character_varying( id SERIAL, data VARCHAR(1000), PRIMARY KEY(id));
 CREATE TABLE test_date( id SERIAL, data DATE, PRIMARY KEY(id));
 CREATE TABLE test_integer( id SERIAL, data INTEGER, PRIMARY KEY(id));
+CREATE TABLE test_interval( id SERIAL, data INTERVAL, PRIMARY KEY(id));
+CREATE TABLE test_numeric( id SERIAL, data NUMERIC, PRIMARY KEY(id));
+CREATE TABLE test_real( id SERIAL, data REAL, PRIMARY KEY(id));
+CREATE TABLE test_smallint( id SERIAL, data SMALLINT, PRIMARY KEY(id));
+CREATE TABLE test_text( id SERIAL, data TEXT, PRIMARY KEY(id));
+CREATE TABLE test_timestamp_without_time_zone( id SERIAL, data TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(id));
+CREATE TABLE test_timestamp_with_time_zone( id SERIAL, data TIMESTAMP WITH TIME ZONE, PRIMARY KEY(id));
+CREATE TABLE test_time_without_time_zone( id SERIAL, data TIME WITHOUT TIME ZONE, PRIMARY KEY(id));
+CREATE TABLE test_time_with_time_zone( id SERIAL, data TIME WITH TIME ZONE, PRIMARY KEY(id));
 
 

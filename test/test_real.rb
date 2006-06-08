@@ -1,18 +1,16 @@
 
 class TestReal < Test::Unit::TestCase
 
-  def test_filter_set
-    t = Momomoto::Datatype::Real.new
-    assert_equal( nil, t.filter_set( nil ) )
-    assert_equal( 1.0, t.filter_set( 1 ) )
-    assert_equal( 1.0, t.filter_set( '1' ) )
-  end
-
-  def test_filter_get
-    t = Momomoto::Datatype::Real.new
-    assert_equal( nil, t.filter_get( nil ) )
-    assert_equal( 1.0, t.filter_get( 1 ) )
-    assert_equal( 1.0, t.filter_get( '1' ) )
+  def test_samples
+    c = Class.new( Momomoto::Table )
+    c.table_name = 'test_real'
+    [nil,1.0,2.0,2.3,-1.2].each do | number |
+      r = c.new( :data => number )
+      assert_equal( number, r.data )
+      r.write
+      r2 = c.select(:id=>r.id).first
+      assert_equal( number, r2.data )
+    end
   end
 
 end
