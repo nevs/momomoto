@@ -126,7 +126,7 @@ module Momomoto
           end
         end
         rows = select( conditions, options )  
-        raise Error, 'Multiple values found in select_or_create' if rows.length > 1
+        raise Error, 'Multiple values found in select_or_new' if rows.length > 1
         rows.empty? ? new( conditions ) : rows.first
       end
 

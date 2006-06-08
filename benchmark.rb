@@ -11,7 +11,7 @@ include Benchmark
 
 GC.disable
 
-QUERY_REPEAT = 2
+QUERY_REPEAT = 10
 ITERATION_REPEAT = 10
 
 puts "==Momomoto==========================================================================="
@@ -43,7 +43,6 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
 end
 
 puts "==ActiveRecord======================================================================="
-
 ActiveRecord::Base.connection = {'adapter'=>'postgresql','host'=>'localhost', 'database' => 'pentabarf', 'username' => 'pentabarf'}
 
 class Columns < ActiveRecord::Base
