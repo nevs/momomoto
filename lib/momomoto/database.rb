@@ -33,10 +33,10 @@ module Momomoto
     def connect
       @connection.close if @connection
       @transaction_active = false
+      PGconn.translate_results = true
       @connection = PGconn.connect( @config[:host], @config[:port], @config[:pgoptions],
                       @config[:pgtty], @config[:database], @config[:username],
                       @config[:password])
-      PGconn.translate_results = true
     rescue => e
       raise CriticalError, "Connection to database failed: #{e}"
     end

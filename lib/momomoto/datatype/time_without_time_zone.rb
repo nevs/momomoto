@@ -9,7 +9,7 @@ module Momomoto
         value == nil ? 'NULL' : "'#{Database.escape_string(value.strftime('%H:%M:%S'))}'"
       end
     
-      def filter_get( value )
+      def filter_set( value )
         case value
           when nil, '' then nil
           when ::Time then value
@@ -18,10 +18,6 @@ module Momomoto
         end
        rescue => e
         raise Error, 'Error while parsing time'
-      end
-
-      def filter_set( value )
-        filter_get( value ) 
       end
 
     end
