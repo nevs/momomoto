@@ -25,7 +25,7 @@ module Momomoto
         end
       end
     
-      def self.escape( input )
+      def escape( input )
         case input 
           when true then "'t'"
           when false then "'f'"

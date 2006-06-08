@@ -5,7 +5,7 @@ module Momomoto
   module Datatype
     class Time_without_time_zone < Base
 
-      def self.escape( value )
+      def escape( value )
         value == nil ? 'NULL' : "'#{Database.escape_string(value.strftime('%H:%M:%S'))}'"
       end
     

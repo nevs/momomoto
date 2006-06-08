@@ -30,7 +30,7 @@ module Momomoto
         value
       end
 
-      def self.escape( input )
+      def escape( input )
         input.nil? ? "NULL" : "'" + Database.escape_string( input.to_s ) + "'"
       end
 
@@ -69,10 +69,6 @@ module Momomoto
         end
       end
 
-      def escape( input )
-        self.class.escape( input )
-      end
- 
     end
 
   end

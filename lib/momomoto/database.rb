@@ -36,6 +36,7 @@ module Momomoto
       @connection = PGconn.connect( @config[:host], @config[:port], @config[:pgoptions],
                       @config[:pgtty], @config[:database], @config[:username],
                       @config[:password])
+      PGconn.translate_results = true
     rescue => e
       raise CriticalError, "Connection to database failed: #{e}"
     end
@@ -128,10 +129,6 @@ module Momomoto
 
     def self.escape_bytea( input )
       PGconn.escape_bytea( input )
-    end
-
-    def self.unescape_bytea( input )
-      PGconn.unescape_bytea( input )
     end
 
   end
