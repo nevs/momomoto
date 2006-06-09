@@ -5,6 +5,7 @@ require 'singleton'
 require 'momomoto/information_schema/columns'
 require 'momomoto/information_schema/table_constraints'
 require 'momomoto/information_schema/key_column_usage'
+require 'momomoto/information_schema/routines'
 
 ## Momomoto is a database abstraction layer
 module Momomoto
@@ -88,6 +89,17 @@ module Momomoto
       end
       columns
     end
+
+    # fetches the parameter of a stored procedure
+    def fetch_procedure_parameter( procedure_name, schema_name = nil ) # :nodoc:
+      
+    end
+
+    # fetches the resultset columns of a stored procedure
+    def fetch_procedure_columns( procedure_name, schema_name )
+
+    end
+
 
     # begin a transaction
     def begin
