@@ -4,7 +4,8 @@ class TestNumeric < Test::Unit::TestCase
   def test_samples
     c = Class.new( Momomoto::Table )
     c.table_name = 'test_numeric'
-    [nil,1.0,2.0,2.3].each do | number |
+    [nil,1.0,1.5,2.0,2.3].each do | number |
+      number = BigDecimal.new(number.to_s)
       r = c.new( :data => number )
       assert_equal( number, r.data )
       r.write
