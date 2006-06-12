@@ -13,8 +13,10 @@ Rake::TestTask.new do | t |
 end
 
 Rcov::RcovTask.new do | t |
-  t.ruby_opts << '--callsites'
-  t.ruby_opts << '-x test_setup.rb'
+  t.libs << 'test_setup.rb'
+  t.rcov_opts << '--xrefs'
+  t.rcov_opts << '--comments'
+  t.rcov_opts << '-x test_setup.rb'
   t.test_files = FileList['test/test*.rb'].unshift( 'test_setup.rb' )
 end
 
