@@ -8,6 +8,9 @@ Momomoto::Database.instance.config(:database=>:test)
 
 class Test::Unit::TestCase
 
+  undef_method( :setup )
+  undef_method( :teardown )
+
   def setup
     Momomoto::Database.instance.connect
   end
