@@ -79,7 +79,7 @@ module Momomoto
 
     # fetch column definitions from database
     # should work with any SQL2003 compliant DBMS
-    def fetch_columns( table_name, schema_name = nil ) # :nodoc:
+    def fetch_table_columns( table_name, schema_name = nil ) # :nodoc:
       columns = {}
       conditions = { :table_name=>table_name }
       conditions[:table_schema] = schema_name if schema_name

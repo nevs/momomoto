@@ -35,7 +35,7 @@ module Momomoto
         end
 
         unless class_variables.member?( '@@columns' )
-          columns( database.fetch_columns( table_name() ) )
+          columns( database.fetch_table_columns( table_name() ) )
         end
 
         unless class_variables.member?( '@@primary_keys' )

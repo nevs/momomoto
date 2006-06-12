@@ -8,11 +8,11 @@ module Momomoto
     class << self
 
       def initialize_procedure # :nodoc:
-  
+
         unless class_variables.member?( '@@procedure_name' )
           procedure_name( construct_procedure_name( self.name ) )
         end
-  
+
         unless class_variables.member?( '@@schema_name' )
           schema_name( construct_schema_name( self.name ) )
         end
@@ -56,7 +56,7 @@ module Momomoto
       end
 
       # get the full name of the procedure including schema if set
-      def full_name
+      def full_name # :nodoc:
         "#{ schema_name ? schema_name + '.' : ''}#{procedure_name}"
       end
 
@@ -90,7 +90,7 @@ module Momomoto
         end
       end
 
-      def compile_parameter( params )
+      def compile_parameter( params ) # :nodoc:
         args = []
         parameter.each do | field_name, datatype |
           raise Error, "parameter #{field_name} not specified" if not params.include?( field_name )
