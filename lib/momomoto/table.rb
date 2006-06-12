@@ -5,7 +5,7 @@ module Momomoto
   # it must not be used directly but you should inherit from this class
   # you can only write to a table if it has primary keys defined
   class Table < Base
-  
+
     class << self
 
       # set the columns of the table this class operates on
@@ -25,11 +25,11 @@ module Momomoto
       end
 
       def initialize_table # :nodoc:
-  
+
         unless class_variables.member?( '@@table_name' )
           table_name( construct_table_name( self.name ) )
         end
-  
+
         unless class_variables.member?( '@@schema_name' )
           schema_name( construct_schema_name( self.name ) )
         end

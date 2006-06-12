@@ -5,7 +5,7 @@ module Momomoto
   class << self
 
     attr_accessor :debug
-  
+
   end
 
   ## base exception for all exceptions thrown by Momomoto

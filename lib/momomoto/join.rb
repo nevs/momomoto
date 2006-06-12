@@ -6,15 +6,15 @@ module Momomoto
   class Join < Base
 
     attr_reader :base_table, :join_rules
- 
+
     # constructor of the join class
     # base_table is the base table of the join
     # join_rules is an array of Hashes consisting of the table to join as key
     # and an symbol or an array of symbols on which fields to join the table
     # Example: Momomoto::Join.new(Event, {Event_Person=>:event_id},{Person=>:person_id})
     #          results in SELECT * FROM event INNER JOIN event_person USING (event_id) INNER JOIN Person USING(person_id)
-    # if you leave out the eclipit braces to mark the hash you may get 
-    # unexpected results because of the undefined order of hashs         
+    # if you leave out the eclipit braces to mark the hash you may get
+    # unexpected results because of the undefined order of hashs
     def initialize( base_table, *join_rules )
       @base_table = base_table
       @join_rules = join_rules
@@ -40,7 +40,7 @@ module Momomoto
     end
 
     def select( conditions = {}, options = {} )
-      sql = "SELECT " + base_table.columns.keys.map{ | field | "#{base_table.table_name}.\"#{field}\"" }.join( "," ) 
+      sql = "SELECT " + base_table.columns.keys.map{ | field | "#{base_table.table_name}.\"#{field}\"" }.join( "," )
       join_rules.each do | rules |
         rules.each do | table, fields |
           sql += ','

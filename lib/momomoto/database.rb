@@ -15,10 +15,10 @@ module Momomoto
     include Singleton
 
     # establish connection to the database
-    # expects a hash with the following keys: host, port, database, 
+    # expects a hash with the following keys: host, port, database,
     # username, password, pgoptions and pgtty
     def config( config )
-      # we also accept String keys in the config hash 
+      # we also accept String keys in the config hash
       config.each do | key, value |
         config[key.to_sym] = value unless key.kind_of?( Symbol )
         config[key.to_sym] = value.to_s if value.kind_of?(Symbol)
@@ -65,9 +65,9 @@ module Momomoto
       conditions[:table_schema] = schema_name if schema_name
       keys = Momomoto::Information_schema::Table_constraints.select( conditions )
       if keys.length != 0
-        cols = Momomoto::Information_schema::Key_column_usage.select( 
-            { :table_name => keys[0].table_name, 
-              :table_schema => keys[0].table_schema, 
+        cols = Momomoto::Information_schema::Key_column_usage.select(
+            { :table_name => keys[0].table_name,
+              :table_schema => keys[0].table_schema,
               :constraint_name => keys[0].constraint_name,
               :constraint_schema => keys[0].constraint_schema } )
         cols.each do | key |
@@ -92,7 +92,7 @@ module Momomoto
 
     # fetches the parameter of a stored procedure
     def fetch_procedure_parameter( procedure_name, schema_name = nil ) # :nodoc:
-      
+
     end
 
     # fetches the resultset columns of a stored procedure
