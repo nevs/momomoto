@@ -18,7 +18,6 @@ class TestProcedure < Test::Unit::TestCase
     p.procedure_name = 'fetch_procedure_columns'
     p.schema_name = 'momomoto'
     assert_equal( 2, p.columns.length )
-    assert_equal( [:procedure_name], p.columns.keys )
   end
 
   def test_parameters_fetching
@@ -26,6 +25,8 @@ class TestProcedure < Test::Unit::TestCase
     p.procedure_name = 'fetch_procedure_parameters'
     p.schema_name = 'momomoto'
     assert_equal( 1, p.parameters.length )
+    assert_instance_of( Array, p.parameters )
+    assert_instance_of( Hash, p.parameters.first )
   end
 
   def test_columns
@@ -44,13 +45,13 @@ class TestProcedure < Test::Unit::TestCase
   def test_parameters
     p = Class.new( Momomoto::Procedure )
     p2 = Class.new( Momomoto::Procedure )
-    p.parameters = :chunky
-    p2.parameters = :bacon
-    assert_equal( :chunky, p.parameters )
-    assert_equal( :bacon, p2.parameters )
-    p.parameters( :alice )
-    assert_equal( :alice, p.parameters )
-    assert_equal( :bacon, p2.parameters )
+    p.parameters = { :chunky => :bacon }
+    p2.parameters = { :bacon => :chunky }
+    assert_equal( [{:chunky=>:bacon}], p.parameters )
+    assert_equal( [{:bacon=>:chunky}], p2.parameters )
+    p.parameters( {:alice=>:bob},{:eve=>:mallory})
+    assert_equal( [{:alice=>:bob},{:eve=>:mallory}], p.parameters )
+    assert_equal( [{:bacon=>:chunky}], p2.parameters )
   end
 
   def test_call

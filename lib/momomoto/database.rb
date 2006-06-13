@@ -95,18 +95,23 @@ module Momomoto
     # fetches the parameter of a stored procedure
     def fetch_procedure_parameters( procedure_name, schema_name = nil ) # :nodoc:
       p = []
-      conditions = { :table_name => procedure_name }
-      conditions[:schema_name] = schema_name if schema_name
-      cols = Momomoto::Information_schema::Fetch_procedure_parameters.call( conditions )
-      cols.each do  | col |
-        p << { col.parameter_name.to_sym => Momomoto::Datatype.const_get(col.data_type.gsub(' ','_').capitalize).new( col ) }
+      conditions = { :procedure_name => procedure_name }
+      params = Momomoto::Information_schema::Fetch_procedure_parameters.call( conditions )
+      params.each do  | param |
+        p << { param.parameter_name.to_sym => Momomoto::Datatype.const_get(param.data_type.gsub(' ','_').capitalize).new }
       end
       p
     end
 
     # fetches the resultset columns of a stored procedure
     def fetch_procedure_columns( procedure_name, schema_name = nil ) # :nodoc:
-      columns = {}
+      c = {}
+      conditions = { :procedure_name => procedure_name }
+      cols = Momomoto::Information_schema::Fetch_procedure_columns.call( conditions )
+      cols.each do  | col |
+        c[col.column_name.to_sym] = Momomoto::Datatype.const_get(col.data_type.gsub(' ','_').capitalize).new
+      end
+      c
     end
 
 

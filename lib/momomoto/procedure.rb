@@ -61,13 +61,17 @@ module Momomoto
       end
 
       # set the parameters this procedures accepts
-      def parameters=( parameters )
-        class_variable_set( :@@parameters, parameters)
+      # example: parameters = {:param1=>Momomoto::Datatype::Text.new}
+      # example: parameters = {:param1=>Momomoto::Datatype::Text.new}
+      def parameters=( *p )
+        p = p.first if p.first.kind_of? Array
+        raise Error, "Wrong input format" if p.first.kind_of? Array
+        class_variable_set( :@@parameters, p )
       end
 
       # get the parameters this procedure accepts
-      def parameters( p = nil )
-        return self.parameters=( p ) if p
+      def parameters( *p )
+        return self.send( :parameters=, *p ) if not p.empty?
         begin
           class_variable_get( :@@parameters )
         rescue NameError
@@ -94,7 +98,8 @@ module Momomoto
 
       def compile_parameter( params ) # :nodoc:
         args = []
-        parameters.each do | field_name, datatype |
+        parameters.each do | parameter |
+          field_name, datatype = parameter.to_a.first
           raise Error, "parameter #{field_name} not specified" if not params.include?( field_name )
           args << datatype.escape( params[field_name] )
         end
