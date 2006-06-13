@@ -1,10 +1,10 @@
 
-CREATE OR REPLACE FUNCTION fetch_procedure_columns( procedure_name TEXT ) RETURNS SETOF procedure_column AS $$
+CREATE OR REPLACE FUNCTION momomoto.fetch_procedure_columns( procedure_name TEXT ) RETURNS SETOF momomoto.procedure_column AS $$
 DECLARE
   proc RECORD;
   typ RECORD;
   att RECORD;
-  col procedure_column%rowtype;
+  col momomoto.procedure_column%rowtype;
 BEGIN
   SELECT INTO proc * FROM pg_proc WHERE proname = procedure_name;
   IF FOUND THEN
@@ -28,11 +28,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fetch_procedure_parameter( procedure_name TEXT ) RETURNS SETOF procedure_parameter AS $$
+CREATE OR REPLACE FUNCTION momomoto.fetch_procedure_parameters( procedure_name TEXT ) RETURNS SETOF momomoto.procedure_parameter AS $$
 DECLARE
   proc RECORD;
   typ RECORD;
-  col procedure_parameter%rowtype;
+  col momomoto.procedure_parameter%rowtype;
   i INTEGER;
   j INTEGER;
   k INTEGER;
@@ -41,10 +41,9 @@ BEGIN
   IF FOUND THEN
     j = array_lower(proc.proargtypes, 1);
     k = array_upper(proc.proargtypes, 1);
-    RAISE WARNING '%', j;
     FOR i IN j .. k
     LOOP
-      col.column_name = proc.proargnames[ i + array_lower( proc.proargnames, 1 )];
+      col.parameter_name = proc.proargnames[ i + array_lower( proc.proargnames, 1 )];
       col.data_type = format_type( proc.proargtypes[i], NULL );
       RETURN NEXT col;
     END LOOP;
