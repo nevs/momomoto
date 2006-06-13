@@ -6,6 +6,18 @@ module Momomoto
 
     attr_accessor :debug
 
+    def lower( *args )
+      Momomoto::Order::Lower.new( *args )
+    end
+
+    def asc( *args )
+      Momomoto::Order::Asc.new( *args )
+    end
+
+    def desc( *args )
+      Momomoto::Order::Desc.new( *args )
+    end
+
   end
 
   ## base exception for all exceptions thrown by Momomoto
@@ -69,9 +81,13 @@ module Momomoto
       def compile_order( order ) # :nodoc:
         order = [ order ] if not order.kind_of?( Array )
         order = order.map do | field |
-          field = field.to_s
-          raise Error if not columns.keys.member?( field.to_sym )
-          "lower(#{field})"
+          if field.kind_of?( Momomoto::Order )
+            field.to_sql( columns )
+          else
+            raise Momomoto::Error if not field.kind_of?( String ) and not field.kind_of?( Symbol ) 
+            raise Momomoto::Error if not columns.keys.member?( field.to_sym )
+            field.to_s
+          end
         end
         " ORDER BY #{order.join(',')}"
       end

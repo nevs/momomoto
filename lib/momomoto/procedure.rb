@@ -64,8 +64,7 @@ module Momomoto
       # example: parameters = {:param1=>Momomoto::Datatype::Text.new}
       # example: parameters = {:param1=>Momomoto::Datatype::Text.new}
       def parameters=( *p )
-        p = p.first if p.first.kind_of? Array
-        raise Error, "Wrong input format" if p.first.kind_of? Array
+        p = p.flatten
         class_variable_set( :@@parameters, p )
       end
 

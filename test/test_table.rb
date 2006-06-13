@@ -97,7 +97,18 @@ class TestTable < Test::Unit::TestCase
     Person.select( nil, {:limit => 3, :order => [:first_name, :last_name]} )
     Person.select( nil, {:limit => 3, :order => ['first_name', :last_name]} )
     Person.select( nil, {:limit => 3, :order => ['first_name', 'last_name']} )
-    assert_raise( Momomoto::Error ) do 
+    Person.select( nil, {:order => Momomoto::lower(:first_name)})
+    Person.select( nil, {:order => Momomoto::lower(:first_name, :last_name)})
+    Person.select( nil, {:order => Momomoto::asc( [:first_name, :last_name] )} )
+    Person.select( nil, {:order => [:first_name, Momomoto::lower(:last_name )]} )
+    Person.select( nil, {:order => Momomoto::asc(Momomoto::lower(:first_name))})
+    assert_raise( Momomoto::Error ) do
+      Person.select( nil, {:order => Momomoto::lower(Momomoto::asc(:first_name))})
+    end
+    assert_raise( Momomoto::Error ) do
+      Person.select( nil, {:order => Momomoto::lower(Momomoto::desc(:first_name))})
+    end
+    assert_raise( Momomoto::Error ) do
       Person.select( nil, {:limit=>'4f4'} )
     end
     assert_raise( Momomoto::Error ) do
