@@ -6,6 +6,8 @@ require 'momomoto/information_schema/columns'
 require 'momomoto/information_schema/table_constraints'
 require 'momomoto/information_schema/key_column_usage'
 require 'momomoto/information_schema/routines'
+require 'momomoto/information_schema/fetch_procedure_columns'
+require 'momomoto/information_schema/fetch_procedure_parameters'
 
 ## Momomoto is a database abstraction layer
 module Momomoto
@@ -81,7 +83,7 @@ module Momomoto
     # should work with any SQL2003 compliant DBMS
     def fetch_table_columns( table_name, schema_name = nil ) # :nodoc:
       columns = {}
-      conditions = { :table_name=>table_name }
+      conditions = { :table_name => table_name }
       conditions[:table_schema] = schema_name if schema_name
       cols = Momomoto::Information_schema::Columns.select( conditions )
       cols.each do  | col |
@@ -91,13 +93,20 @@ module Momomoto
     end
 
     # fetches the parameter of a stored procedure
-    def fetch_procedure_parameter( procedure_name, schema_name = nil ) # :nodoc:
-
+    def fetch_procedure_parameters( procedure_name, schema_name = nil ) # :nodoc:
+      p = []
+      conditions = { :table_name => procedure_name }
+      conditions[:schema_name] = schema_name if schema_name
+      cols = Momomoto::Information_schema::Fetch_procedure_parameters.call( conditions )
+      cols.each do  | col |
+        p << { col.parameter_name.to_sym => Momomoto::Datatype.const_get(col.data_type.gsub(' ','_').capitalize).new( col ) }
+      end
+      p
     end
 
     # fetches the resultset columns of a stored procedure
-    def fetch_procedure_columns( procedure_name, schema_name )
-
+    def fetch_procedure_columns( procedure_name, schema_name = nil ) # :nodoc:
+      columns = {}
     end
 
 

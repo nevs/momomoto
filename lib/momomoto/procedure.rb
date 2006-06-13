@@ -17,9 +17,9 @@ module Momomoto
           schema_name( construct_schema_name( self.name ) )
         end
 
-        unless class_variables.member?( '@@parameter' )
-          parameter( database.fetch_procedure_parameter( procedure_name ) )
-          raise CriticalError if not parameter
+        unless class_variables.member?( '@@parameters' )
+          parameters( database.fetch_procedure_parameters( procedure_name ) )
+          raise CriticalError if not parameters
         end
 
         unless class_variables.member?( '@@columns' )
@@ -60,18 +60,19 @@ module Momomoto
         "#{ schema_name ? schema_name + '.' : ''}#{procedure_name}"
       end
 
-      # set the parameter this procedures accepts
-      def parameter=( parameter )
-        class_variable_set( :@@parameter, parameter)
+      # set the parameters this procedures accepts
+      def parameters=( parameters )
+        class_variable_set( :@@parameters, parameters)
       end
 
-      # get the parameter this procedure accepts
-      def parameter( parameter = nil )
-        return self.parameter=( parameter ) if parameter
+      # get the parameters this procedure accepts
+      def parameters( p = nil )
+        return self.parameters=( p ) if p
         begin
-          class_variable_get( :@@parameter )
+          class_variable_get( :@@parameters )
         rescue NameError
-          nil
+          initialize_procedure
+          class_variable_get( :@@parameters )
         end
       end
 
@@ -81,18 +82,19 @@ module Momomoto
       end
 
       # get the columns of the resultset this procedure returns
-      def columns( columns = nil )
-        return self.columns=( columns ) if columns
+      def columns( c = nil )
+        return self.columns=( c ) if c
         begin
           class_variable_get( :@@columns )
         rescue NameError
-          nil
+          initialize_procedure
+          class_variable_get( :@@columns )
         end
       end
 
       def compile_parameter( params ) # :nodoc:
         args = []
-        parameter.each do | field_name, datatype |
+        parameters.each do | field_name, datatype |
           raise Error, "parameter #{field_name} not specified" if not params.include?( field_name )
           args << datatype.escape( params[field_name] )
         end

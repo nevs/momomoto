@@ -13,6 +13,21 @@ class TestProcedure < Test::Unit::TestCase
     assert_equal( 'proc1', Proc1.procedure_name )
   end
 
+  def test_columns_fetching
+    p = Class.new( Momomoto::Procedure )
+    p.procedure_name = 'fetch_procedure_columns'
+    p.schema_name = 'momomoto'
+    assert_equal( 2, p.columns.length )
+    assert_equal( [:procedure_name], p.columns.keys )
+  end
+
+  def test_parameters_fetching
+    p = Class.new( Momomoto::Procedure )
+    p.procedure_name = 'fetch_procedure_parameters'
+    p.schema_name = 'momomoto'
+    assert_equal( 1, p.parameters.length )
+  end
+
   def test_columns
     p = Class.new( Momomoto::Procedure )
     p2 = Class.new( Momomoto::Procedure )
@@ -26,23 +41,23 @@ class TestProcedure < Test::Unit::TestCase
     assert_equal( :alice, p2.columns )
   end
 
-  def test_parameter
+  def test_parameters
     p = Class.new( Momomoto::Procedure )
     p2 = Class.new( Momomoto::Procedure )
-    p.parameter = :chunky
-    p2.parameter = :bacon
-    assert_equal( :chunky, p.parameter )
-    assert_equal( :bacon, p2.parameter )
-    p.parameter( :alice )
-    assert_equal( :alice, p.parameter )
-    assert_equal( :bacon, p2.parameter )
+    p.parameters = :chunky
+    p2.parameters = :bacon
+    assert_equal( :chunky, p.parameters )
+    assert_equal( :bacon, p2.parameters )
+    p.parameters( :alice )
+    assert_equal( :alice, p.parameters )
+    assert_equal( :bacon, p2.parameters )
   end
 
   def test_call
     self.class.const_set(:Test_parameter, Class.new( Momomoto::Procedure ) )
     assert_equal( "test_parameter", Test_parameter.procedure_name )
-    Test_parameter.parameter(:person_id => Momomoto::Datatype::Integer.new)
-    assert_not_nil( Test_parameter.parameter )
+    Test_parameter.parameters(:person_id => Momomoto::Datatype::Integer.new)
+    assert_not_nil( Test_parameter.parameters )
     Test_parameter.columns(
         :person_id => Momomoto::Datatype::Integer.new,
         :first_name => Momomoto::Datatype::Text.new,
