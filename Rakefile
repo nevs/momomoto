@@ -25,6 +25,11 @@ task :coverage do | t |
   sh "scp -r coverage pulsar:public_html"
 end
 
+desc "create documentation for ri"
+task :doc do
+  sh "rdoc -r lib"
+end
+
 desc "run benchmark"
 task( :bench ) do | t |
   sh "ruby benchmark.rb"

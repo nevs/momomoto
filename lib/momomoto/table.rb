@@ -1,9 +1,8 @@
 
 module Momomoto
 
-  # this class implements to tables/views
+  # this class implements access to tables/views
   # it must not be used directly but you should inherit from this class
-  # you can only write to a table if it has primary keys defined
   class Table < Base
 
     class << self

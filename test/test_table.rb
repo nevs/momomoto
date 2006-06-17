@@ -101,7 +101,9 @@ class TestTable < Test::Unit::TestCase
     Person.select( nil, {:order => Momomoto::lower(:first_name, :last_name)})
     Person.select( nil, {:order => Momomoto::asc( [:first_name, :last_name] )} )
     Person.select( nil, {:order => [:first_name, Momomoto::lower(:last_name )]} )
+    Person.select( nil, {:order => [:first_name, Momomoto::desc(:last_name )]} )
     Person.select( nil, {:order => Momomoto::asc(Momomoto::lower(:first_name))})
+    Person.select( nil, {:order => Momomoto::desc(Momomoto::lower(:first_name))})
     assert_raise( Momomoto::Error ) do
       Person.select( nil, {:order => Momomoto::lower(Momomoto::asc(:first_name))})
     end
