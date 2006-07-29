@@ -1,6 +1,21 @@
 
 class TestProcedure < Test::Unit::TestCase
 
+  def test_sql_function_parameter
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_parameter_sql")
+    assert_equal( 1, a.parameters.length )
+    assert_equal( [:param1], a.parameters[0].keys )
+  end
+
+  def test_plpqsql_function_parameter
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_parameter_plpgsql")
+    assert_equal( 2, a.parameters.length )
+    assert_equal( [:param1], a.parameters[0].keys )
+    assert_equal( [:param2], a.parameters[1].keys )
+  end
+
   def test_procedure_name
     self.class.const_set( :Proc1, Class.new( Momomoto::Procedure ) )
     assert_equal( 'proc1', Proc1.procedure_name )
