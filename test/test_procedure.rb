@@ -35,15 +35,6 @@ class TestProcedure < Test::Unit::TestCase
     assert_equal( 2, p.columns.length )
   end
 
-  def test_parameters_fetching
-    p = Class.new( Momomoto::Procedure )
-    p.procedure_name = 'fetch_procedure_parameters'
-    p.schema_name = 'momomoto'
-    assert_equal( 1, p.parameters.length )
-    assert_instance_of( Array, p.parameters )
-    assert_instance_of( Hash, p.parameters.first )
-  end
-
   def test_columns
     p = Class.new( Momomoto::Procedure )
     p2 = Class.new( Momomoto::Procedure )
