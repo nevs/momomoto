@@ -36,6 +36,7 @@ module Momomoto
         unless class_variables.member?( '@@columns' )
           columns( database.fetch_table_columns( table_name() ) )
         end
+        raise CriticalError, "No fields in table #{table_name}" if columns.keys.empty?
 
         unless class_variables.member?( '@@primary_keys' )
           primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )

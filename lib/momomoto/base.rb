@@ -64,7 +64,7 @@ module Momomoto
         where = ''
         conditions.each do | key , value |
           key = key.to_sym if key.kind_of?( String )
-          raise CriticalError unless columns.keys.member?( key )
+          raise CriticalError, "condition key '#{key}' not a column in table '#{table_name}'" unless columns.keys.member?( key )
           where = where_append( where, columns[key].compile_rule( key, value ) )
         end
         where
@@ -84,7 +84,7 @@ module Momomoto
           if field.kind_of?( Momomoto::Order )
             field.to_sql( columns )
           else
-            raise Momomoto::Error if not field.kind_of?( String ) and not field.kind_of?( Symbol ) 
+            raise Momomoto::Error if not field.kind_of?( String ) and not field.kind_of?( Symbol )
             raise Momomoto::Error if not columns.keys.member?( field.to_sym )
             field.to_s
           end
