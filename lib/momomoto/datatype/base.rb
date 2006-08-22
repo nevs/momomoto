@@ -5,7 +5,7 @@ module Momomoto
     # base class for all datatypes
     class Base
       # get the default value for this column
-      # returns false if none exists 
+      # returns false if none exists
       def default
         @default
       end
@@ -19,7 +19,7 @@ module Momomoto
         @not_null = row.respond_to?(:is_nullable) && row.is_nullable == "NO"
         @default = row.respond_to?( :column_default) && row.column_default
       end
-      
+
       # values are filtered by this function when being set
       def filter_set( value ) # :nodoc:
         value

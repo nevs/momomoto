@@ -38,7 +38,7 @@ module Momomoto
         # Uncomment these lines to derive the schema from the enclosing namespace of the class
         schema = classname.split('::')[-2]
         schema ? schema.downcase.gsub(/[^a-z_0-9]/, '') : nil
-        nil
+        'public'
       end
 
       # set the schema name of the table this class operates on
