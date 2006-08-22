@@ -7,6 +7,14 @@ module Momomoto
       class_variable_get( :@@table )
     end
 
+    def []( fieldname )
+      send( fieldname )
+    end
+
+    def []=( fieldname, value )
+      send( fieldname.to_s + '=', value )
+    end
+
     def initialize( data = [] )
       @data = data
       @new_record = false
