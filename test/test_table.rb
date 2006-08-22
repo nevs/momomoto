@@ -144,6 +144,26 @@ class TestTable < Test::Unit::TestCase
     assert_equal( 0, Person.select(:person_id => 7).length )
   end
 
+  def test_select_single
+    # delete existing test_select_single entries
+    Person.select(:first_name=>'test_select_single').each do | p | p.delete end
+
+    assert_raise( Momomoto::Nothing_found ) do
+      Person.select_single(:first_name=>'test_select_single')
+    end
+
+    p1 = Person.new(:first_name=>'test_select_single')
+    p1.write
+    p2 = Person.new(:first_name=>'test_select_single')
+    p2.write
+
+    assert_raise( Momomoto::Too_many_records ) do
+      Person.select_single(:first_name=>'test_select_single')
+    end
+    p1.delete
+    p2.delete
+  end
+
   def test_write
     r = Person.new
     r.first_name = 'Chunky'

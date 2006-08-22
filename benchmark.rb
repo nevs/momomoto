@@ -52,12 +52,9 @@ end
 Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
   a = nil
   times = []
+
   times << b.report("querying the first time") do a = Columns.find_all end
-
-  times << b.report("querying #{QUERY_REPEAT} times") do
-    QUERY_REPEAT.times do a = Columns.find_all end
-  end
-
+  times << b.report("querying #{QUERY_REPEAT} times") do QUERY_REPEAT.times do a = Columns.find_all end end
   times << b.report("iterating #{ITERATION_REPEAT} times over #{a.length} rows") do
     ITERATION_REPEAT.times do a.each do | row | temp = row end end
   end
@@ -72,7 +69,7 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
   [ total , total / times.length ]
 end
 
-puts "==Native SQL========================================================================="
+puts "==native ruby-postgres==============================================================="
 
 conn = PGconn.connect('localhost', 5432,nil, nil,'pentabarf', 'pentabarf')
 

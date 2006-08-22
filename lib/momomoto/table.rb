@@ -117,17 +117,28 @@ module Momomoto
 
       ## Tries to find a specific record and creates a new one if it does not find it
       #  raises an exception if multiple records are found
-      #  You can pass a block which has to deliver the respective values for the 
+      #  You can pass a block which has to deliver the respective values for the
       #  primary key fields
       def select_or_new( conditions = {}, options = {} )
         if block_given?
-          primary_keys.each do | field | 
+          primary_keys.each do | field |
             conditions[ field ] = yield( field ) if not conditions[ field ]
           end
         end
-        rows = select( conditions, options )  
+        rows = select( conditions, options )
         raise Error, 'Multiple values found in select_or_new' if rows.length > 1
         rows.empty? ? new( conditions ) : rows.first
+      end
+
+      ## Select a single row from the database, raises an exception if more or zero
+      #  rows are found
+      def select_single( conditions = {}, options = {} )
+        data = select( conditions, options )
+        case data.length
+          when 0 then raise Nothing_found, "nothing found in #{table_name}"
+          when 1 then return data[0]
+          else raise Too_many_records, "too many records found in #{table_name}"
+        end
       end
 
       # write row back to database
