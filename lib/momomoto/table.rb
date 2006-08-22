@@ -127,7 +127,7 @@ module Momomoto
         end
         rows = select( conditions, options )
         raise Error, 'Multiple values found in select_or_new' if rows.length > 1
-        rows.empty? ? new( conditions ) : rows.first
+        rows.empty? ? new( options[:copy_values] != false ? conditions : {} ) : rows.first
       end
 
       ## Select a single row from the database, raises an exception if more or zero
@@ -207,5 +207,4 @@ module Momomoto
   end
 
 end
-
 
