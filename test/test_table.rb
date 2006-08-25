@@ -36,7 +36,7 @@ class TestTable < Test::Unit::TestCase
 
   def test_schema_name_getter
     self.class.const_set( :S, Class.new( Momomoto::Table ) )
-    assert_equal( nil, S.schema_name )
+    assert_equal( 'public', S.schema_name )
     S.schema_name = "chunky"
     assert_equal( "chunky", S.schema_name )
   end
@@ -72,7 +72,7 @@ class TestTable < Test::Unit::TestCase
   def test_full_name
     a = Class.new( Momomoto::Table )
     a.table_name( 'abc' )
-    assert_equal( 'abc', a.full_name )
+    assert_equal( 'public.abc', a.full_name )
     a.schema_name( 'def' )
     assert_equal( 'def.abc', a.full_name )
   end

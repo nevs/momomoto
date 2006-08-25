@@ -36,8 +36,8 @@ module Momomoto
       # guesses the schema name of the table this class works on
       def construct_schema_name( classname ) # :nodoc:
         # Uncomment these lines to derive the schema from the enclosing namespace of the class
-        schema = classname.split('::')[-2]
-        schema ? schema.downcase.gsub(/[^a-z_0-9]/, '') : nil
+        #schema = classname.split('::')[-2]
+        #schema ? schema.downcase.gsub(/[^a-z_0-9]/, '') : nil
         'public'
       end
 
