@@ -8,6 +8,7 @@ Rake::TestTask.new do | t |
   t.pattern = 'test/test_*.rb'
   t.ruby_opts << '-I.'
   t.ruby_opts << '-rtest_setup'
+#  t.options = '-rgtk2'
   t.verbose = false
   t.warning = true
 end

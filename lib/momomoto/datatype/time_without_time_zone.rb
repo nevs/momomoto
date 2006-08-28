@@ -8,7 +8,7 @@ module Momomoto
       def escape( value )
         value == nil ? 'NULL' : "'#{Database.escape_string(value.strftime('%H:%M:%S'))}'"
       end
-    
+
       def filter_set( value )
         case value
           when nil, '' then nil
