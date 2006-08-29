@@ -1,4 +1,22 @@
 
+CREATE TABLE conference (
+    conference_id SERIAL,
+    acronym TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    subtitle TEXT,
+    description TEXT,
+    start_date DATE NOT NULL,
+    timeslot_duration INTERVAL NOT NULL DEFAULT '0:30:00',
+    default_timeslots INTEGER NOT NULL DEFAULT 1,
+    max_timeslots_per_event INTEGER NOT NULL DEFAULT 10,
+    day_change TIME WITHOUT TIME ZONE NOT NULL DEFAULT '0:00:00',
+    feedback_enabled BOOL NOT NULL DEFAULT FALSE,
+    submission_enabled BOOL NOT NULL DEFAULT FALSE,
+    visitor_enabled BOOL NOT NULL DEFAULT FALSE,
+    reconfirmation_enabled BOOL NOT NULL DEFAULT FALSE,
+    PRIMARY KEY(conference_id)
+);
+
 CREATE TABLE person (
     person_id SERIAL,
     first_name TEXT,

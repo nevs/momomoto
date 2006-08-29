@@ -1,6 +1,12 @@
 
 class TestTable < Test::Unit::TestCase
 
+  class Person < Momomoto::Table
+  end
+
+  class Conference < Momomoto::Table
+  end
+
   def test_columns_getter
     c1 = Class.new( Momomoto::Table )
     c1.columns =  {:a=>Momomoto::Datatype::Text}
@@ -21,9 +27,10 @@ class TestTable < Test::Unit::TestCase
     a = Class.new( Momomoto::Table )
     a.primary_keys( [:pk] )
     assert_equal( [:pk], a.primary_keys )
-    self.class.const_set( :Person, Class.new( Momomoto::Table ) )
-    Person.schema_name = nil
-    assert_nothing_raised do Person.primary_keys end
+    p = Class.new( Momomoto::Table )
+    p.table_name = 'person'
+    p.schema_name = 'public'
+    assert_nothing_raised do p.primary_keys end
   end
 
   def test_primary_key_setter
@@ -162,6 +169,14 @@ class TestTable < Test::Unit::TestCase
     end
     p1.delete
     p2.delete
+  end
+
+  def test_defaults
+    conf = Conference.select_or_new(:conference_id=>1)
+    conf.acronym = 'Pentabarf'
+    conf.title = 'Pentabarf Developer Conference'
+    conf.start_date = '2007-08-07'
+    conf.write
   end
 
   def test_write
