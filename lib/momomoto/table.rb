@@ -109,6 +109,11 @@ module Momomoto
         initialize_table unless class_variables.member?('@@initialized')
         new_row = const_get(:Row).new( [] )
         new_row.instance_variable_set( :@new_record, true )
+        # set default values
+        columns.each do | key, value |
+          next if primary_keys.member?( key )
+          new_row.send( "#{key}=", value.default ) if value.default
+        end
         fields.each do | key, value |
           new_row.send( "#{key}=", value )
         end
