@@ -11,9 +11,9 @@ module Momomoto
       end
 
       def escape( input )
-        case input 
-          when true then "'t'"
-          when false then "'f'"
+        case input
+          when true, 1, 't', 'true' then "'t'"
+          when false, 0, 'f', 'false' then "'f'"
           else "NULL"
         end
       end
