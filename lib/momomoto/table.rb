@@ -115,7 +115,7 @@ module Momomoto
           new_row.send( "#{key}=", value.default ) if value.default
         end
         fields.each do | key, value |
-          new_row.send( "#{key}=", value )
+          new_row[ key ] = value
         end
         new_row
       end
@@ -126,6 +126,7 @@ module Momomoto
       #  primary key fields
       def select_or_new( conditions = {}, options = {} )
         if block_given?
+          conditions = conditions.dup
           primary_keys.each do | field |
             conditions[ field ] = yield( field ) if not conditions[ field ]
           end
