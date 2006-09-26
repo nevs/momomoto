@@ -112,7 +112,13 @@ module Momomoto
         # set default values
         columns.each do | key, value |
           next if primary_keys.member?( key )
-          new_row.send( "#{key}=", value.default ) if value.default
+          if value.default
+            if m = value.default.match( /^'([^']+)'::(text|interval|timestamp with time zone)$/ )
+              new_row[ key ] = m[1]
+            else
+              new_row[ key ] = value.default
+            end
+          end
         end
         fields.each do | key, value |
           new_row[ key ] = value
