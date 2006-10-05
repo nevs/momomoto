@@ -33,16 +33,16 @@ module Momomoto
       def compile_rule( field_name, value ) # :nodoc:
         case value
           when nil then
-            raise Error, "nil values not allowed here"
+            raise Error, "nil values not allowed for #{field_name}"
           when Array then
-            raise Error, "empty array conditions are not allowed" if value.empty?
-            raise Error, "nil values not allowed in compile_rule" if value.member?( nil )
+            raise Error, "empty array conditions are not allowed for #{field_name}" if value.empty?
+            raise Error, "nil values not allowed in compile_rule for #{field_name}" if value.member?( nil )
             field_name.to_s + ' IN (' + value.map{ | v | escape(filter_set(v)) }.join(',') + ')'
           when Hash then
-            raise Error, "empty hash conditions are not allowed" if value.empty?
+            raise Error, "empty hash conditions are not allowed for #{field_name}" if value.empty?
             rules = []
             value.each do | op, v |
-              raise Error, "nil values not allowed in compile_rule" if v == nil
+              raise Error, "nil values not allowed in compile_rule for #{field_name}" if v == nil
               rules << field_name.to_s + ' ' + self.class.operator_sign(op) + ' ' + escape(filter_set(v))
             end
             rules.join( " AND " )
