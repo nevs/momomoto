@@ -115,7 +115,7 @@ module Momomoto
           if value.default
             if value.default.match( /^\d+$/ )
               new_row[ key ] = value.default
-            elsif m = value.default.match( /^'([^']+)'::(text|interval|timestamp with time zone)$/ )
+            elsif m = value.default.match( /^'([^']+)'::(text|interval|timestamp with time(out)? zone|time with(out)? time zone)$/ )
               new_row[ key ] = m[1]
             end
           end
