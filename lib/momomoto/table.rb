@@ -113,10 +113,10 @@ module Momomoto
         columns.each do | key, value |
           next if primary_keys.member?( key )
           if value.default
-            if m = value.default.match( /^'([^']+)'::(text|interval|timestamp with time zone)$/ )
-              new_row[ key ] = m[1]
-            else
+            if value.default.is_a?( Numeric )
               new_row[ key ] = value.default
+            elsif m = value.default.match( /^'([^']+)'::(text|interval|timestamp with time zone)$/ )
+              new_row[ key ] = m[1]
             end
           end
         end
