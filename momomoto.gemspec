@@ -21,6 +21,6 @@ Gem::Specification.new do | s |
   s.autorequire = "momomoto"
   s.has_rdoc = true
   s.date = Time.now
-  s.files = FileList['lib/**/*.rb', 'test/**/*.rb', '[A-Z]*'].to_a
+  s.files = FileList['lib/**/*.rb', 'sql/**/*.sql', 'test/**/*.rb', '[A-Z]*'].to_a
 end
 
