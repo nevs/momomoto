@@ -21,7 +21,7 @@ module Momomoto
           else raise Error
         end
        rescue => e
-        raise Error, "Error while parsing Timestamp"
+        raise ConversionError, "Error while parsing Timestamp"
       end
 
     end

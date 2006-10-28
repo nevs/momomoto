@@ -13,7 +13,7 @@ module Momomoto
           else raise Error
         end
        rescue => e 
-        raise Error, "parse Error in Date #{e}"
+        raise ConversionError, "parse Error in Date #{e}"
       end
     
     end

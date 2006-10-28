@@ -8,7 +8,7 @@ module Momomoto
           else Integer( value )
         end
        rescue => e
-        raise Error, e.to_s
+        raise ConversionError, e.to_s
       end
 
     end

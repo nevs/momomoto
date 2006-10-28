@@ -23,10 +23,13 @@ module Momomoto
   ## base exception for all exceptions thrown by Momomoto
   class Error < StandardError; end
 
+  # thrown when datatype conversion fails
+  class ConversionError < Error; end
+  class CriticalError < Error; end
+
   class Too_many_records < Error; end
   class Nothing_found < Error; end
 
-  class CriticalError < Error; end
 
   ## Momomoto base class for Table, Procedure and Join
   class Base
