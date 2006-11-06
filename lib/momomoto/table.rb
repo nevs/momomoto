@@ -131,18 +131,24 @@ module Momomoto
       #  You can pass a block which has to deliver the respective values for the
       #  primary key fields
       def select_or_new( conditions = {}, options = {} )
-        rows = []
-        if block_given?
-          conditions = conditions.dup
-          primary_keys.each do | field |
-            conditions[ field ] = yield( field ) if not conditions[ field ]
-            raise ConversionError if not conditions[ field ]
+        begin
+          if block_given?
+            conditions = conditions.dup
+            primary_keys.each do | field |
+              conditions[ field ] = yield( field ) if not conditions[ field ]
+              raise ConversionError if not conditions[ field ]
+            end
           end
+          rows = select( conditions, options )
+        rescue ConversionError
         end
-        rows = select( conditions, options )
-        raise Too_many_records, 'Multiple values found in select_or_new' if rows.length > 1
-      rescue ConversionError
-        rows.empty? ? new( options[:copy_values] != false ? conditions : {} ) : rows.first
+        if rows && rows.length > 1
+          raise Too_many_records, 'Multiple values found in select_or_new'
+        elsif rows && rows.length == 1
+          rows.first
+        else
+          new( options[:copy_values] != false ? conditions : {} )
+        end
       end
 
       ## Select a single row from the database, raises an exception if more or zero
