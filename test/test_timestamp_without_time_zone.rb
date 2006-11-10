@@ -6,7 +6,7 @@ class TestTimestampWithoutTimeZone < Test::Unit::TestCase
     c.table_name = 'test_timestamp_without_time_zone'
     [ :x, 2.3 ].each do | value |
       r = c.new
-      assert_raise( Momomoto::Error ) do
+      assert_raise( Momomoto::ConversionError ) do
         r.data = value
       end
     end

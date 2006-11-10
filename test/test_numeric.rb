@@ -20,7 +20,7 @@ class TestNumeric < Test::Unit::TestCase
     c.table_name = 'test_numeric'
     [ "2005-5-43", "a"].each do | value |
       r = c.new
-      assert_raise( Momomoto::Error ) do
+      assert_raise( Momomoto::ConversionError ) do
         r.data = value
       end
     end
