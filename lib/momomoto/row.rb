@@ -3,6 +3,8 @@ module Momomoto
   # base class for all Rows
   class Row
 
+    undef :id
+
     def self.table
       class_variable_get( :@@table )
     end

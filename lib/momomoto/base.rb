@@ -115,20 +115,24 @@ module Momomoto
         columns.each_with_index do | ( field_name, data_type ), index |
           # define getter and setter for row class
           row.instance_eval do
-            if data_type.respond_to?( :filter_get )
-              define_method( field_name ) do
-                data_type.filter_get( instance_variable_get(:@data)[index] )
-              end
-            else
-              define_method( field_name ) do
-                instance_variable_get(:@data)[index]
+            if not public_method_defined?( field_name )
+              if data_type.respond_to?( :filter_get )
+                define_method( field_name ) do
+                  data_type.filter_get( instance_variable_get(:@data)[index] )
+                end
+              else
+                define_method( field_name ) do
+                  instance_variable_get(:@data)[index]
+                end
               end
             end
-            define_method( "#{field_name}=" ) do | value |
-              if not new_record? and table.primary_keys.member?( field_name )
-                raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
+            if not public_method_defined?( "#{field_name}=" )
+              define_method( "#{field_name}=" ) do | value |
+                if not new_record? and table.primary_keys.member?( field_name )
+                  raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
+                end
+                instance_variable_get(:@data)[index] = data_type.filter_set( value )
               end
-              instance_variable_get(:@data)[index] = data_type.filter_set( value )
             end
           end
         end
