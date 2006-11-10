@@ -16,7 +16,7 @@ class TestInterval < Test::Unit::TestCase
     c.table_name = 'test_interval'
     [ :x, 2.3 ].each do | value |
       r = c.new
-      assert_raise( Momomoto::Error ) do
+      assert_raise( Momomoto::ConversionError ) do
         r.data = value
       end
     end

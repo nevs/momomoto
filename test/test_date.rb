@@ -40,7 +40,7 @@ class TestDate < Test::Unit::TestCase
     c.table_name = 'test_date'
     [ "2005-5-43", "2006-16-06"].each do | value |
       r = c.new
-      assert_raise( Momomoto::Error ) do
+      assert_raise( Momomoto::ConversionError ) do
         r.data = value
       end
     end
