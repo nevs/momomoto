@@ -2,6 +2,13 @@
 class TestTable < Test::Unit::TestCase
 
   class Person < Momomoto::Table
+    def self.person_id=( row , newvalue )
+      newvalue
+    end
+
+    def self.nick_name=( row, newvalue )
+      row.first_name + newvalue
+    end
   end
 
   class Conference < Momomoto::Table
@@ -82,6 +89,13 @@ class TestTable < Test::Unit::TestCase
     assert_equal( 'public.abc', a.full_name )
     a.schema_name( 'def' )
     assert_equal( 'def.abc', a.full_name )
+  end
+
+  def test_custom_setter
+    p = Person.new
+    p.first_name = 'bacon'
+    p.nick_name = 'abc'
+    assert_equal( p.first_name + 'abc', p.nick_name )
   end
 
   def test_new
