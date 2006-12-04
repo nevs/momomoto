@@ -126,21 +126,21 @@ module Momomoto
                 end
               end
             end
-            if table.respond_to?( "#{field_name}=" )
-              define_method( "#{field_name}=" ) do | value |
-                if not new_record? and table.primary_keys.member?( field_name )
-                  raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
-                end
-                instance_variable_get(:@data)[index] = table.send( "#{field_name}=", self, data_type.filter_set( value ) )
+
+            setter_name = "#{field_name}="
+            define_method( setter_name ) do | value |
+              if not new_record? and table.primary_keys.member?( field_name )
+                raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
               end
-            else
-              define_method( "#{field_name}=" ) do | value |
-                if not new_record? and table.primary_keys.member?( field_name )
-                  raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
+              instance_variable_get(:@data)[index] = data_type.filter_set( 
+                if self.class.table.respond_to?( setter_name )
+                  table.send( setter_name, self, value )
+                else
+                  value
                 end
-                instance_variable_get(:@data)[index] = data_type.filter_set( value )
-              end
+              )
             end
+
           end
         end
 
