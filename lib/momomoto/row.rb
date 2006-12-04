@@ -3,6 +3,7 @@ module Momomoto
   # base class for all Rows
   class Row
 
+    # undefing id to avoid conflicts with fields named id
     undef :id
 
     def self.table

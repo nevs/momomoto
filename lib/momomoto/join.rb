@@ -56,8 +56,6 @@ module Momomoto
         end
       end
       sql += self.class.compile_where( conditions )
-      sql += " LIMIT #{options[:limit]}" if options[:limit]
-      sql += " ORDER BY #{options[:order]}" if options[:order]
       @data = []
       self.class.database.execute( sql )
     end
