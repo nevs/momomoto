@@ -21,6 +21,7 @@ CREATE TABLE person (
     person_id SERIAL,
     first_name TEXT,
     last_name TEXT,
+    nick_name TEXT,
     PRIMARY KEY(person_id)
 );
 
