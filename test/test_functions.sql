@@ -10,3 +10,16 @@ CREATE OR REPLACE FUNCTION test_parameter_plpgsql( param1 INTEGER, param2 TEXT )
   END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION test_set_returning( person_id INTEGER ) RETURNS SETOF person AS $$
+  DECLARE
+    result RECORD;
+  BEGIN
+    FOR result IN
+      SELECT person.* FROM person WHERE person.person_id <> person_id
+      LOOP
+        RETURN NEXT result;
+      END LOOP;
+    RETURN;
+  END;
+$$ LANGUAGE plpgsql;
+
