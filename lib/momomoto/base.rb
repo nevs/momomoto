@@ -113,8 +113,8 @@ module Momomoto
         row.instance_eval do class_variable_set( :@@table, table ) end
 
         columns.each_with_index do | ( field_name, data_type ), index |
-          # define getter and setter for row class
           row.instance_eval do
+            # define getter for row class
             if not public_method_defined?( field_name )
               if data_type.respond_to?( :filter_get )
                 define_method( field_name ) do
@@ -127,18 +127,24 @@ module Momomoto
               end
             end
 
+            # define setter for row class
             setter_name = "#{field_name}="
             define_method( setter_name ) do | value |
               if not new_record? and table.primary_keys.member?( field_name )
                 raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
               end
-              instance_variable_get(:@data)[index] = data_type.filter_set( 
+              store = instance_variable_get(:@data)
+              value = data_type.filter_set( 
                 if self.class.table.respond_to?( setter_name )
                   table.send( setter_name, self, value )
                 else
                   value
                 end
               )
+              if store[index] != value
+                instance_variable_set(:@dirty, true)
+                store[index] = value
+              end
             end
 
           end

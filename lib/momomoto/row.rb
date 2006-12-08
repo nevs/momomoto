@@ -18,9 +18,14 @@ module Momomoto
       send( fieldname.to_s + '=', value )
     end
 
+    def dirty?
+      @dirty
+    end
+
     def initialize( data = [] )
       @data = data
       @new_record = false
+      @dirty = false
     end
 
     def new_record?
