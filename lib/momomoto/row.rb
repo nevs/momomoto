@@ -22,6 +22,10 @@ module Momomoto
       @dirty
     end
 
+    def dirty=( value )
+      @dirty = !!value
+    end
+
     def initialize( data = [] )
       @data = data
       @new_record = false
@@ -30,6 +34,10 @@ module Momomoto
 
     def new_record?
       @new_record
+    end
+
+    def new_record=( value )
+      @new_record = !!value
     end
 
     # write the row to the database

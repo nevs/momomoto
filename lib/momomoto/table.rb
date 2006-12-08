@@ -108,7 +108,7 @@ module Momomoto
       def new( fields = {} )
         initialize_table unless class_variables.member?('@@initialized')
         new_row = const_get(:Row).new( [] )
-        new_row.instance_variable_set( :@new_record, true )
+        new_row.new_record = true
         # set default values
         columns.each do | key, value |
           next if primary_keys.member?( key )
@@ -172,8 +172,11 @@ module Momomoto
         if row.new_record?
           insert( row )
         else
+          return false unless row.dirty?
           update( row )
         end
+        row.dirty = false
+        true
       end
 
       # create an insert statement for a row
@@ -195,7 +198,7 @@ module Momomoto
         end
         raise Error, "insert with all fields nil" if fields.empty?
         sql = "INSERT INTO " + full_name + '(' + fields.join(',') + ') VALUES (' + values.join(',') + ');'
-        row.instance_variable_set( :@new_record, false )
+        row.new_record = false
         database.execute( sql )
       end
 
@@ -223,7 +226,7 @@ module Momomoto
           conditions[field_name] = row.send( field_name )
         end
         sql = "DELETE FROM #{table_name} #{compile_where(conditions)};"
-        row.instance_variable_set( :@new_record, true )
+        row.new_record = true
         database.execute( sql )
       end
 

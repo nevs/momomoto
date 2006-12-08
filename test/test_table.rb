@@ -217,5 +217,17 @@ class TestTable < Test::Unit::TestCase
     end
   end
 
+  def test_dirty
+    r = Person.new
+    assert_equal( false, r.dirty?, "New empty rows should not be dirty" )
+    r.first_name = 'Chunky'
+    assert_equal( true, r.dirty?, "Modified rows must be dirty" )
+    r.write
+    assert_equal( false, r.dirty?, "Written rows should not be dirty" )
+    r.delete
+    r = Person.new(:first_name => 'Chunky')
+    assert_equal( true, r.dirty? )
+  end
+
 end
 

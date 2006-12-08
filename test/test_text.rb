@@ -10,6 +10,7 @@ class TestText < Test::Unit::TestCase
       r.write
       r2 = c.select(:id=>r.id).first
       assert_equal( value, r2.data )
+      r.delete
     end
   end
 
