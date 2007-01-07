@@ -1,5 +1,11 @@
 
-require 'postgres'
+begin
+  require 'rubygems'
+  require_gem 'ruby-postgres', '>= 0.7.1.2006.04.06'
+rescue LoadError
+  require 'postgres'
+end
+
 require 'singleton'
 
 require 'momomoto/information_schema/columns'
