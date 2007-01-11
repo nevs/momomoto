@@ -90,7 +90,7 @@ module Momomoto
         end
       end
 
-      ## Searches for records and returns the number of records found
+      ## Searches for records and returns an array containing the records
       def select( conditions = {}, options = {} )
         initialize_table unless class_variables.member?('@@initialized')
         sql = "SELECT " + columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
@@ -105,6 +105,7 @@ module Momomoto
         data
       end
 
+      ## constructor for a record in this table accepts a hash with presets for the fields of the record
       def new( fields = {} )
         initialize_table unless class_variables.member?('@@initialized')
         new_row = const_get(:Row).new( [] )
