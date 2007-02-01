@@ -2,9 +2,9 @@
 
 $LOAD_PATH.unshift( File.join( File.dirname(__FILE__), 'lib' ))
 
+require 'rubygems'
 require 'benchmark'
 require 'momomoto'
-require 'rubygems'
 require 'active_record'
 
 include Benchmark
@@ -15,7 +15,7 @@ QUERY_REPEAT = 10
 ITERATION_REPEAT = 10
 
 puts "==Momomoto==========================================================================="
-Momomoto::Database.instance.config('database'=>'pentabarf','username'=>'pentabarf')
+Momomoto::Database.instance.config('database'=>'test')
 Momomoto::Database.instance.connect
 Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
   a = nil
@@ -43,7 +43,7 @@ Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
 end
 
 puts "==ActiveRecord======================================================================="
-ActiveRecord::Base.connection = {'adapter'=>'postgresql','host'=>'localhost', 'database' => 'pentabarf', 'username' => 'pentabarf'}
+ActiveRecord::Base.connection = {'adapter'=>'postgresql', 'database' => 'test' }
 
 class Columns < ActiveRecord::Base
   set_table_name 'information_schema.columns'
@@ -71,7 +71,7 @@ end
 
 puts "==native ruby-postgres==============================================================="
 
-conn = PGconn.connect('localhost', 5432,nil, nil,'pentabarf', 'pentabarf')
+conn = PGconn.connect( nil, nil, nil, nil, 'test' )
 
 Benchmark.benchmark(" "*40 + CAPTION, 40, FMTSTR, ">total:", ">avg:") do | b |
   a = nil

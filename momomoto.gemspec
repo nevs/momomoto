@@ -2,7 +2,7 @@
 require 'rake'
 
 Gem::Specification.new do | s |
-  s.name = "Momomoto"
+  s.name = "momomoto"
   s.homepage = "http://pentabarf.org/Momomoto"
   s.version = '0.1.0'
 
