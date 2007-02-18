@@ -130,7 +130,7 @@ module Momomoto
     # executes the block and commits the transaction if a block is given
     # otherwise simply starts a new transaction
     def transaction
-      raise Error if @transaction_active
+      raise Error, "Transaction active" if @transaction_active
       self.begin
       begin
         yield

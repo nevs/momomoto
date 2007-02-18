@@ -1,5 +1,5 @@
 
-## Momomoto is a database abstraction layer
+## Momomoto is a database abstraction layer for PostgreSQL
 module Momomoto
 
   class << self
