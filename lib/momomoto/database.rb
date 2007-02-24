@@ -92,6 +92,7 @@ module Momomoto
       conditions = { :table_name => table_name }
       conditions[:table_schema] = schema_name if schema_name
       cols = Momomoto::Information_schema::Columns.select( conditions )
+      raise CriticalError, "Table without columns" if cols.length < 1
       cols.each do  | col |
         columns[col.column_name.to_sym] = Momomoto::Datatype.const_get(col.data_type.gsub(' ','_').capitalize).new( col )
       end
