@@ -98,6 +98,7 @@ module Momomoto
         sql += compile_where( conditions )
         sql += compile_order( options[:order] ) if options[:order]
         sql += compile_limit( options[:limit] ) if options[:limit]
+        sql += compile_offset( options[:offset] ) if options[:offset]
         data = []
         database.execute( sql ).each do | row |
           data << const_get(:Row).new( row )

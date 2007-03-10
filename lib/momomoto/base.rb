@@ -83,6 +83,13 @@ module Momomoto
         raise Error, e.to_s
       end
 
+      # compiles the sql statement defining the offset
+      def compile_offset( offset )
+        " OFFSET #{Integer(offset)}"
+       rescue => e
+        raise Error, e.to_s
+      end
+
       # compiles the sql statement defining the table order
       def compile_order( order ) # :nodoc:
         order = [ order ] if not order.kind_of?( Array )
