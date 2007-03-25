@@ -34,6 +34,10 @@ module Momomoto
       @config = config
     end
 
+    def self.config( conf )
+      instance.config( conf )
+    end
+
     def initialize # :nodoc:
       @config = {}
       @connection = nil
@@ -48,6 +52,10 @@ module Momomoto
                       @config[:password])
     rescue => e
       raise CriticalError, "Connection to database failed: #{e}"
+    end
+
+    def self.connect
+      instance.connect
     end
 
     # terminate this connection
