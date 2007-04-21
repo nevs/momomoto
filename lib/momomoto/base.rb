@@ -113,7 +113,7 @@ module Momomoto
       # construct the Row class for the table
       def initialize_row( row, table ) # :nodoc:
 
-        if not row.ancestors.include?( Momomoto::Row )
+        if not row.ancestors.member?( Momomoto::Row )
           raise CriticalError, "Row is not inherited from Momomoto::Row"
         end
 

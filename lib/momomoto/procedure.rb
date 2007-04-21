@@ -99,7 +99,7 @@ module Momomoto
         args = []
         parameters.each do | parameter |
           field_name, datatype = parameter.to_a.first
-          raise Error, "parameter #{field_name} not specified" if not params.include?( field_name )
+          raise Error, "parameter #{field_name} not specified" if not params.member?( field_name )
           args << datatype.escape( params[field_name] )
         end
         args.join(',')
