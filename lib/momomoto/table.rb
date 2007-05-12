@@ -149,7 +149,7 @@ module Momomoto
         rescue ConversionError
         end
         if rows && rows.length > 1
-          raise Too_many_records, 'Multiple values found in select_or_new'
+          raise Too_many_records, "Multiple values found in select_or_new for #{self}:#{conditions.inspect}"
         elsif rows && rows.length == 1
           rows.first
         else
