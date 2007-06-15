@@ -3,8 +3,8 @@ module Momomoto
   # base class for all Rows
   class Row
 
-    # undefing id to avoid conflicts with fields named id
-    undef :id
+    # undefing fields to avoid conflicts
+    undef :id,:type
 
     def self.table
       class_variable_get( :@@table )
