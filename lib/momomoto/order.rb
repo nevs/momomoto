@@ -7,6 +7,9 @@ module Momomoto
 
     def initialize( *fields )
       @fields = fields.flatten
+      @fields.each do | field |
+        raise Error if not columns.keys.member?( field.to_sym )
+      end
     end
 
     def to_sql( columns )
@@ -26,13 +29,16 @@ module Momomoto
       def initialize( *fields )
         fields = fields.flatten
         fields.each do | field |
+          raise Error if not columns.keys.member?( field.to_sym )
           raise Error, "Asc and Desc are only allowed as toplevel order elements" if field.kind_of?( Asc ) or field.kind_of?( Desc )
         end
         @fields = fields
       end
 
       def function( argument )
-        "lower(#{argument})"
+        argument = [ argument ] if not argument.kind_of?( Array )
+        argument = argument.map{|a| "lower(#{a})"}
+        argument.join(',')
       end
     end
 
