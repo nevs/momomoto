@@ -7,9 +7,6 @@ module Momomoto
 
     def initialize( *fields )
       @fields = fields.flatten
-      @fields.each do | field |
-        raise Error if not columns.keys.member?( field.to_sym )
-      end
     end
 
     def to_sql( columns )
