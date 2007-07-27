@@ -26,6 +26,7 @@ module Momomoto
     # expects a hash with the following keys: host, port, database,
     # username, password, pgoptions and pgtty
     def config( config )
+      config ||= {}
       # we also accept String keys in the config hash
       config.each do | key, value |
         config[key.to_sym] = value unless key.kind_of?( Symbol )
