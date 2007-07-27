@@ -50,6 +50,14 @@ module Momomoto
       self.class.table.delete( self )
     end
 
+    def to_hash
+      hash = {}
+      self.class.table.columns.keys.each do | key |
+        hash[key] = self[key]
+      end
+      hash
+    end
+
   end
 
 end
