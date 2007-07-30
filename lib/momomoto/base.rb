@@ -92,6 +92,7 @@ module Momomoto
 
       # compiles the sql statement defining the table order
       def compile_order( order ) # :nodoc:
+        order = default_order if not order
         order = [ order ] if not order.kind_of?( Array )
         order = order.map do | field |
           if field.kind_of?( Momomoto::Order )

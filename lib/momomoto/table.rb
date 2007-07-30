@@ -7,6 +7,17 @@ module Momomoto
 
     class << self
 
+      # set the default order for selects
+      def default_order=( order )
+        @default_order = order
+      end
+
+      # get the columns of the table this class operates on
+      def default_order( order = nil )
+        return self.default_order=( order ) if order
+        @default_order
+      end
+
       # set the columns of the table this class operates on
       def columns=( columns )
         class_variable_set( :@@columns, columns)
@@ -96,7 +107,7 @@ module Momomoto
         sql = "SELECT " + columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
         sql += full_name
         sql += compile_where( conditions )
-        sql += compile_order( options[:order] ) if options[:order]
+        sql += compile_order( options[:order] ) if options[:order] || default_order
         sql += compile_limit( options[:limit] ) if options[:limit]
         sql += compile_offset( options[:offset] ) if options[:offset]
         data = []
@@ -104,6 +115,35 @@ module Momomoto
           data << const_get(:Row).new( row )
         end
         data
+      end
+
+      ## Searches for records and returns an array containing the records
+      def select_with_join( conditions = {}, options = {} )
+        initialize_table unless class_variables.member?('@@initialized')
+        join_table = options[:join]
+        fields = columns.keys.map{|field| full_name+'."'+field.to_s+'"'}
+        fields += join_table.columns.keys.map{|field| join_table.full_name+'."'+field.to_s+'"'}
+
+        sql = "SELECT " + fields.join( "," ) + " FROM "
+        sql += full_name
+        sql += " LEFT OUTER JOIN " + join_table.full_name + " USING(#{join_columns(join_table).join(',')})"
+        sql += compile_where( conditions )
+        sql += compile_order( options[:order] ) if options[:order]
+        sql += compile_limit( options[:limit] ) if options[:limit]
+        sql += compile_offset( options[:offset] ) if options[:offset]
+        data = []
+        database.execute( sql ).each do | row |
+          new_row = const_get(:Row).new( row[0, columns.keys.length] )
+          join_row = join_table.const_get(:Row).new( row[columns.keys.length,join_table.columns.keys.length] )
+          new_row.instance_variable_set(:@join, join_row)
+          new_row.send( :instance_eval ) { class << self; self; end }.send(:define_method, join_table.table_name ) do join_row end
+          data << new_row
+        end
+        data
+      end
+
+      def join_columns( join_table )
+        join_table.primary_keys.select{|f| columns.key?(f)}
       end
 
       ## constructor for a record in this table accepts a hash with presets for the fields of the record
@@ -174,7 +214,7 @@ module Momomoto
         if row.new_record?
           insert( row )
         else
-          return false unless row.dirty?
+#          return false unless row.dirty?
           update( row )
         end
         row.dirty = false
@@ -191,7 +231,7 @@ module Momomoto
               row.send( "#{field_name}=", database.execute("SELECT #{datatype.default};")[0][0] )
             end
             if row.send( field_name ) == nil
-              raise Error, "Primary key fields need to be set or must have a default"
+              raise Error, "Primary key fields(#{field_name}) need to be set or must have a default"
             end
           end
           next if row.send( field_name ).nil?
