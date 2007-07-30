@@ -43,7 +43,14 @@ module Momomoto
             rules = []
             value.each do | op, v |
               raise Error, "nil values not allowed in compile_rule for #{field_name}" if v == nil
-              rules << field_name.to_s + ' ' + self.class.operator_sign(op) + ' ' + escape(filter_set(v))
+              v = [v] if not v.kind_of?( Array )
+              if op == :eq # use IN if comparing for equality
+                rules << compile_rule( field_name, v )
+              else
+                v.each do | v2 |
+                  rules << field_name.to_s + ' ' + self.class.operator_sign(op) + ' ' + escape(filter_set(v2))
+                end
+              end
             end
             rules.join( " AND " )
           else

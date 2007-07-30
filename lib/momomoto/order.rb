@@ -15,7 +15,7 @@ module Momomoto
         if field.kind_of?( Momomoto::Order )
           sql << function( field.to_sql( columns ) )
         else
-          raise Momomoto::Error if not columns.keys.member?( field.to_sym )
+          raise Momomoto::Error, "Unknown field #{field} in order" if not columns.keys.member?( field.to_sym )
           sql << function( field  )
         end
       end
@@ -32,7 +32,9 @@ module Momomoto
       end
 
       def function( argument )
-        "lower(#{argument})"
+        argument = [ argument ] if not argument.kind_of?( Array )
+        argument = argument.map{|a| "lower(#{a})"}
+        argument.join(',')
       end
     end
 

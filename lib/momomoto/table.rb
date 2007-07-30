@@ -7,6 +7,17 @@ module Momomoto
 
     class << self
 
+      # set the default order for selects
+      def default_order=( order )
+        @default_order = order
+      end
+
+      # get/set the default order for selects
+      def default_order( order = nil )
+        return self.default_order=( order ) if order
+        @default_order
+      end
+
       # set the columns of the table this class operates on
       def columns=( columns )
         class_variable_set( :@@columns, columns)
@@ -96,7 +107,7 @@ module Momomoto
         sql = "SELECT " + columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
         sql += full_name
         sql += compile_where( conditions )
-        sql += compile_order( options[:order] ) if options[:order]
+        sql += compile_order( options[:order] ) if options[:order] || default_order
         sql += compile_limit( options[:limit] ) if options[:limit]
         sql += compile_offset( options[:offset] ) if options[:offset]
         data = []
@@ -149,7 +160,7 @@ module Momomoto
         rescue ConversionError
         end
         if rows && rows.length > 1
-          raise Too_many_records, 'Multiple values found in select_or_new'
+          raise Too_many_records, "Multiple values found in select_or_new for #{self}:#{conditions.inspect}"
         elsif rows && rows.length == 1
           rows.first
         else
@@ -174,7 +185,7 @@ module Momomoto
         if row.new_record?
           insert( row )
         else
-          return false unless row.dirty?
+#          return false unless row.dirty?
           update( row )
         end
         row.dirty = false
@@ -191,7 +202,7 @@ module Momomoto
               row.send( "#{field_name}=", database.execute("SELECT #{datatype.default};")[0][0] )
             end
             if row.send( field_name ) == nil
-              raise Error, "Primary key fields need to be set or must have a default"
+              raise Error, "Primary key fields(#{field_name}) need to be set or must have a default"
             end
           end
           next if row.send( field_name ).nil?

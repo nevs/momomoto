@@ -92,6 +92,7 @@ module Momomoto
 
       # compiles the sql statement defining the table order
       def compile_order( order ) # :nodoc:
+        order = default_order if not order
         order = [ order ] if not order.kind_of?( Array )
         order = order.map do | field |
           if field.kind_of?( Momomoto::Order )
@@ -141,13 +142,7 @@ module Momomoto
                 raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
               end
               store = instance_variable_get(:@data)
-              value = data_type.filter_set( 
-                if self.class.table.respond_to?( setter_name )
-                  table.send( setter_name, self, value )
-                else
-                  value
-                end
-              )
+              value = data_type.filter_set( value )
               if store[index] != value
                 instance_variable_set(:@dirty, true)
                 store[index] = value

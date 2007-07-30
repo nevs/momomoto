@@ -3,8 +3,8 @@ module Momomoto
   # base class for all Rows
   class Row
 
-    # undefing id to avoid conflicts with fields named id
-    undef :id
+    # undefing fields to avoid conflicts
+    undef :id,:type
 
     def self.table
       class_variable_get( :@@table )
@@ -48,6 +48,14 @@ module Momomoto
     # delete the row
     def delete
       self.class.table.delete( self )
+    end
+
+    def to_hash
+      hash = {}
+      self.class.table.columns.keys.each do | key |
+        hash[key] = self[key]
+      end
+      hash
     end
 
   end
