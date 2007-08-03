@@ -25,6 +25,11 @@ CREATE TABLE person (
     PRIMARY KEY(person_id)
 );
 
+INSERT INTO person(nick_name) VALUES ('blossom');
+INSERT INTO person(nick_name) VALUES ('buttercup');
+INSERT INTO person(nick_name) VALUES ('bubbles');
+INSERT INTO person(nick_name) VALUES ('mojojojo');
+
 CREATE TABLE event (
     event_id SERIAL,
     title TEXT,
