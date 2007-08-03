@@ -63,7 +63,7 @@ module Momomoto
     def disconnect
       @connection.close
       @connection = nil
-      @transaction_active = true
+      @transaction_active = false
     end
 
     # execute a query
@@ -71,6 +71,12 @@ module Momomoto
       puts sql if Momomoto.debug
       @connection.query( sql )
      rescue => e
+      if @connection.status == PGconn::CONNECTION_BAD
+        begin
+          connect
+        rescue
+        end
+      end
       raise CriticalError, "#{e}: #{sql}"
     end
 
