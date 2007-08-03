@@ -6,7 +6,7 @@ module Momomoto
         if input.nil? || input.empty?
           "NULL"
         else
-          "'" + Database.escape_string( input.to_s ) + "'"
+          "E'" + Database.escape_string( input.to_s ) + "'"
         end
       end
 
