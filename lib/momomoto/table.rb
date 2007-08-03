@@ -25,6 +25,15 @@ module Momomoto
       # set the columns of the table this class operates on
       def columns=( columns )
         class_variable_set( :@@columns, columns)
+        # we store the order separate because it's quite important 
+        # that it's constant otherwise get_colum and set_column 
+        # on the row class might stop working 
+        class_variable_set( :@@column_order, columns.keys )
+      end
+
+      # get the columns of this table
+      def column_order
+        class_variable_get( :@@column_order )
       end
 
       # get the columns of the table this class operates on
