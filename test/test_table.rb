@@ -14,6 +14,22 @@ class TestTable < Test::Unit::TestCase
   class Conference < Momomoto::Table
   end
 
+  def test_default_order_getter
+    c1 = Class.new( Momomoto::Table )
+    c1.default_order = [:a,:b]
+    assert_equal( [:a,:b], c1.default_order )
+  end
+
+  def test_default_order_setter
+    c1 = Class.new( Momomoto::Table )
+    c1.default_order = :a
+    assert_equal( :a, c1.default_order )
+    c1.default_order = :b
+    assert_equal( :b, c1.default_order )
+    c1.default_order( :c )
+    assert_equal( :c, c1.default_order )
+  end
+
   def test_columns_getter
     c1 = Class.new( Momomoto::Table )
     c1.columns =  {:a=>Momomoto::Datatype::Text}
