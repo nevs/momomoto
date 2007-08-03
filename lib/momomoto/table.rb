@@ -9,13 +9,17 @@ module Momomoto
 
       # set the default order for selects
       def default_order=( order )
-        @default_order = order
+        class_variable_set( :@@default_order, order )
       end
 
       # get the columns of the table this class operates on
       def default_order( order = nil )
         return self.default_order=( order ) if order
-        @default_order
+        begin
+          class_variable_get( :@@default_order )
+        rescue NameError
+          class_variable_set( :@@default_order, nil )
+        end
       end
 
       # set the columns of the table this class operates on
