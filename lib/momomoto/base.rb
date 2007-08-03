@@ -120,35 +120,6 @@ module Momomoto
 
         row.instance_eval do class_variable_set( :@@table, table ) end
 
-        # define generic setter
-        c = columns.keys
-        row.instance_eval do
-          define_method( :set_column ) do | column, value |
-            if not new_record? and table.primary_keys.member?( column.to_sym )
-              raise Error, "Setting primary keys(#{column}) is only allowed for new records"
-            end
-            store = instance_variable_get(:@data)
-            value = table.columns[column.to_sym].filter_set( value )
-            index = c.index( column.to_sym )
-            if store[index] != value
-              instance_variable_set(:@dirty, true)
-              store[index] = value
-            end
-          end
-        end
-
-        # define generic getter
-        row.instance_eval do
-          define_method( :get_column ) do | column |
-            index = c.index( column.to_sym )
-            if table.columns[column.to_sym].respond_to?( :filter_get )
-              table.columns[column.to_sym].filter_get( instance_variable_get(:@data)[index] )
-            else
-              instance_variable_get(:@data)[c.index(column.to_sym)]
-            end
-          end
-        end
-
         columns.each_with_index do | ( field_name, data_type ), index |
           row.instance_eval do
             # define getter for row class
