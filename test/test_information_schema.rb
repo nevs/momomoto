@@ -17,10 +17,8 @@ class TestInformationSchema < Test::Unit::TestCase
 
   # test for working information_schema.table_constraints class
   def test_information_schema_table_constraints
-    a = Momomoto::Information_schema::Table_constraints.select(:table_schema => 'pg_catalog', :table_name => 'pg_class')
-    assert_equal( 0, a.length )
     a = Momomoto::Information_schema::Table_constraints.select(:table_schema => 'public')
-    assert_operator( 0, :<, a.length )
+    assert( a.length > 0 )
   end
 
 end
