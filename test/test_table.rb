@@ -2,12 +2,10 @@
 class TestTable < Test::Unit::TestCase
 
   class Person < Momomoto::Table
-    def self.person_id=( row , newvalue )
-      newvalue
-    end
-
-    def self.nick_name=( row, newvalue )
-      row.first_name + newvalue
+    module Methods
+      def nick_name=( newvalue )
+        set_column(:nick_name, get_column(:first_name) + newvalue )
+      end
     end
   end
 

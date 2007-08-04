@@ -114,46 +114,56 @@ module Momomoto
       # construct the Row class for the table
       def initialize_row( row, table ) # :nodoc:
 
+        const_set( :Methods, Module.new ) if not const_defined?( :Methods )
+        const_set( :StandardMethods, Module.new ) if not const_defined?( :StandardMethods )
+
         if not row.ancestors.member?( Momomoto::Row )
           raise CriticalError, "Row is not inherited from Momomoto::Row"
         end
 
         row.instance_eval do class_variable_set( :@@table, table ) end
 
+        define_row_accessors( table )
+
+        row.instance_eval do
+          include table.const_get( :StandardMethods )
+          include table.const_get( :Methods )
+        end
+
+      end
+
+      # defines row setter and getter in the module StandardMethods which
+      # is later included in the Row class 
+      def define_row_accessors( table ) #:nodoc:
+        method_module = const_get( :StandardMethods )
         columns.each_with_index do | ( field_name, data_type ), index |
-          row.instance_eval do
+          method_module.instance_eval do
             # define getter for row class
-            if not public_method_defined?( field_name )
-              if data_type.respond_to?( :filter_get )
-                define_method( field_name ) do
-                  data_type.filter_get( instance_variable_get(:@data)[index] )
-                end
-              else
-                define_method( field_name ) do
-                  instance_variable_get(:@data)[index]
-                end
+            if data_type.respond_to?( :filter_get )
+              define_method( field_name ) do
+                data_type.filter_get( instance_variable_get(:@data)[index] )
+              end
+            else
+              define_method( field_name ) do
+                instance_variable_get(:@data)[index]
               end
             end
 
             # define setter for row class
-            setter_name = "#{field_name}="
-            if not public_method_defined?( setter_name )
-              define_method( setter_name ) do | value |
-                if not new_record? and table.primary_keys.member?( field_name )
-                  raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
-                end
-                store = instance_variable_get(:@data)
-                value = data_type.filter_set( value )
-                if store[index] != value
-                  instance_variable_set(:@dirty, true)
-                  store[index] = value
-                end
+            define_method( "#{field_name}=" ) do | value |
+              if not new_record? and table.primary_keys.member?( field_name )
+                raise Error, "Setting primary keys(#{field_name}) is only allowed for new records"
+              end
+              store = instance_variable_get(:@data)
+              value = data_type.filter_set( value )
+              if store[index] != value
+                instance_variable_set(:@dirty, true)
+                store[index] = value
               end
             end
 
           end
         end
-
       end
 
     end
