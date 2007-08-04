@@ -123,6 +123,14 @@ class TestTable < Test::Unit::TestCase
     assert_equal( true, sven.new_record? )
   end
 
+  def test_offset
+    p = Person.select( {}, {:limit => 1, :order => :person_id,:offset=>2})
+    assert_operator( 2, :<, p[0].person_id )
+    assert_raise( Momomoto::Error ) do 
+      Person.select( {}, {:limit => 1, :order => :person_id,:offset=>'bacon'})
+    end
+  end
+
   def test_select
     r = Person.select( nil, {:limit => 3})
     assert_equal( 3, r.length )
