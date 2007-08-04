@@ -61,6 +61,7 @@ module Momomoto
 
     # generic setter for column values
     def set_column( column, value )
+      table = self.class.table
       if not new_record? and table.primary_keys.member?( column.to_sym )
         raise Error, "Setting primary keys(#{column}) is only allowed for new records"
       end
@@ -74,6 +75,7 @@ module Momomoto
 
     # generic getter for column values
     def get_column( column )
+      table = self.class.table
       index = table.column_order.index( column.to_sym )
       if table.columns[column.to_sym].respond_to?( :filter_get )
         table.columns[column.to_sym].filter_get( @data[index] )
