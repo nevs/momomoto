@@ -1,7 +1,8 @@
 
 begin
   require 'rubygems'
-  require_gem 'ruby-postgres', '>= 0.7.1.2006.04.06'
+  gem 'ruby-postgres', '>= 0.7.1.2006.04.06'
+  require 'postgres'
 rescue LoadError
   require 'postgres'
 end
