@@ -18,6 +18,7 @@ Rcov::RcovTask.new do | t |
   t.rcov_opts << '--xrefs'
   t.rcov_opts << '--comments'
   t.rcov_opts << '-x test_setup.rb'
+  t.rcov_opts << '-x rcov.rb'
   t.test_files = FileList['test/test*.rb'].unshift( 'test_setup.rb' )
 end
 
