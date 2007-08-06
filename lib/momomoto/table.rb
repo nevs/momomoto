@@ -20,11 +20,20 @@ module Momomoto
 
       # set the columns of the table this class operates on
       def columns=( columns )
-        class_variable_set( :@@columns, columns)
         # we store the order separate because it's quite important 
         # that it's constant otherwise get_colum and set_column 
         # on the row class might stop working 
         @column_order = columns.keys
+        @columns = columns
+      end
+
+      # get the columns of the table this class operates on
+      def columns( columns = nil )
+        return self.columns=( columns ) if columns
+        if not instance_variable_defined?( :@columns )
+          initialize_table
+        end
+        @columns
       end
 
       # get the columns of this table
@@ -32,35 +41,24 @@ module Momomoto
         @column_order
       end
 
-      # get the columns of the table this class operates on
-      def columns( columns = nil )
-        return self.columns=( columns ) if columns
-        begin
-          class_variable_get( :@@columns )
-        rescue NameError
-          initialize_table
-          class_variable_get( :@@columns )
-        end
-      end
-
       def initialize_table # :nodoc:
 
         @table_name ||= construct_table_name( self.name )
+        @columns ||= database.fetch_table_columns( table_name(), schema_name() ) 
+        @column_order = @columns.keys
+        @default_order ||= nil
 
         unless class_variables.member?( '@@schema_name' )
           schema_name( construct_schema_name( self.name ) )
         end
 
-        unless class_variables.member?( '@@columns' )
-          columns( database.fetch_table_columns( table_name(), schema_name() ) )
-        end
+
         raise CriticalError, "No fields in table #{table_name}" if columns.keys.empty?
 
         unless class_variables.member?( '@@primary_keys' )
           primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )
         end
 
-        @default_order ||= nil
 
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )
