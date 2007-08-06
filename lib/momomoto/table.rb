@@ -9,17 +9,13 @@ module Momomoto
 
       # set the default order for selects
       def default_order=( order )
-        class_variable_set( :@@default_order, order )
+        @default_order = order
       end
 
       # get the columns of the table this class operates on
       def default_order( order = nil )
         return self.default_order=( order ) if order
-        begin
-          class_variable_get( :@@default_order )
-        rescue NameError
-          class_variable_set( :@@default_order, nil )
-        end
+        @default_order
       end
 
       # set the columns of the table this class operates on
@@ -65,6 +61,8 @@ module Momomoto
         unless class_variables.member?( '@@primary_keys' )
           primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )
         end
+
+        @default_order ||= nil
 
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )
