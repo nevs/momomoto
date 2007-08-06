@@ -47,14 +47,11 @@ module Momomoto
         @schema_name ||= construct_schema_name( self.name )
 
         @columns ||= database.fetch_table_columns( table_name(), schema_name() ) 
-        @column_order = @columns.keys
         raise CriticalError, "No fields in table #{table_name}" if columns.keys.empty?
 
+        @primary_keys ||= database.fetch_primary_keys( table_name(), schema_name() )
+        @column_order = @columns.keys
         @default_order ||= nil
-
-        unless class_variables.member?( '@@primary_keys' )
-          primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )
-        end
 
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )
@@ -87,17 +84,16 @@ module Momomoto
 
       # set the primary key fields of the table
       def primary_keys=( keys ) # :nodoc:
-        class_variable_set( :@@primary_keys, keys )
+        @primary_keys = keys
       end
 
       # get the primary key fields of the table
       def primary_keys( keys = nil )
         return self.primary_keys=( keys ) if keys
-        begin
-          class_variable_get( :@@primary_keys )
-        rescue
+        if not instance_variable_defined?( :@primary_keys )
           self.primary_keys=( database.fetch_primary_keys( table_name(), schema_name()) )
         end
+        @primary_keys
       end
 
       ## Searches for records and returns an array containing the records
