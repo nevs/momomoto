@@ -13,6 +13,21 @@ class TestDatabase < Test::Unit::TestCase
     assert_raise( Momomoto::Error ) do db.commit end
   end
 
+  def test_config
+    db = Momomoto::Database.instance
+    db.disconnect
+    old_config = db.send( :instance_variable_get, :@config )
+    Momomoto::Database.config( :port => 65535 )
+    assert_raise( Momomoto::CriticalError ) do
+      Momomoto::Database.connect
+    end
+    Momomoto::Database.config( old_config )
+    assert_nothing_raised do
+      db.connect
+    end
+    db.connect
+  end
+
   def test_connect
     db = Momomoto::Database.instance
     db.disconnect
