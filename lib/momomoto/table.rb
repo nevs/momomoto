@@ -45,9 +45,7 @@ module Momomoto
 
       def initialize_table # :nodoc:
 
-        unless class_variables.member?( '@@table_name' )
-          table_name( construct_table_name( self.name ) )
-        end
+        @table_name ||= construct_table_name( self.name )
 
         unless class_variables.member?( '@@schema_name' )
           schema_name( construct_schema_name( self.name ) )
@@ -79,17 +77,13 @@ module Momomoto
 
       # set the table_name of the table this class operates on
       def table_name=( table_name )
-        class_variable_set( :@@table_name, table_name )
+        @table_name = table_name
       end
 
       # get the table_name of the table this class operates on
       def table_name( table_name = nil )
         return self.table_name=( table_name ) if table_name
-        begin
-          class_variable_get( :@@table_name )
-        rescue NameError
-          construct_table_name( self.name )
-        end
+        @table_name
       end
 
       # get the full name of a table including schema if set
