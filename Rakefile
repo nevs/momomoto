@@ -1,6 +1,5 @@
 
 require 'rake/testtask'
-require 'rcov/rcovtask'
 
 task(:default => :test)
 
@@ -13,18 +12,20 @@ Rake::TestTask.new do | t |
   t.warning = true
 end
 
-Rcov::RcovTask.new do | t |
-  t.libs << 'test_setup.rb'
-  t.rcov_opts << '--xrefs'
-  t.rcov_opts << '--comments'
-  t.rcov_opts << '-x test_setup.rb'
-  t.rcov_opts << '-x rcov.rb'
-  t.test_files = FileList['test/test*.rb'].unshift( 'test_setup.rb' )
-end
+begin
+  require 'rcov/rcovtask'
 
-desc "copy the coverage information to pentabarf.org"
-task :coverage do | t |
-  sh "scp -r coverage pulsar:public_html"
+  Rcov::RcovTask.new do | t |
+    t.libs << 'test_setup.rb'
+#    t.rcov_opts << '--xrefs'
+    t.rcov_opts << '--comments'
+#    t.rcov_opts << '--profile'
+    t.rcov_opts << '-x test_setup.rb'
+    t.rcov_opts << '-x rcov.rb'
+    t.test_files = FileList['test/test*.rb'].unshift( 'test_setup.rb' )
+  end
+
+rescue LoadError
 end
 
 desc "create documentation for ri"
