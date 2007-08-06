@@ -9,10 +9,7 @@ module Momomoto
 
       def initialize_procedure # :nodoc:
 
-        unless class_variables.member?( '@@procedure_name' )
-          procedure_name( construct_procedure_name( self.name ) )
-        end
-
+        @procedure_name ||= construct_procedure_name( self.name )
         @schema_name ||= construct_schema_name( self.name )
 
         unless class_variables.member?( '@@parameters' )
@@ -40,17 +37,16 @@ module Momomoto
 
       # set the procedure name
       def procedure_name=( procedure_name )
-        class_variable_set( :@@procedure_name, procedure_name )
+        @procedure_name = procedure_name
       end
 
       # get the procedure name
       def procedure_name( procedure_name = nil )
         return self.procedure_name=( procedure_name ) if procedure_name
-        begin
-          class_variable_get( :@@procedure_name )
-        rescue NameError
-          construct_procedure_name( self.name )
+        if not instance_variable_defined?( :@procedure_name )
+          self.procedure_name = construct_procedure_name( self.name )
         end
+        @procedure_name
       end
 
       # get the full name of the procedure including schema if set
