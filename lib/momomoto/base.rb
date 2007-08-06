@@ -46,17 +46,16 @@ module Momomoto
 
       # set the schema name of the table this class operates on
       def schema_name=( schema_name )
-        class_variable_set( :@@schema_name, schema_name )
+        @schema_name = schema_name
       end
 
       # get the schema name of the table this class operates on
       def schema_name( schema_name  = nil )
         return self.schema_name=( schema_name ) if schema_name
-        begin
-          class_variable_get( :@@schema_name )
-        rescue NameError
-          construct_schema_name( self.name )
+        if not instance_variable_defined?( :@schema_name )
+          self.schema_name=( construct_schema_name( self.name ) )
         end
+        @schema_name
       end
 
       # get the database connection

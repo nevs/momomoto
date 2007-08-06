@@ -44,21 +44,17 @@ module Momomoto
       def initialize_table # :nodoc:
 
         @table_name ||= construct_table_name( self.name )
+        @schema_name ||= construct_schema_name( self.name )
+
         @columns ||= database.fetch_table_columns( table_name(), schema_name() ) 
         @column_order = @columns.keys
-        @default_order ||= nil
-
-        unless class_variables.member?( '@@schema_name' )
-          schema_name( construct_schema_name( self.name ) )
-        end
-
-
         raise CriticalError, "No fields in table #{table_name}" if columns.keys.empty?
+
+        @default_order ||= nil
 
         unless class_variables.member?( '@@primary_keys' )
           primary_keys( database.fetch_primary_keys( table_name(), schema_name() ) )
         end
-
 
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )

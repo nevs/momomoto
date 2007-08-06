@@ -13,9 +13,7 @@ module Momomoto
           procedure_name( construct_procedure_name( self.name ) )
         end
 
-        unless class_variables.member?( '@@schema_name' )
-          schema_name( construct_schema_name( self.name ) )
-        end
+        @schema_name ||= construct_schema_name( self.name )
 
         unless class_variables.member?( '@@parameters' )
           parameters( database.fetch_procedure_parameters( procedure_name ) )
