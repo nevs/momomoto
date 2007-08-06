@@ -43,5 +43,20 @@ class TestRow < Test::Unit::TestCase
     assert_equal( a.person_id, a['person_id'])
   end
 
+  def test_primary_key_setting
+    a = Person.select_single( nil, {:limit=>1})
+    assert_raise( Momomoto::Error ) do
+      a.person_id = 42
+    end
+    assert_raise( Momomoto::Error ) do
+      a.set_column( :person_id, 42 )
+    end
+  end
+
+  def test_to_hash
+    a = Person.new
+    assert_instance_of( Hash, a.to_hash )
+  end
+
 end
 
