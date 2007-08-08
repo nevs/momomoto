@@ -11,13 +11,8 @@ module Momomoto
 
         @procedure_name ||= construct_procedure_name( self.name )
         @schema_name ||= construct_schema_name( self.name )
-
         @parameters ||= database.fetch_procedure_parameters( procedure_name )
-
-        unless class_variables.member?( '@@columns' )
-          columns( database.fetch_procedure_columns( procedure_name ) )
-          raise CriticalError if not columns
-        end
+        @columns ||= database.fetch_procedure_columns( procedure_name )
 
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )
@@ -67,18 +62,14 @@ module Momomoto
 
       # get the columns of the resultset this procedure returns
       def columns=( columns )
-        class_variable_set( :@@columns, columns)
+        @columns = columns
       end
 
       # get the columns of the resultset this procedure returns
       def columns( c = nil )
         return self.columns=( c ) if c
-        begin
-          class_variable_get( :@@columns )
-        rescue NameError
-          initialize_procedure
-          class_variable_get( :@@columns )
-        end
+        initialize_procedure if not instance_variable_defined?( :@columns )
+        @columns
       end
 
       def compile_parameter( params ) # :nodoc:
