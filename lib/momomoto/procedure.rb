@@ -12,10 +12,7 @@ module Momomoto
         @procedure_name ||= construct_procedure_name( self.name )
         @schema_name ||= construct_schema_name( self.name )
 
-        unless class_variables.member?( '@@parameters' )
-          parameters( database.fetch_procedure_parameters( procedure_name ) )
-          raise CriticalError if not parameters
-        end
+        @parameters ||= database.fetch_procedure_parameters( procedure_name )
 
         unless class_variables.member?( '@@columns' )
           columns( database.fetch_procedure_columns( procedure_name ) )
@@ -56,21 +53,16 @@ module Momomoto
 
       # set the parameters this procedures accepts
       # example: parameters = {:param1=>Momomoto::Datatype::Text.new}
-      # example: parameters = {:param1=>Momomoto::Datatype::Text.new}
       def parameters=( *p )
         p = p.flatten
-        class_variable_set( :@@parameters, p )
+        @parameters = p
       end
 
       # get the parameters this procedure accepts
       def parameters( *p )
         return self.send( :parameters=, *p ) if not p.empty?
-        begin
-          class_variable_get( :@@parameters )
-        rescue NameError
-          initialize_procedure
-          class_variable_get( :@@parameters )
-        end
+        initialize_procedure if not instance_variable_defined?( :@parameters )
+        @parameters
       end
 
       # get the columns of the resultset this procedure returns
