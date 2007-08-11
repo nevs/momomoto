@@ -122,7 +122,7 @@ module Momomoto
 
         row.instance_eval do class_variable_set( :@@table, table ) end
 
-        define_row_accessors( table )
+        define_row_accessors( const_get( :StandardMethods ), table )
 
         row.instance_eval do
           include table.const_get( :StandardMethods )
@@ -133,8 +133,7 @@ module Momomoto
 
       # defines row setter and getter in the module StandardMethods which
       # is later included in the Row class 
-      def define_row_accessors( table ) #:nodoc:
-        method_module = const_get( :StandardMethods )
+      def define_row_accessors( method_module, table, columns = self.columns ) #:nodoc:
         columns.each_with_index do | ( field_name, data_type ), index |
           method_module.instance_eval do
             # define getter for row class

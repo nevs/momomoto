@@ -96,18 +96,38 @@ module Momomoto
         @primary_keys
       end
 
-      ## Searches for records and returns an array containing the records
-      def select( conditions = {}, options = {} )
-        initialize_table unless class_variables.member?('@@initialized')
-        sql = "SELECT " + columns.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
+      # compile the select clause
+      def compile_select( conditions, options ) # :nodoc:
+        if options[:columns] 
+          cols = {}
+          options[:columns].each do | name | cols[name] = columns[name] end
+        else
+          cols = columns
+        end
+        sql = "SELECT " + cols.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
         sql += full_name
         sql += compile_where( conditions )
         sql += compile_order( options[:order] ) if options[:order] || default_order
         sql += compile_limit( options[:limit] ) if options[:limit]
         sql += compile_offset( options[:offset] ) if options[:offset]
+        sql
+      end
+
+      ## Searches for records and returns an array containing the records
+      def select( conditions = {}, options = {} )
+        initialize_table unless class_variables.member?('@@initialized')
+        sql = compile_select( conditions, options )
         data = []
+        if options[:columns]
+          row_class = Class.new( Momomoto::Row )
+          cols = {}
+          options[:columns].each do | name | cols[name] = columns[name] end
+          define_row_accessors( row_class, self, cols )
+        else
+          row_class = const_get(:Row)
+        end
         database.execute( sql ).each do | row |
-          data << const_get(:Row).new( row )
+          data << row_class.new( row )
         end
         data
       end
