@@ -18,6 +18,10 @@ module Momomoto
       send( fieldname.to_s + '=', value )
     end
 
+    def ==( other )
+      @data == other.instance_variable_get( :@data )
+    end
+
     def dirty?
       @dirty
     end

@@ -121,7 +121,9 @@ module Momomoto
         if options[:columns]
           row_class = Class.new( Momomoto::Row )
           cols = {}
-          options[:columns].each do | name | cols[name] = columns[name] end
+          columns.each do | key, value |
+            cols[key] = value if options[:columns].member?( key )
+          end
           define_row_accessors( row_class, self, cols )
         else
           row_class = const_get(:Row)
@@ -133,7 +135,32 @@ module Momomoto
       end
 
       ## Searches for records and returns an array containing the records
-      def select_with_join( conditions = {}, options = {} )
+      def select_outer_join( conditions = {}, options = {} )
+        initialize_table unless class_variables.member?('@@initialized')
+        join_table = options[:join]
+        fields = columns.keys.map{|field| full_name+'."'+field.to_s+'"'}
+        fields += join_table.columns.keys.map{|field| join_table.full_name+'."'+field.to_s+'"'}
+
+        sql = "SELECT " + fields.join( "," ) + " FROM "
+        sql += full_name
+        sql += " LEFT OUTER JOIN " + join_table.full_name + " USING(#{join_columns(join_table).join(',')})"
+        sql += compile_where( conditions )
+        sql += compile_order( options[:order] ) if options[:order]
+        sql += compile_limit( options[:limit] ) if options[:limit]
+        sql += compile_offset( options[:offset] ) if options[:offset]
+        data = []
+        database.execute( sql ).each do | row |
+          new_row = const_get(:Row).new( row[0, columns.keys.length] )
+          join_row = join_table.const_get(:Row).new( row[columns.keys.length,join_table.columns.keys.length] )
+          new_row.instance_variable_set(:@join, join_row)
+          new_row.send( :instance_eval ) { class << self; self; end }.send(:define_method, join_table.table_name ) do join_row end
+          data << new_row
+        end
+        data
+      end
+
+      ## Searches for records and returns an array containing the records
+      def select_inner_join( conditions = {}, options = {} )
         initialize_table unless class_variables.member?('@@initialized')
         join_table = options[:join]
         fields = columns.keys.map{|field| full_name+'."'+field.to_s+'"'}
@@ -229,7 +256,7 @@ module Momomoto
         if row.new_record?
           insert( row )
         else
-#          return false unless row.dirty?
+          return false unless row.dirty?
           update( row )
         end
         row.dirty = false
