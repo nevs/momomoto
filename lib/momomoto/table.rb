@@ -148,15 +148,21 @@ module Momomoto
         sql += compile_order( options[:order] ) if options[:order]
         sql += compile_limit( options[:limit] ) if options[:limit]
         sql += compile_offset( options[:offset] ) if options[:offset]
-        data = []
+        data = {}
         database.execute( sql ).each do | row |
-          new_row = const_get(:Row).new( row[0, columns.keys.length] )
-          join_row = join_table.const_get(:Row).new( row[columns.keys.length,join_table.columns.keys.length] )
+          new_row = row[0, columns.keys.length]
+          data[new_row] ||= []
+          join_row = row[columns.keys.length,join_table.columns.keys.length]
+          data[new_row] << join_table.const_get(:Row).new( join_row ) if join_row.nitems > 0
+        end
+        result = []
+        data.each do | new_row, join_row |
+          new_row = const_get(:Row).new( new_row )
           new_row.instance_variable_set(:@join, join_row)
           new_row.send( :instance_eval ) { class << self; self; end }.send(:define_method, join_table.table_name ) do join_row end
-          data << new_row
+          result << new_row
         end
-        data
+        result
       end
 
       ## Searches for records and returns an array containing the records
