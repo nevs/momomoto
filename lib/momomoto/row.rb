@@ -11,11 +11,11 @@ module Momomoto
     end
 
     def []( fieldname )
-      send( fieldname )
+      get_column( fieldname )
     end
 
     def []=( fieldname, value )
-      send( fieldname.to_s + '=', value )
+      set_column( fieldname, value )
     end
 
     def ==( other )
