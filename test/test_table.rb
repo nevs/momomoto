@@ -131,6 +131,15 @@ class TestTable < Test::Unit::TestCase
     end
   end
 
+  def test_select_columns
+    p = Person.select({},{:columns=>[:person_id,:first_name],:limit=>1})[0]
+    assert( p.respond_to?( :person_id ))
+    assert( p.respond_to?( :first_name ))
+    assert_raise( NoMethodError ) do
+      p.nick_name
+    end
+  end
+
   def test_select
     r = Person.select( nil, {:limit => 3})
     assert_equal( 3, r.length )
