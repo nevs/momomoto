@@ -116,8 +116,6 @@ module Momomoto
       ## Searches for records and returns an array containing the records
       def select( conditions = {}, options = {} )
         initialize_table unless class_variables.member?('@@initialized')
-        sql = compile_select( conditions, options )
-        data = []
         if options[:columns]
           row_class = Class.new( Momomoto::Row )
           cols = {}
@@ -128,6 +126,8 @@ module Momomoto
         else
           row_class = const_get(:Row)
         end
+        sql = compile_select( conditions, options )
+        data = []
         database.execute( sql ).each do | row |
           data << row_class.new( row )
         end
