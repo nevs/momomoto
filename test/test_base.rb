@@ -1,10 +1,28 @@
 
 class TestBase < Test::Unit::TestCase
 
+  def test_logical_operator
+    t1 = Class.new( Momomoto::Table )
+    t1.table_name = 'person'
+    t1.initialize_table
+    t2 = Class.new( Momomoto::Table )
+    t2.table_name = 'person'
+    t2.initialize_table
+    assert_equal( "AND", t1.logical_operator )
+    assert_equal( "AND", t2.logical_operator )
+    t1.logical_operator = "OR"
+    assert_equal( "OR", t1.logical_operator )
+    assert_equal( "AND", t2.logical_operator )
+    t1.logical_operator = "or"
+    assert_equal( "OR", t1.logical_operator )
+    assert_equal( " WHERE first_name = E'a' OR person_id = '1'" , t1.compile_where(:person_id=>'1',:first_name=>'a') )
+    assert_equal( " WHERE first_name = E'a' AND person_id = '1'" , t2.compile_where(:person_id=>'1',:first_name=>'a') )
+  end
+
   def test_compile_where
     t = Class.new( Momomoto::Table )
     t.table_name = 'person'
-    t.columns
+    t.initialize_table
     assert_equal( " WHERE person_id = '1'" , t.compile_where( :person_id => '1' ) )
     assert_equal( " WHERE person_id IN ('1')" , t.compile_where( :person_id => ['1'] ) )
     assert_equal( " WHERE person_id IN ('1','2')" , t.compile_where( :person_id => ['1',2] ) )
