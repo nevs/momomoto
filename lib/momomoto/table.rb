@@ -53,6 +53,8 @@ module Momomoto
         @column_order = @columns.keys
         @default_order ||= nil
 
+        @logical_operator ||= "AND"
+
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )
 
@@ -165,32 +167,8 @@ module Momomoto
         result
       end
 
-      ## Searches for records and returns an array containing the records
-      def select_inner_join( conditions = {}, options = {} )
-        initialize_table unless initialized
-        join_table = options[:join]
-        fields = columns.keys.map{|field| full_name+'."'+field.to_s+'"'}
-        fields += join_table.columns.keys.map{|field| join_table.full_name+'."'+field.to_s+'"'}
-
-        sql = "SELECT " + fields.join( "," ) + " FROM "
-        sql += full_name
-        sql += " LEFT OUTER JOIN " + join_table.full_name + " USING(#{join_columns(join_table).join(',')})"
-        sql += compile_where( conditions )
-        sql += compile_order( options[:order] ) if options[:order]
-        sql += compile_limit( options[:limit] ) if options[:limit]
-        sql += compile_offset( options[:offset] ) if options[:offset]
-        data = []
-        database.execute( sql ).each do | row |
-          new_row = const_get(:Row).new( row[0, columns.keys.length] )
-          join_row = join_table.const_get(:Row).new( row[columns.keys.length,join_table.columns.keys.length] )
-          new_row.instance_variable_set(:@join, join_row)
-          new_row.send( :instance_eval ) { class << self; self; end }.send(:define_method, join_table.table_name ) do join_row end
-          data << new_row
-        end
-        data
-      end
-
-      def join_columns( join_table )
+      # returns the columns to be used for joining
+      def join_columns( join_table ) # :nodoc:
         join_table.primary_keys.select{|f| columns.key?(f)}
       end
 
