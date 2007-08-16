@@ -37,6 +37,16 @@ module Momomoto
     class << self
 
       attr_accessor :initialized
+      attr_reader :logical_operator
+
+      # set the default logical operator for constraints
+      def logical_operator=( value )
+        @logical_operator = case value
+          when /and/i then "AND"
+          when /or/i then "OR"
+          else raise Momomoto::Error, "Unsupported logical operator"
+        end
+      end
 
       # guesses the schema name of the table this class works on
       def construct_schema_name( classname ) # :nodoc:
@@ -109,7 +119,7 @@ module Momomoto
 
       # append where string
       def where_append( where, append ) # :nodoc:
-        ( where.empty? ? ' WHERE ' : where + ' AND ' ) + append
+        ( where.empty? ? ' WHERE ' : where + ' ' + logical_operator + ' ' ) + append
       end
 
       # construct the Row class for the table
