@@ -57,7 +57,7 @@ module Momomoto
         initialize_row( const_get( :Row ), self )
 
         # mark class as initialized
-        class_variable_set( :@@initialized, true)
+        self.initialized = true
 
       end
 
@@ -115,7 +115,7 @@ module Momomoto
 
       ## Searches for records and returns an array containing the records
       def select( conditions = {}, options = {} )
-        initialize_table unless class_variables.member?('@@initialized')
+        initialize_table unless initialized
         if options[:columns]
           row_class = Class.new( Momomoto::Row )
           cols = {}
@@ -136,7 +136,7 @@ module Momomoto
 
       ## Searches for records and returns an array containing the records
       def select_outer_join( conditions = {}, options = {} )
-        initialize_table unless class_variables.member?('@@initialized')
+        initialize_table unless initialized
         join_table = options[:join]
         fields = columns.keys.map{|field| full_name+'."'+field.to_s+'"'}
         fields += join_table.columns.keys.map{|field| join_table.full_name+'."'+field.to_s+'"'}
@@ -167,7 +167,7 @@ module Momomoto
 
       ## Searches for records and returns an array containing the records
       def select_inner_join( conditions = {}, options = {} )
-        initialize_table unless class_variables.member?('@@initialized')
+        initialize_table unless initialized
         join_table = options[:join]
         fields = columns.keys.map{|field| full_name+'."'+field.to_s+'"'}
         fields += join_table.columns.keys.map{|field| join_table.full_name+'."'+field.to_s+'"'}
@@ -196,7 +196,7 @@ module Momomoto
 
       ## constructor for a record in this table accepts a hash with presets for the fields of the record
       def new( fields = {} )
-        initialize_table unless class_variables.member?('@@initialized')
+        initialize_table unless initialized
         new_row = const_get(:Row).new( [] )
         new_row.new_record = true
         # set default values

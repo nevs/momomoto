@@ -18,7 +18,7 @@ module Momomoto
         initialize_row( const_get( :Row ), self )
 
         # mark class as initialized
-        class_variable_set( :@@initialized, true)
+        self.initialized = true
 
       end
 
@@ -84,7 +84,7 @@ module Momomoto
 
       # execute the stored procedure
       def call( params = {}, conditions = {}, options = {} )
-        initialize_procedure unless class_variables.member?('@@initialized')
+        initialize_procedure unless initialized
         sql = "SELECT #{columns.keys.join(',')} FROM "
         sql += "#{full_name}(#{compile_parameter(params)})"
         sql += compile_where( conditions )

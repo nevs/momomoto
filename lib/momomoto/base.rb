@@ -36,6 +36,8 @@ module Momomoto
 
     class << self
 
+      attr_accessor :initialized
+
       # guesses the schema name of the table this class works on
       def construct_schema_name( classname ) # :nodoc:
         # Uncomment these lines to derive the schema from the enclosing namespace of the class
