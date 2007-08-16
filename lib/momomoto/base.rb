@@ -122,7 +122,7 @@ module Momomoto
           raise CriticalError, "Row is not inherited from Momomoto::Row"
         end
 
-        row.instance_eval do class_variable_set( :@@table, table ) end
+        row.instance_eval do instance_variable_set( :@table, table ) end
 
         define_row_accessors( const_get( :StandardMethods ), table )
 

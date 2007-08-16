@@ -7,7 +7,7 @@ module Momomoto
     undef :id,:type
 
     def self.table
-      class_variable_get( :@@table )
+      @table
     end
 
     def []( fieldname )
