@@ -31,7 +31,7 @@ module Momomoto
   class Nothing_found < Error; end
 
 
-  ## Momomoto base class for Table, Procedure and Join
+  ## Momomoto base class for Table and Procedure
   class Base
 
     class << self
