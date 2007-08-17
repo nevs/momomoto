@@ -115,7 +115,7 @@ module Momomoto
         sql
       end
 
-      ## Searches for records and returns an array containing the records
+      # Searches for records and returns an array containing the records
       def select( conditions = {}, options = {} )
         initialize_table unless initialized
         if options[:columns]
@@ -136,7 +136,7 @@ module Momomoto
         data
       end
 
-      ## Searches for records and returns an array containing the records
+      # Searches for records and returns an array containing the records
       def select_outer_join( conditions = {}, options = {} )
         initialize_table unless initialized
         join_table = options[:join]
@@ -172,7 +172,7 @@ module Momomoto
         join_table.primary_keys.select{|f| columns.key?(f)}
       end
 
-      ## constructor for a record in this table accepts a hash with presets for the fields of the record
+      # constructor for a record in this table accepts a hash with presets for the fields of the record
       def new( fields = {} )
         initialize_table unless initialized
         new_row = const_get(:Row).new( [] )
@@ -198,10 +198,10 @@ module Momomoto
         new_row
       end
 
-      ## Tries to find a specific record and creates a new one if it does not find it
-      #  raises an exception if multiple records are found
-      #  You can pass a block which has to deliver the respective values for the
-      #  primary key fields
+      # Tries to find a specific record and creates a new one if it does not find it.
+      # Raises an exception if multiple records are found.
+      # You can pass a block which has to deliver the respective values for the
+      # primary key fields
       def select_or_new( conditions = {}, options = {} )
         begin
           if block_given?
@@ -223,8 +223,8 @@ module Momomoto
         end
       end
 
-      ## Select a single row from the database, raises an exception if more or zero
-      #  rows are found
+      # Select a single row from the database, raises an exception if more or zero
+      # rows are found
       def select_single( conditions = {}, options = {} )
         data = select( conditions, options )
         case data.length
