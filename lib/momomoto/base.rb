@@ -36,7 +36,6 @@ module Momomoto
 
     class << self
 
-      attr_accessor :initialized
       attr_reader :logical_operator
 
       # set the default logical operator for constraints
@@ -46,14 +45,6 @@ module Momomoto
           when /or/i then "OR"
           else raise Momomoto::Error, "Unsupported logical operator"
         end
-      end
-
-      # guesses the schema name of the table this class works on
-      def construct_schema_name( classname ) # :nodoc:
-        # Uncomment these lines to derive the schema from the enclosing namespace of the class
-        #schema = classname.split('::')[-2]
-        #schema ? schema.downcase.gsub(/[^a-z_0-9]/, '') : nil
-        'public'
       end
 
       # set the schema name of the table this class operates on
@@ -70,13 +61,25 @@ module Momomoto
         @schema_name
       end
 
+      protected
+
+      attr_accessor :initialized
+
+      # guesses the schema name of the table this class works on
+      def construct_schema_name( classname )
+        # Uncomment these lines to derive the schema from the enclosing namespace of the class
+        #schema = classname.split('::')[-2]
+        #schema ? schema.downcase.gsub(/[^a-z_0-9]/, '') : nil
+        'public'
+      end
+
       # get the database connection
       def database # :nodoc:
         Momomoto::Database.instance
       end
 
       # compiles the where-clause of the query
-      def compile_where( conditions ) # :nodoc:
+      def compile_where( conditions )
         conditions = {} if not conditions
         where = ''
         conditions.each do | key , value |
@@ -102,7 +105,7 @@ module Momomoto
       end
 
       # compiles the sql statement defining the table order
-      def compile_order( order ) # :nodoc:
+      def compile_order( order )
         order = default_order if not order
         order = [ order ] if not order.kind_of?( Array )
         order = order.map do | field |
@@ -118,12 +121,12 @@ module Momomoto
       end
 
       # append where string
-      def where_append( where, append ) # :nodoc:
+      def where_append( where, append )
         ( where.empty? ? ' WHERE ' : where + ' ' + logical_operator + ' ' ) + append
       end
 
       # construct the Row class for the table
-      def initialize_row( row, table ) # :nodoc:
+      def initialize_row( row, table )
 
         const_set( :Methods, Module.new ) if not const_defined?( :Methods )
         const_set( :StandardMethods, Module.new ) if not const_defined?( :StandardMethods )
@@ -145,7 +148,7 @@ module Momomoto
 
       # defines row setter and getter in the module StandardMethods which
       # is later included in the Row class 
-      def define_row_accessors( method_module, table, columns = self.columns ) #:nodoc:
+      def define_row_accessors( method_module, table, columns = self.columns )
         columns.each_with_index do | ( field_name, data_type ), index |
           method_module.instance_eval do
             # define getter for row class
