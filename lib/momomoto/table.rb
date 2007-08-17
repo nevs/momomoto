@@ -12,7 +12,7 @@ module Momomoto
         @default_order = order
       end
 
-      # get the columns of the table this class operates on
+      # get the default order for selects
       def default_order( order = nil )
         return self.default_order=( order ) if order
         @default_order
