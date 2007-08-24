@@ -216,6 +216,26 @@ class TestTable < Test::Unit::TestCase
     p2.delete
   end
 
+  def test_update
+    Person.select(:first_name=>'test_update').each do | p | p.delete end
+
+    assert_raise( Momomoto::Nothing_found ) do
+      Person.select_single(:first_name=>'test_update')
+    end
+
+    p1 = Person.new(:first_name=>'test_select_single')
+    p1.write
+    p1.first_name = 'Chunky'
+    p1.last_name = 'Bacon'
+    p1.write
+    p2 = Person.select_single(:person_id=>p1.person_id)
+    assert_equal( p1.person_id, p2.person_id)
+    assert_equal( p1.first_name, p2.first_name )
+    assert_equal( p1.last_name, p2.last_name)
+
+    p1.delete
+  end
+
   def test_defaults
     conf = Conference.select_or_new(:conference_id=>1)
     conf.acronym = 'Pentabarf'
