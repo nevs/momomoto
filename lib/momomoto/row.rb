@@ -22,18 +22,27 @@ module Momomoto
       @data == other.instance_variable_get( :@data )
     end
 
-    def dirty?
+    def dirty
       @dirty
     end
 
-    def dirty=( value )
-      @dirty = !!value
+    def dirty?
+      @dirty.length > 0
+    end
+
+    def mark_dirty( field )
+      field = field.to_sym
+      @dirty.push( field ) if not @dirty.member?( field )
+    end
+
+    def clean_dirty
+      @dirty = []
     end
 
     def initialize( data = [] )
       @data = data
       @new_record = false
-      @dirty = false
+      clean_dirty
     end
 
     def new_record?
@@ -72,7 +81,7 @@ module Momomoto
       value = table.columns[column.to_sym].filter_set( value )
       index = table.column_order.index( column.to_sym )
       if @data[index] != value
-        @dirty = true
+        mark_dirty( column )
         @data[index] = value
       end
     end

@@ -243,7 +243,7 @@ module Momomoto
           return false unless row.dirty?
           update( row )
         end
-        row.dirty = false
+        row.clean_dirty
         true
       end
 
@@ -275,6 +275,7 @@ module Momomoto
         raise CriticalError, 'Updating is only allowed for tables with primary keys' if primary_keys.empty?
         setter, conditions = [], {}
         columns.each do | field_name, data_type |
+          next if not row.dirty.member?( field_name )
           setter << field_name.to_s + ' = ' + data_type.escape(row.send(field_name))
         end
         primary_keys.each do | field_name |
