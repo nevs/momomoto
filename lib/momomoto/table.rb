@@ -21,7 +21,7 @@ module Momomoto
       # set the columns of the table this class operates on
       def columns=( columns )
         # we store the order separate because it's quite important 
-        # that it's constant otherwise get_colum and set_column 
+        # that it's constant otherwise get_column and set_column 
         # on the row class might stop working 
         @column_order = columns.keys
         @columns = columns
@@ -262,7 +262,7 @@ module Momomoto
           end
           next if row.send( field_name ).nil?
           fields << field_name
-          values << datatype.escape( row.send( field_name ))
+          values << datatype.escape( row.get_column( field_name ))
         end
         raise Error, "insert with all fields nil" if fields.empty?
         sql = "INSERT INTO " + full_name + '(' + fields.join(',') + ') VALUES (' + values.join(',') + ');'
@@ -276,7 +276,7 @@ module Momomoto
         setter, conditions = [], {}
         columns.each do | field_name, data_type |
           next if not row.dirty.member?( field_name )
-          setter << field_name.to_s + ' = ' + data_type.escape(row.send(field_name))
+          setter << field_name.to_s + ' = ' + data_type.escape(row.get_column(field_name))
         end
         primary_keys.each do | field_name |
           raise Error, "Primary key fields must not be empty!" if not row.send( field_name )
