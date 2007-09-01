@@ -92,7 +92,9 @@ module Momomoto
       # get the primary key fields of the table
       def primary_keys( keys = nil )
         return self.primary_keys=( keys ) if keys
-        initialize_table unless initialized
+        if not instance_variable_defined?( :@primary_keys )
+          initialize_table
+        end
         @primary_keys
       end
 
