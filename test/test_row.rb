@@ -43,6 +43,19 @@ class TestRow < Test::Unit::TestCase
     assert_equal( a.person_id, a['person_id'])
   end
 
+  def test_equal
+    a = Person.new
+    b = Person.new
+    assert( a == b )
+    assert( b == a )
+    a.person_id = 23
+    assert( a != b )
+    assert( b != a )
+    b.person_id = 23
+    assert( a == b )
+    assert( b == a )
+  end
+
   def test_primary_key_setting
     a = Person.select_single( nil, {:limit=>1})
     assert_raise( Momomoto::Error ) do
