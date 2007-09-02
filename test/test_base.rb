@@ -15,8 +15,11 @@ class TestBase < Test::Unit::TestCase
     assert_equal( "AND", t2.logical_operator )
     t1.logical_operator = "or"
     assert_equal( "OR", t1.logical_operator )
-    assert_equal( " WHERE first_name = E'a' OR person_id = '1'" , t1.instance_eval do compile_where(:person_id=>'1',:first_name=>'a') end )
-    assert_equal( " WHERE first_name = E'a' AND person_id = '1'" , t2.instance_eval do compile_where(:person_id=>'1',:first_name=>'a') end )
+    assert( t1.instance_eval do compile_where(:person_id=>'1',:first_name=>'a') end.match( / OR / ) )
+    assert( t2.instance_eval do compile_where(:person_id=>'1',:first_name=>'a') end.match( / AND / ) )
+    assert_raise( Momomoto::Error ) do
+      t1.logical_operator = "chunky"
+    end
   end
 
   def test_compile_where
