@@ -147,7 +147,7 @@ module Momomoto
       end
 
       # defines row setter and getter in the module StandardMethods which
-      # is later included in the Row class 
+      # is later included in the Row class
       def define_row_accessors( method_module, table, columns = self.columns )
         columns.each_with_index do | ( field_name, data_type ), index |
           method_module.instance_eval do
