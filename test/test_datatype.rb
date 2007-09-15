@@ -39,6 +39,14 @@ class TestDatatype < Test::Unit::TestCase
     end
   end
 
+  def test_compile_rule_null
+    DATATYPES.each do | type |
+      t = type.new
+      assert_equal( "field_name IS NULL", t.compile_rule( :field_name, :NULL) )
+      assert_equal( "field_name IS NOT NULL", t.compile_rule( :field_name, :NOT_NULL) )
+    end
+  end
+
   def test_operator_sign
     DATATYPES.each do | type |
       assert_equal( '<=', type.operator_sign( :le ) )
