@@ -25,6 +25,10 @@ module Momomoto
         value
       end
 
+      def equal( a, b )
+        a == b
+      end
+
       def escape( input )
         input.nil? ? "NULL" : "'" + Database.escape_string( input.to_s ) + "'"
       end

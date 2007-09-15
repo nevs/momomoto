@@ -2,6 +2,10 @@ module Momomoto
   module Datatype
     class Interval < Time_without_time_zone
 
+      def equal( a, b )
+        escape(a) == escape(b) 
+      end
+
       def escape( value )
         case value
           when nil then 'NULL'
