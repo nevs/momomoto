@@ -169,7 +169,7 @@ module Momomoto
               end
               store = instance_variable_get(:@data)
               value = data_type.filter_set( value )
-              if store[index] != value
+              if !data_type.equal( value, store[index] )
                 mark_dirty( field_name )
                 store[index] = value
               end

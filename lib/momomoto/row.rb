@@ -80,7 +80,7 @@ module Momomoto
       end
       value = table.columns[column.to_sym].filter_set( value )
       index = table.column_order.index( column.to_sym )
-      if @data[index] != value
+      if !table.columns[column.to_sym].equal( value, @data[index] )
         mark_dirty( column )
         @data[index] = value
       end
