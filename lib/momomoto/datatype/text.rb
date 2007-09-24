@@ -2,6 +2,10 @@ module Momomoto
   module Datatype
     class Text < Base
 
+      def equal( a, b )
+        a.to_s == b.to_s
+      end
+
       def escape( input )
         if input.nil? || input.empty?
           "NULL"

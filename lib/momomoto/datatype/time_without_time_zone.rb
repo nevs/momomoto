@@ -5,6 +5,10 @@ module Momomoto
   module Datatype
     class Time_without_time_zone < Base
 
+      def equal( a, b )
+        escape(a) == escape(b)
+      end
+
       def escape( value )
         case value
           when nil then 'NULL'
