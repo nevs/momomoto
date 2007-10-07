@@ -77,6 +77,7 @@ module Momomoto
         parameters.each do | parameter |
           field_name, datatype = parameter.to_a.first
           raise Error, "parameter #{field_name} not specified" if not params.member?( field_name )
+          raise Error, "Not null fields(#{field_name}) need to be set" if !params[field_name] && datatype.not_null?
           args << datatype.escape( params[field_name] )
         end
         args.join(',')
