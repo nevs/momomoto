@@ -71,5 +71,22 @@ class TestProcedure < Test::Unit::TestCase
     Test_set_returning.call({:person_id => 5},{:person_id => 5},{:order=>:person_id,:limit=>10} )
   end
 
+  def test_call_strict
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_parameter_sql")
+    assert_equal( false, a.parameters[0][:param1].not_null? )
+    assert_raise( Momomoto::Error ) { a.call }
+    assert_nothing_raised { a.call({:param1=>nil})}
+    assert_nothing_raised { a.call({:param1=>1})}
+
+    b = Class.new(Momomoto::Procedure)
+    b.procedure_name("test_parameter_sql_strict")
+    assert_equal( true, b.parameters[0][:param1].not_null? )
+    assert_raise( Momomoto::Error ) { b.call }
+    assert_raise( Momomoto::Error ) { b.call({:param1=>nil})}
+    assert_nothing_raised { b.call({:param1=>1})}
+
+  end
+
 end
 
