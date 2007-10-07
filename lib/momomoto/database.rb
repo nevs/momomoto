@@ -123,8 +123,11 @@ module Momomoto
       params.each do  | param |
         p << { param.parameter_name.to_sym => Momomoto::Datatype.const_get(param.data_type.gsub(' ','_').capitalize).new }
       end
+      # mark parameters of strict procedures as not null
       if Information_schema::Routines.select_single(:routine_name=>procedure_name).is_null_call == 'YES'
-        p.each do | param | param.instance_variable_set(:@not_null,true) end
+        p.each do | param | 
+          param[param.keys.first].instance_variable_set(:@not_null,true) 
+        end
       end
       p
     end
@@ -139,7 +142,6 @@ module Momomoto
       end
       c
     end
-
 
     # begin a transaction
     def begin
