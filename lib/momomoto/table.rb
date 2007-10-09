@@ -57,6 +57,7 @@ module Momomoto
 
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )
+        @row_cache = {}
 
         # mark class as initialized
         self.initialized = true
@@ -118,22 +119,32 @@ module Momomoto
       # Searches for records and returns an array containing the records
       def select( conditions = {}, options = {} )
         initialize_table unless initialized
-        if options[:columns]
-          row_class = Class.new( Momomoto::Row )
-          cols = {}
-          columns.each do | key, value |
-            cols[key] = value if options[:columns].member?( key )
-          end
-          define_row_accessors( row_class, self, cols )
-        else
-          row_class = const_get(:Row)
-        end
+        row_class = build_row_class( options )
         sql = compile_select( conditions, options )
         data = []
         database.execute( sql ).each do | row |
           data << row_class.new( row )
         end
         data
+      end
+
+      def build_row_class( options )
+        if options[:columns]
+          options[:columns] += primary_keys
+          options[:columns].uniq!
+          if not @row_cache[options[:columns]]
+            row_class = Class.new( Momomoto::Row )
+            cols = {}
+            columns.each do | key, value |
+              cols[key] = value if options[:columns].member?( key )
+            end
+            define_row_accessors( row_class, self, cols )
+            @row_cache[options[:columns]] = row_class
+          end
+          return @row_cache[options[:columns]]
+        else
+          return const_get(:Row)
+        end
       end
 
       # Searches for records and returns an array containing the records
