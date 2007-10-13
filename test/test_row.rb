@@ -56,6 +56,12 @@ class TestRow < Test::Unit::TestCase
     assert( b == a )
   end
 
+  def test_columns
+    a = Person.new
+    assert_equal( Person.columns, a.class.columns )
+    assert_equal( Person.columns, Person::Row.columns )
+  end
+
   def test_primary_key_setting
     a = Person.select_single( nil, {:limit=>1})
     assert_raise( Momomoto::Error ) do

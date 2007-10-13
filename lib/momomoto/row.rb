@@ -10,6 +10,10 @@ module Momomoto
       @table
     end
 
+    def self.columns
+      table.columns
+    end
+
     def []( fieldname )
       get_column( fieldname )
     end
