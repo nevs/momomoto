@@ -11,7 +11,7 @@ module Momomoto
     end
 
     def self.columns
-      table.columns
+      @columns
     end
 
     def []( fieldname )

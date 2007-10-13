@@ -138,7 +138,7 @@ module Momomoto
             columns.each do | key, value |
               cols[key] = value if options[:columns].member?( key )
             end
-            define_row_accessors( row_class, self, cols )
+            initialize_row( row_class, self, cols )
             @row_cache[options[:columns]] = row_class
           end
           return @row_cache[options[:columns]]

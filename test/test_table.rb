@@ -132,11 +132,14 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_select_columns
-    p = Person.select({},{:columns=>[:person_id,:first_name],:limit=>1})[0]
+    p = Person.select({},{:columns=>[:person_id,:first_name,:nick_name],:limit=>1})[0]
     assert( p.respond_to?( :person_id ))
     assert( p.respond_to?( :first_name ))
+    p.first_name = 'bacon'
+    p.nick_name = 'abc'
+    assert_equal( p.first_name + 'abc', p.nick_name )
     assert_raise( NoMethodError ) do
-      p.nick_name
+      p.last_name
     end
   end
 
