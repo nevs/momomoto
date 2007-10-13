@@ -126,7 +126,7 @@ module Momomoto
       end
 
       # construct the Row class for the table
-      def initialize_row( row, table )
+      def initialize_row( row, table, columns = table.columns )
 
         const_set( :Methods, Module.new ) if not const_defined?( :Methods )
         const_set( :StandardMethods, Module.new ) if not const_defined?( :StandardMethods )
@@ -136,6 +136,7 @@ module Momomoto
         end
 
         row.instance_eval do instance_variable_set( :@table, table ) end
+        row.instance_eval do instance_variable_set( :@columns, columns ) end
 
         define_row_accessors( const_get( :StandardMethods ), table )
 
@@ -143,12 +144,22 @@ module Momomoto
           include table.const_get( :StandardMethods )
           include table.const_get( :Methods )
         end
+        
+        if table.columns.keys.length != columns.keys.length
+          unused = table.columns.keys - columns.keys
+          unused.each do | field |
+            row.class_eval do
+              undef_method field
+              undef_method "#{field}="
+            end
+          end
+        end
 
       end
 
       # defines row setter and getter in the module StandardMethods which
       # is later included in the Row class
-      def define_row_accessors( method_module, table, columns = self.columns )
+      def define_row_accessors( method_module, table, columns = table.columns )
         columns.each_with_index do | ( field_name, data_type ), index |
           method_module.instance_eval do
             # define getter for row class
