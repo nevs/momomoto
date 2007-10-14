@@ -129,7 +129,7 @@ module Momomoto
       def initialize_row( row, table, columns = table.columns )
 
         const_set( :Methods, Module.new ) if not const_defined?( :Methods )
-        const_set( :StandardMethods, Module.new ) if not const_defined?( :StandardMethods )
+        row.const_set( :StandardMethods, Module.new ) if not row.const_defined?( :StandardMethods )
 
         if not row.ancestors.member?( Momomoto::Row )
           raise CriticalError, "Row is not inherited from Momomoto::Row"
@@ -137,20 +137,21 @@ module Momomoto
 
         row.instance_eval do instance_variable_set( :@table, table ) end
         row.instance_eval do instance_variable_set( :@columns, columns ) end
+        row.instance_eval do instance_variable_set( :@column_order, columns.keys ) end
 
-        define_row_accessors( const_get( :StandardMethods ), table )
+        define_row_accessors( row.const_get( :StandardMethods ), table, columns )
 
         row.instance_eval do
-          include table.const_get( :StandardMethods )
+          include row.const_get( :StandardMethods )
           include table.const_get( :Methods )
         end
-        
+
         if table.columns.keys.length != columns.keys.length
           unused = table.columns.keys - columns.keys
           unused.each do | field |
             row.class_eval do
-              undef_method field
-              undef_method "#{field}="
+              undef_method field if row.instance_methods.member?( "#{field}" )
+              undef_method "#{field}=" if row.instance_methods.member?( "#{field}=" )
             end
           end
         end
@@ -159,7 +160,7 @@ module Momomoto
 
       # defines row setter and getter in the module StandardMethods which
       # is later included in the Row class
-      def define_row_accessors( method_module, table, columns = table.columns )
+      def define_row_accessors( method_module, table, columns )
         columns.each_with_index do | ( field_name, data_type ), index |
           method_module.instance_eval do
             # define getter for row class

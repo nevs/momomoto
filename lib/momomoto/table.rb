@@ -23,7 +23,6 @@ module Momomoto
         # we store the order separate because it's quite important 
         # that it's constant otherwise get_column and set_column 
         # on the row class might stop working 
-        @column_order = columns.keys
         @columns = columns
       end
 
@@ -34,11 +33,6 @@ module Momomoto
           initialize_table
         end
         @columns
-      end
-
-      # get the columns of this table
-      def column_order #:nodoc:
-        @column_order
       end
 
       def initialize_table # :nodoc:
@@ -247,7 +241,6 @@ module Momomoto
 
       # write row back to database
       def write( row ) # :nodoc:
-        raise CriticalError unless row.class == const_get(:Row)
         if row.new_record?
           insert( row )
         else
@@ -285,7 +278,7 @@ module Momomoto
       def update( row ) # :nodoc:
         raise CriticalError, 'Updating is only allowed for tables with primary keys' if primary_keys.empty?
         setter, conditions = [], {}
-        columns.each do | field_name, data_type |
+        row.class.columns.each do | field_name, data_type |
           next if not row.dirty.member?( field_name )
           setter << field_name.to_s + ' = ' + data_type.escape(row.get_column(field_name))
         end

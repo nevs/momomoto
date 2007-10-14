@@ -14,6 +14,10 @@ module Momomoto
       @columns
     end
 
+    def self.column_order
+      @column_order
+    end
+
     def []( fieldname )
       get_column( fieldname )
     end
@@ -70,7 +74,7 @@ module Momomoto
     # convert row to hash
     def to_hash
       hash = {}
-      self.class.table.columns.keys.each do | key |
+      self.class.columns.keys.each do | key |
         hash[key] = self[key]
       end
       hash
@@ -83,7 +87,7 @@ module Momomoto
         raise Error, "Setting primary keys(#{column}) is only allowed for new records"
       end
       value = table.columns[column.to_sym].filter_set( value )
-      index = table.column_order.index( column.to_sym )
+      index = self.class.column_order.index( column.to_sym )
       if !table.columns[column.to_sym].equal( value, @data[index] )
         mark_dirty( column )
         @data[index] = value
@@ -93,7 +97,7 @@ module Momomoto
     # generic getter for column values
     def get_column( column )
       table = self.class.table
-      index = table.column_order.index( column.to_sym )
+      index = self.class.column_order.index( column.to_sym )
       if table.columns[column.to_sym].respond_to?( :filter_get )
         table.columns[column.to_sym].filter_get( @data[index] )
       else
