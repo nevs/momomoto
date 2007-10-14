@@ -132,15 +132,26 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_select_columns
-    p = Person.select({},{:columns=>[:person_id,:first_name,:nick_name],:limit=>1})[0]
+    p = Person.select({},{:columns=>[:first_name,:nick_name],:limit=>1})[0]
     assert( p.respond_to?( :person_id ))
     assert( p.respond_to?( :first_name ))
+    assert( p.respond_to?( :nick_name ))
     p.first_name = 'bacon'
     p.nick_name = 'abc'
     assert_equal( p.first_name + 'abc', p.nick_name )
     assert_raise( NoMethodError ) do
       p.last_name
     end
+  end
+
+  def test_write_columns
+    p = Person.select({},{:columns=>[:first_name],:limit=>1})[0]
+    p.first_name = 'test_write_columns'
+    p.write
+    p2 = Person.select_single(:person_id=>p.person_id)
+    assert_equal( 'test_write_columns', p2.first_name )
+    p2.first_name = 'chunky'
+    p2.write
   end
 
   def test_select
