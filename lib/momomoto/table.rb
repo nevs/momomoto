@@ -20,9 +20,6 @@ module Momomoto
 
       # set the columns of the table this class operates on
       def columns=( columns )
-        # we store the order separate because it's quite important 
-        # that it's constant otherwise get_column and set_column 
-        # on the row class might stop working 
         @columns = columns
       end
 
