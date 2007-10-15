@@ -82,7 +82,7 @@ module Momomoto
 
     # generic setter for column values
     def set_column( column, value )
-      raise "Unknown column #{column}" if not column_order.member?( column.to_sym )
+      raise "Unknown column #{column}" if not self.class.column_order.member?( column.to_sym )
       table = self.class.table
       if not new_record? and table.primary_keys.member?( column.to_sym )
         raise Error, "Setting primary keys(#{column}) is only allowed for new records"
@@ -97,7 +97,7 @@ module Momomoto
 
     # generic getter for column values
     def get_column( column )
-      raise "Unknown column #{column}" if not column_order.member?( column.to_sym )
+      raise "Unknown column #{column}" if not self.class.column_order.member?( column.to_sym )
       table = self.class.table
       index = self.class.column_order.index( column.to_sym )
       if table.columns[column.to_sym].respond_to?( :filter_get )
