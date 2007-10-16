@@ -7,7 +7,7 @@ module Momomoto
       end
 
       def escape( input )
-        if input.nil? || input.empty?
+        if input.nil? || input.to_s.empty?
           "NULL"
         else
           "E'" + Database.escape_string( input.to_s ) + "'"
