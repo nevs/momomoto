@@ -18,7 +18,7 @@ module Momomoto
           else raise Error
         end
        rescue => e
-        raise ConversionError, 'Error while parsing time'
+        raise ConversionError, "Error while parsing interval (#{e.message})"
       end
 
       def filter_set( value )
