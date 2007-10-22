@@ -2,7 +2,7 @@
 require 'date'
 
 class TimeInterval
-  
+
   attr_reader :hour, :min, :sec
 
   class << self
@@ -33,6 +33,10 @@ class TimeInterval
   end
 
   def to_i
+    @hour * 3600 + @min * 60 + @sec
+  end
+
+  def to_int
     @hour * 3600 + @min * 60 + @sec
   end
 
