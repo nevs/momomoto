@@ -36,9 +36,7 @@ class TimeInterval
     @hour * 3600 + @min * 60 + @sec
   end
 
-  def to_int
-    @hour * 3600 + @min * 60 + @sec
-  end
+  alias_method :to_int, :to_i
 
   def to_s
     strftime
