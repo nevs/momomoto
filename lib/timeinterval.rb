@@ -3,6 +3,8 @@ require 'date'
 
 class TimeInterval
 
+  class ParseError < StandardError; end
+
   attr_reader :hour, :min, :sec
 
   class << self
@@ -10,10 +12,10 @@ class TimeInterval
     def parse( interval )
       d = Date._parse( interval, false)
       if d.empty? && interval.length > 0
-        raise "Could not parse interval `#{interval}`"
+        raise ParseError, "Could not parse interval `#{interval}`"
       end
       if !(d.keys - [:hour,:min,:sec]).empty?
-        raise "Could not parse interval `#{interval}`"
+        raise ParseError, "Could not parse interval `#{interval}`"
       end
       TimeInterval.new( d )
     end
