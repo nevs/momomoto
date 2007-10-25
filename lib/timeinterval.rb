@@ -29,7 +29,7 @@ class TimeInterval
         when 'M' then sprintf('%02d',@min)
         when 'S' then sprintf('%02d',@sec)
         when '%' then '%'
-        else '%' + match
+        else match
       end
     end
   end
