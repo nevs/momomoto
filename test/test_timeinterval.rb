@@ -19,5 +19,14 @@ class TestTimeInterval < Test::Unit::TestCase
     end
   end
 
+  def test_strftime
+    i = TimeInterval.parse( "23:00:05" )
+    assert_equal( "23", i.strftime("%H"))
+    assert_equal( "00", i.strftime("%M"))
+    assert_equal( "05", i.strftime("%S"))
+    assert_equal( "%", i.strftime("%%"))
+    assert_equal( "%A", i.strftime("%A"))
+  end
+
 end
 
