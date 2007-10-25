@@ -1,12 +1,13 @@
 
 class TestTimeInterval < Test::Unit::TestCase
 
-
   def test_parse
     ["00:00:00","00:05:00","00:00:23","00:05:23","05:00:00","42:00:00","42:05:23"].each do | number |
       i = TimeInterval.parse( number )
       assert_equal( i.to_s, number )
     end
+    assert_raise( TimeInterval::ParseError ) do TimeInterval.parse("u") end
+    assert_raise( TimeInterval::ParseError ) do TimeInterval.parse("2023-05-05 23:05:00") end
   end
 
   def test_to_i
@@ -17,8 +18,6 @@ class TestTimeInterval < Test::Unit::TestCase
       assert_equal( i.to_int, number )
     end
   end
-
-
 
 end
 
