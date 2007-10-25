@@ -189,7 +189,7 @@ module Momomoto
               new_row[ key ] = true
             elsif value.default == "false"
               new_row[ key ] = false
-            elsif m = value.default.match( /^'([^']+)'::(text|interval|timestamp with time(out)? zone|time with(out)? time zone)$/ )
+            elsif m = value.default.match( /^'([^']+)'::(text|interval|time(stamp)? with(out)? time zone)$/ )
               new_row[ key ] = m[1]
             end
           end
