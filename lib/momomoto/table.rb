@@ -295,7 +295,7 @@ module Momomoto
           raise Error, "Primary key fields must not be empty!" if not row.send( field_name )
           conditions[field_name] = row.send( field_name )
         end
-        sql = "DELETE FROM #{table_name} #{compile_where(conditions)};"
+        sql = "DELETE FROM #{full_name} #{compile_where(conditions)};"
         row.new_record = true
         database.execute( sql )
       end
