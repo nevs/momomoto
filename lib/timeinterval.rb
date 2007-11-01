@@ -55,7 +55,7 @@ class TimeInterval
         @sec = d%60
       when String then
         parsed = Date._parse( d, false)
-        if ( parsed.empty? && d.length > 0 ) || !(parsed.keys - [:hour,:min,:sec]).empty?
+        if ( parsed.empty? && d.length > 0 ) || !(parsed.keys - [:hour,:min,:sec,:sec_fraction]).empty?
           raise ParseError, "Could not parse interval `#{d}`"
         end
         @hour = parsed[:hour] || 0
