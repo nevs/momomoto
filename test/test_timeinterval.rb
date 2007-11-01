@@ -28,5 +28,13 @@ class TestTimeInterval < Test::Unit::TestCase
     assert_equal( "%A", i.strftime("%A"))
   end
 
+  def test_comparison
+    assert( TimeInterval.new( 0 ) < TimeInterval.new( 2 ) )
+    assert( TimeInterval.new( 42 ) > TimeInterval.new( 5 ) )
+    assert( TimeInterval.new( 23 ) == TimeInterval.new( 23 ) )
+    assert( TimeInterval.new( "0:00:00" ) == TimeInterval.new( 0 ) )
+    assert( TimeInterval.new( "01:00:00" ) == TimeInterval.new( "1:00:00" ) )
+  end
+
 end
 
