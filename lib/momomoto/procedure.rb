@@ -13,6 +13,7 @@ module Momomoto
         @schema_name ||= construct_schema_name( self.name )
         @parameters ||= database.fetch_procedure_parameters( procedure_name )
         @columns ||= database.fetch_procedure_columns( procedure_name )
+        @logical_operator ||= "AND"
 
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )
