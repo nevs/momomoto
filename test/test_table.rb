@@ -157,6 +157,8 @@ class TestTable < Test::Unit::TestCase
   def test_select
     r = Person.select( nil, {:limit => 3})
     assert_equal( 3, r.length )
+    Person.select({:OR=>{:person_id=>1}})
+    Person.select({:AND=>{:person_id=>1}})
     Person.select( nil, {:limit => 3, :order => :person_id})
     Person.select( nil, {:limit => 3, :order => "person_id"})
     Person.select( nil, {:limit => 3, :order => ["person_id"]})

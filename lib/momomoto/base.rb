@@ -80,15 +80,28 @@ module Momomoto
 
       # compiles the where-clause of the query
       def compile_where( conditions )
-        conditions = {} if not conditions
-        where = ''
+        conditions ||= {}
+        where = compile_expression( conditions, logical_operator )
+        where.empty? ? '' : " WHERE #{where}"
+      end
+
+      def compile_expression( conditions, operator )
+        where = []
         conditions.each do | key , value |
           key = key.to_sym if key.kind_of?( String )
-          raise CriticalError, "condition key '#{key}' not a column in table '#{table_name}'" unless columns.keys.member?( key )
-          where = where_append( where, columns[key].compile_rule( key, value ) )
+          case key
+            when :OR then
+              where << compile_expression( value, "OR" )
+            when :AND then
+              where << compile_expression( value, "AND" )
+            else
+              raise CriticalError, "condition key '#{key}' not a column in table '#{table_name}'" unless columns.keys.member?( key )
+              where << columns[key].compile_rule( key, value )
+          end
         end
-        where
+        where.join( " #{logical_operator} ")
       end
+
 
       # compiles the sql statement defining the limit
       def compile_limit( limit )
@@ -118,11 +131,6 @@ module Momomoto
           end
         end
         " ORDER BY #{order.join(',')}"
-      end
-
-      # append where string
-      def where_append( where, append )
-        ( where.empty? ? ' WHERE ' : where + ' ' + logical_operator + ' ' ) + append
       end
 
       # construct the Row class for the table
