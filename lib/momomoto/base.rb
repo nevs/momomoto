@@ -99,7 +99,7 @@ module Momomoto
               where << columns[key].compile_rule( key, value )
           end
         end
-        where.join( " #{logical_operator} ")
+        where.join( " #{operator} ")
       end
 
 
