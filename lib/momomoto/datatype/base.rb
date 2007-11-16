@@ -60,7 +60,7 @@ module Momomoto
                 end
               end
             end
-            rules.join( " AND " )
+            rules.join( " OR " )
           else
             field_name.to_s + ' = ' + escape(filter_set(value))
         end

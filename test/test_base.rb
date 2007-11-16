@@ -32,10 +32,12 @@ class TestBase < Test::Unit::TestCase
     assert_equal( " WHERE first_name = E'1'" , t.instance_eval do compile_where( :first_name => '1' ) end )
     assert_equal( " WHERE first_name = E'chu''nky'" , t.instance_eval do compile_where( :first_name => "chu'nky" ) end )
     assert_equal( " WHERE first_name IN (E'chu''nky',E'bac''n')" , t.instance_eval do compile_where( :first_name => ["chu'nky","bac'n"] ) end )
-    assert_equal( " WHERE person_id = '1'" , t.instance_eval do compile_where( :OR => { :person_id => '1' } ) end )
-    assert_equal( " WHERE person_id = '1'" , t.instance_eval do compile_where( :AND => { :person_id => '1' } ) end )
-    assert_equal( " WHERE person_id = '1' OR first_name = E's'" , t.instance_eval do compile_where( :OR => { :person_id => '1',:first_name=>'s' } ) end )
-    assert_equal( " WHERE person_id = '1' AND first_name = E's'" , t.instance_eval do compile_where( :AND => { :person_id => '1',:first_name=>'s' } ) end )
+    assert_equal( " WHERE (person_id = '1')" , t.instance_eval do compile_where( :OR => { :person_id => '1' } ) end )
+    assert_equal( " WHERE (person_id = '1')" , t.instance_eval do compile_where( :AND => { :person_id => '1' } ) end )
+    assert_equal( " WHERE (person_id = '1' OR first_name = E's')" , t.instance_eval do compile_where( :OR => { :person_id => '1',:first_name=>'s' } ) end )
+    assert_equal( " WHERE (person_id = '1' AND first_name = E's')" , t.instance_eval do compile_where( :AND => { :person_id => '1',:first_name=>'s' } ) end )
+    assert_equal( " WHERE (person_id = '1' AND person_id = '2')" , t.instance_eval do compile_where( :AND =>[{:person_id=>1},{:person_id=>2}] ) end )
+    assert_equal( " WHERE (person_id = '1' OR person_id = '2')" , t.instance_eval do compile_where( :OR =>[{:person_id=>1},{:person_id=>2}] ) end )
   end
 
 end

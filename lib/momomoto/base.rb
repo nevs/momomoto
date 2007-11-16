@@ -87,17 +87,22 @@ module Momomoto
 
       def compile_expression( conditions, operator )
         where = []
-        conditions.each do | key , value |
-          key = key.to_sym if key.kind_of?( String )
-          case key
-            when :OR then
-              where << compile_expression( value, "OR" )
-            when :AND then
-              where << compile_expression( value, "AND" )
-            else
-              raise CriticalError, "condition key '#{key}' not a column in table '#{table_name}'" unless columns.keys.member?( key )
-              where << columns[key].compile_rule( key, value )
-          end
+        case conditions
+          when Array then
+            conditions.each do | value |
+              where << compile_expression( value, operator )
+            end
+          when Hash then
+            conditions.each do | key , value |
+              key = key.to_sym if key.kind_of?( String )
+              case key
+                when :OR then where << "(" + compile_expression( value, "OR" ) + ")"
+                when :AND then where << "(" + compile_expression( value, "AND" ) + ")"
+                else
+                  raise CriticalError, "condition key '#{key}' not a column in table '#{table_name}'" unless columns.keys.member?( key )
+                  where << columns[key].compile_rule( key, value )
+              end
+            end
         end
         where.join( " #{operator} ")
       end
