@@ -4,6 +4,7 @@ DECLARE
   proc RECORD;
   typ RECORD;
   att RECORD;
+  i INTEGER;
   col momomoto.procedure_column%rowtype;
 BEGIN
   SELECT INTO proc * FROM pg_proc WHERE proname = procedure_name;
@@ -11,13 +12,24 @@ BEGIN
     SELECT INTO typ * FROM pg_type WHERE oid = proc.prorettype;
 
     IF typ.typtype = 'b' THEN
+      -- base type
       col.column_name = procedure_name;
       SELECT INTO col.data_type format_type( proc.prorettype, NULL::integer );
       RETURN NEXT col;
     ELSIF typ.typtype = 'c' THEN
+      -- composite type
       FOR col IN
         SELECT attname AS column_name, format_type(atttypid, NULL) FROM pg_attribute WHERE attrelid = typ.typrelid AND attnum > 0 ORDER BY attnum
       LOOP
+        RETURN NEXT col;
+      END LOOP;
+    ELSIF typ.typtype = 'p' THEN
+      -- pseudo type
+      FOR i IN array_lower(proc.proallargtypes, 1) .. array_upper(proc.proallargtypes, 1)
+      LOOP
+        CONTINUE WHEN proc.proargmodes[ i ] = 'i';
+        col.column_name = proc.proargnames[ i ];
+        col.data_type = format_type( proc.proallargtypes[ i ], NULL );
         RETURN NEXT col;
       END LOOP;
     ELSE
@@ -34,17 +46,13 @@ DECLARE
   typ RECORD;
   col momomoto.procedure_parameter%rowtype;
   i INTEGER;
-  j INTEGER;
-  k INTEGER;
 BEGIN
-  SELECT INTO proc proargnames, proallargtypes, proargtypes FROM pg_proc WHERE proname = procedure_name;
+  SELECT INTO proc proargnames, proargtypes, proargmodes, proargtypes FROM pg_proc WHERE proname = procedure_name;
   IF FOUND THEN
-    j = array_lower(proc.proargtypes, 1);
-    k = array_upper(proc.proargtypes, 1);
-    FOR i IN j .. k
+    FOR i IN array_lower(proc.proargtypes, 1) .. array_upper(proc.proargtypes, 1)
     LOOP
-      col.parameter_name = proc.proargnames[ i + array_lower( proc.proargnames, 1 )];
-      col.data_type = format_type( proc.proargtypes[i], NULL );
+      col.parameter_name = proc.proargnames[ i ];
+      col.data_type = format_type( proc.proargtypes[ i ], NULL );
       RETURN NEXT col;
     END LOOP;
   END IF;
