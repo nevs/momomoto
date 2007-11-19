@@ -90,14 +90,16 @@ module Momomoto
         case conditions
           when Array then
             conditions.each do | value |
-              where << compile_expression( value, operator )
+              expr = compile_expression( value, operator )
+              where << expr if expr.length > 0
             end
           when Hash then
             conditions.each do | key , value |
               key = key.to_sym if key.kind_of?( String )
               case key
-                when :OR then where << "(" + compile_expression( value, "OR" ) + ")"
-                when :AND then where << "(" + compile_expression( value, "AND" ) + ")"
+                when :OR,:AND then
+                  expr = compile_expression( value, key.to_s )
+                  where << "(#{expr})" if expr.length > 0
                 else
                   raise CriticalError, "condition key '#{key}' not a column in table '#{table_name}'" unless columns.keys.member?( key )
                   where << columns[key].compile_rule( key, value )

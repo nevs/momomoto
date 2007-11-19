@@ -38,6 +38,9 @@ class TestBase < Test::Unit::TestCase
     assert_equal( " WHERE (person_id = '1' AND first_name = E's')" , t.instance_eval do compile_where( :AND => { :person_id => '1',:first_name=>'s' } ) end )
     assert_equal( " WHERE (person_id = '1' AND person_id = '2')" , t.instance_eval do compile_where( :AND =>[{:person_id=>1},{:person_id=>2}] ) end )
     assert_equal( " WHERE (person_id = '1' OR person_id = '2')" , t.instance_eval do compile_where( :OR =>[{:person_id=>1},{:person_id=>2}] ) end )
+    assert_equal( "" , t.instance_eval do compile_where( :OR =>[] ) end )
+    assert_equal( "" , t.instance_eval do compile_where( :OR =>[{}] ) end )
+    assert_equal( "" , t.instance_eval do compile_where( :AND =>[{},{}] ) end )
   end
 
 end
