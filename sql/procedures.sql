@@ -51,7 +51,7 @@ BEGIN
   IF FOUND THEN
     FOR i IN array_lower(proc.proargtypes, 1) .. array_upper(proc.proargtypes, 1)
     LOOP
-      col.parameter_name = proc.proargnames[ i ];
+      col.parameter_name = proc.proargnames[ i + array_lower( proc.proargnames, 1 )];
       col.data_type = format_type( proc.proargtypes[ i ], NULL );
       RETURN NEXT col;
     END LOOP;
