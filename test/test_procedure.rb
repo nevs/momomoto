@@ -85,7 +85,68 @@ class TestProcedure < Test::Unit::TestCase
     assert_raise( Momomoto::Error ) { b.call }
     assert_raise( Momomoto::Error ) { b.call({:param1=>nil})}
     assert_nothing_raised { b.call({:param1=>1})}
+  end
 
+  def test_inout_sql
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_parameter_inout_sql")
+    assert_equal( 1, a.columns.keys.length )
+    assert_instance_of( Momomoto::Datatype::Integer, a.columns[:ret1] )
+    assert_equal( 1, a.parameters.length )
+    assert_instance_of( Momomoto::Datatype::Integer, a.parameters.first[:param1] )
+  end
+
+  def test_inout_plpgsql
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_parameter_inout_plpgsql")
+    assert_equal( 1, a.columns.keys.length )
+    assert_instance_of( Momomoto::Datatype::Integer, a.columns[:ret1] )
+    assert_equal( 2, a.parameters.length )
+    assert_instance_of( Momomoto::Datatype::Integer, a.parameters[0][:param1] )
+    assert_instance_of( Momomoto::Datatype::Text, a.parameters[1][:param2] )
+  end
+
+  def test_set_returning_inout
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_set_returning_inout")
+    assert_equal( 2, a.columns.keys.length )
+    assert_instance_of( Momomoto::Datatype::Integer, a.columns[:ret1] )
+    assert_instance_of( Momomoto::Datatype::Text, a.columns[:ret2] )
+    assert_equal( 1, a.parameters.length )
+    assert_instance_of( Momomoto::Datatype::Integer, a.parameters[0][:param1] )
+  end
+
+  def test_parameter_inout_unnamed
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_parameter_inout_unnamed")
+    assert_equal( 1, a.columns.keys.length )
+    assert_equal( :test_parameter_inout_unnamed, a.columns.keys.first )
+    assert_instance_of( Momomoto::Datatype::Integer, a.columns[:test_parameter_inout_unnamed] )
+    assert_equal( 1, a.parameters.length )
+    assert_equal( :test_parameter_inout_unnamed, a.parameters.first.keys.first )
+    assert_instance_of( Momomoto::Datatype::Integer, a.parameters[0][:test_parameter_inout_unnamed] )
+  end
+
+  def test_parameter_inout_unnamed2
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_parameter_inout_unnamed2")
+    assert_equal( 1, a.columns.keys.length )
+    assert_equal( :test_parameter_inout_unnamed2, a.columns.keys.first )
+    assert_instance_of( Momomoto::Datatype::Integer, a.columns[:test_parameter_inout_unnamed2] )
+    assert_equal( 1, a.parameters.length )
+    assert_equal( :param1, a.parameters.first.keys.first )
+    assert_instance_of( Momomoto::Datatype::Integer, a.parameters[0][:param1] )
+  end
+
+  def test_parameter_inout_unnamed3
+    a = Class.new(Momomoto::Procedure)
+    a.procedure_name("test_parameter_inout_unnamed3")
+    assert_equal( 1, a.columns.keys.length )
+    assert_equal( :ret1, a.columns.keys.first )
+    assert_instance_of( Momomoto::Datatype::Integer, a.columns[:ret1] )
+    assert_equal( 1, a.parameters.length )
+    assert_equal( :test_parameter_inout_unnamed3, a.parameters.first.keys.first )
+    assert_instance_of( Momomoto::Datatype::Integer, a.parameters[0][:test_parameter_inout_unnamed3] )
   end
 
 end
