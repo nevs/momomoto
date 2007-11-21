@@ -1,6 +1,7 @@
 
 require 'date'
 
+# the class is used in Momomoto to represent the SQL interval datatype
 class TimeInterval
 
   include Comparable
@@ -17,10 +18,14 @@ class TimeInterval
 
   end
 
+  # compare two TimeInterval instances
+  # the comparison is done by calling to_i on other
   def <=>( other )
     self.to_i <=> other.to_i
   end
 
+  # formats timeinterval according to the directives in the give format
+  # string
   def strftime( fmt = "%H:%M:%S" )
     fmt.gsub( /%(.)/ ) do | match |
       case match[1,1]
@@ -33,14 +38,17 @@ class TimeInterval
     end
   end
 
+  # returns the value of timeinterval as number of seconds
   def to_i
     @hour * 3600 + @min * 60 + @sec
   end
 
   alias_method :to_int, :to_i
 
+  # Returns a string representing timeinterval. Equivalent to calling
+  # Time#strftime with a format string of '%H:%M:%S'.
   def to_s
-    strftime
+    strftime( '%H:%M:%S' )
   end
 
   def initialize( d = {} )
