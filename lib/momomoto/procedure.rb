@@ -55,18 +55,21 @@ module Momomoto
       end
 
       # get the parameters this procedure accepts
+      # returns an array of hashes with the fieldnames as key and the datatype as value
       def parameters( *p )
         return self.send( :parameters=, *p ) if not p.empty?
         initialize_procedure if not instance_variable_defined?( :@parameters )
         @parameters
       end
 
-      # get the columns of the resultset this procedure returns
+      # set the columns of the resultset this procedure returns
+      # expects a hash with the fieldnames as key and the datatype as value
       def columns=( columns )
         @columns = columns
       end
 
       # get the columns of the resultset this procedure returns
+      # returns a hash with the fieldnames as key and the datatype as value
       def columns( c = nil )
         return self.columns=( c ) if c
         initialize_procedure if not instance_variable_defined?( :@columns )
