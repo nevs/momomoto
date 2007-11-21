@@ -13,9 +13,25 @@ BEGIN
 
     IF typ.typtype = 'b' THEN
       -- base type
-      col.column_name = procedure_name;
-      SELECT INTO col.data_type format_type( proc.prorettype, NULL::integer );
-      RETURN NEXT col;
+      IF proc.proallargtypes IS NULL THEN
+        -- we only got IN arguments
+        col.column_name = procedure_name;
+        SELECT INTO col.data_type format_type( proc.prorettype, NULL::integer );
+        RETURN NEXT col;
+      ELSE
+        -- we got a named out arguments
+        FOR i IN array_lower(proc.proallargtypes, 1) .. array_upper(proc.proallargtypes, 1)
+        LOOP
+          CONTINUE WHEN proc.proargmodes[ i ] = 'i';
+          IF COALESCE( proc.proargnames[ i ], '' ) = '' THEN
+            col.column_name = procedure_name;
+          ELSE
+            col.column_name = proc.proargnames[ i ];
+          END IF;
+          col.data_type = format_type( proc.proallargtypes[ i ], NULL );
+          RETURN NEXT col;
+        END LOOP;
+      END IF;
     ELSIF typ.typtype = 'c' THEN
       -- composite type
       FOR col IN
@@ -51,7 +67,11 @@ BEGIN
   IF FOUND THEN
     FOR i IN array_lower(proc.proargtypes, 1) .. array_upper(proc.proargtypes, 1)
     LOOP
-      col.parameter_name = proc.proargnames[ i + array_lower( proc.proargnames, 1 )];
+      IF COALESCE( proc.proargnames[ i + array_lower( proc.proargnames, 1 ) ], '' ) = '' THEN
+        col.parameter_name = procedure_name;
+      ELSE
+        col.parameter_name = proc.proargnames[ i + array_lower( proc.proargnames, 1 )];
+      END IF;
       col.data_type = format_type( proc.proargtypes[ i ], NULL );
       RETURN NEXT col;
     END LOOP;
