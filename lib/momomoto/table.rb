@@ -32,34 +32,6 @@ module Momomoto
         @columns
       end
 
-      def initialize_table # :nodoc:
-
-        @table_name ||= construct_table_name( self.name )
-        @schema_name ||= construct_schema_name( self.name )
-
-        @columns ||= database.fetch_table_columns( table_name(), schema_name() ) 
-        raise CriticalError, "No fields in table #{table_name}" if columns.keys.empty?
-
-        @primary_keys ||= database.fetch_primary_keys( table_name(), schema_name() )
-        @column_order = @columns.keys
-        @default_order ||= nil
-
-        @logical_operator ||= "AND"
-
-        const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
-        initialize_row( const_get( :Row ), self )
-        @row_cache = {}
-
-        # mark class as initialized
-        self.initialized = true
-
-      end
-
-      # guesses the table name of the table this class works on
-      def construct_table_name( classname ) # :nodoc:
-        classname.split('::').last.downcase.gsub(/[^a-z_0-9]/, '')
-      end
-
       # set the table_name of the table this class operates on
       def table_name=( table_name )
         @table_name = table_name
@@ -77,7 +49,7 @@ module Momomoto
       end
 
       # set the primary key fields of the table
-      def primary_keys=( keys ) # :nodoc:
+      def primary_keys=( keys )
         @primary_keys = keys
       end
 
@@ -90,23 +62,6 @@ module Momomoto
         @primary_keys
       end
 
-      # compile the select clause
-      def compile_select( conditions, options ) # :nodoc:
-        if options[:columns] 
-          cols = {}
-          options[:columns].each do | name | cols[name] = columns[name] end
-        else
-          cols = columns
-        end
-        sql = "SELECT " + cols.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
-        sql += full_name
-        sql += compile_where( conditions )
-        sql += compile_order( options[:order] ) if options[:order] || default_order
-        sql += compile_limit( options[:limit] ) if options[:limit]
-        sql += compile_offset( options[:offset] ) if options[:offset]
-        sql
-      end
-
       # Searches for records and returns an array containing the records
       def select( conditions = {}, options = {} )
         initialize_table unless initialized
@@ -117,25 +72,6 @@ module Momomoto
           data << row_class.new( row )
         end
         data
-      end
-
-      def build_row_class( options )
-        if options[:columns]
-          options[:columns] += primary_keys
-          options[:columns].uniq!
-          if not @row_cache[options[:columns]]
-            row_class = Class.new( Momomoto::Row )
-            cols = {}
-            columns.each do | key, value |
-              cols[key] = value if options[:columns].member?( key )
-            end
-            initialize_row( row_class, self, cols )
-            @row_cache[options[:columns]] = row_class
-          end
-          return @row_cache[options[:columns]]
-        else
-          return const_get(:Row)
-        end
       end
 
       # Searches for records and returns an array containing the records
@@ -167,11 +103,6 @@ module Momomoto
           result << new_row
         end
         result
-      end
-
-      # returns the columns to be used for joining
-      def join_columns( join_table ) # :nodoc:
-        join_table.primary_keys.select{|f| columns.key?(f)}
       end
 
       # constructor for a record in this table accepts a hash with presets for the fields of the record
@@ -225,8 +156,9 @@ module Momomoto
         end
       end
 
-      # Select a single row from the database, raises an exception if more or zero
-      # rows are found
+      # Select a single row from the database
+      # raises Momomoto::Nothing_found if nothing was found, raises
+      # Momomoto::Too_many_records if more than one record was found.
       def select_single( conditions = {}, options = {} )
         data = select( conditions, options )
         case data.length
@@ -237,6 +169,7 @@ module Momomoto
       end
 
       # write row back to database
+      # this function is called by Momomoto::Row#write
       def write( row ) # :nodoc:
         if row.new_record?
           insert( row )
@@ -249,7 +182,8 @@ module Momomoto
       end
 
       # create an insert statement for a row
-      def insert( row ) # :nodoc:
+      # do not call insert directly use row.write or Table.write( row ) instead
+      def insert( row )
         fields, values = [], []
         columns.each do | field_name, datatype |
           # check for set primary key fields or fetch respective default values
@@ -272,7 +206,8 @@ module Momomoto
       end
 
       # create an update statement for a row
-      def update( row ) # :nodoc:
+      # do not call update directly use row.write or Table.write( row ) instead
+      def update( row )
         raise CriticalError, 'Updating is only allowed for tables with primary keys' if primary_keys.empty?
         setter, conditions = [], {}
         row.class.columns.each do | field_name, data_type |
@@ -287,7 +222,8 @@ module Momomoto
         database.execute( sql )
       end
 
-      def delete( row ) # :nodoc:
+      # delete _row_ from the database
+      def delete( row )
         raise CriticalError, 'Deleting is only allowed for tables with primary keys' if primary_keys.empty?
         raise Error, "this is a new record" if row.new_record?
         conditions = {}
@@ -298,6 +234,78 @@ module Momomoto
         sql = "DELETE FROM #{full_name} #{compile_where(conditions)};"
         row.new_record = true
         database.execute( sql )
+      end
+
+      protected
+
+      # guesses the table name of the table this class works on
+      def construct_table_name( classname )
+        classname.split('::').last.downcase.gsub(/[^a-z_0-9]/, '')
+      end
+
+      # initialie a table class
+      def initialize_table
+
+        @table_name ||= construct_table_name( self.name )
+        @schema_name ||= construct_schema_name( self.name )
+
+        @columns ||= database.fetch_table_columns( table_name(), schema_name() )
+        raise CriticalError, "No fields in table #{table_name}" if columns.keys.empty?
+
+        @primary_keys ||= database.fetch_primary_keys( table_name(), schema_name() )
+        @column_order = @columns.keys
+        @default_order ||= nil
+
+        @logical_operator ||= "AND"
+
+        const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
+        initialize_row( const_get( :Row ), self )
+        @row_cache = {}
+
+        self.initialized = true
+
+      end
+
+      # builds the row class for this table
+      def build_row_class( options )
+        if options[:columns]
+          options[:columns] += primary_keys
+          options[:columns].uniq!
+          if not @row_cache[options[:columns]]
+            row_class = Class.new( Momomoto::Row )
+            cols = {}
+            columns.each do | key, value |
+              cols[key] = value if options[:columns].member?( key )
+            end
+            initialize_row( row_class, self, cols )
+            @row_cache[options[:columns]] = row_class
+          end
+          return @row_cache[options[:columns]]
+        else
+          return const_get(:Row)
+        end
+      end
+
+      # compile the select clause
+      def compile_select( conditions, options )
+        if options[:columns]
+          cols = {}
+          options[:columns].each do | name | cols[name] = columns[name] end
+        else
+          cols = columns
+        end
+        sql = "SELECT " + cols.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
+        sql += full_name
+        sql += compile_where( conditions )
+        sql += compile_order( options[:order] ) if options[:order] || default_order
+        sql += compile_limit( options[:limit] ) if options[:limit]
+        sql += compile_offset( options[:offset] ) if options[:offset]
+        sql
+      end
+
+      # returns the columns to be used for joining
+      def join_columns( join_table ) # :nodoc:
+        join_table.primary_keys.select{|f| columns.key?(f)}
       end
 
     end
