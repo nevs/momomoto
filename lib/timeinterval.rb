@@ -54,9 +54,9 @@ class TimeInterval
   def initialize( d = {} )
     case d
       when Hash then
-        @hour = d[:hour] || 0
-        @min = d[:min] || 0
-        @sec = d[:sec] || 0
+        @hour = Integer( d[:hour] || 0 )
+        @min = Integer( d[:min] || 0 )
+        @sec = Integer( d[:sec] || 0 )
       when Integer then
         @hour = d/3600
         @min = (d/60)%60
@@ -66,9 +66,9 @@ class TimeInterval
         if ( parsed.empty? && d.length > 0 ) || !(parsed.keys - [:hour,:min,:sec,:sec_fraction]).empty?
           raise ParseError, "Could not parse interval `#{d}`"
         end
-        @hour = parsed[:hour] || 0
-        @min = parsed[:min] || 0
-        @sec = parsed[:sec] || 0
+        @hour = Integer( d[:hour] || 0 )
+        @min = Integer( d[:min] || 0 )
+        @sec = Integer( d[:sec] || 0 )
     end
   end
 
