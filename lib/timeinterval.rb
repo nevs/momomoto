@@ -54,7 +54,7 @@ class TimeInterval
   def initialize( d = {} )
     case d
       when Hash then
-        init_from_hash( parsed )
+        init_from_hash( d )
       when Integer then
         @hour = d/3600
         @min = (d/60)%60
