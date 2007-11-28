@@ -36,6 +36,7 @@ module Momomoto
       @config = config
     end
 
+    # Eases the use of #config.
     def self.config( conf )
       instance.config( conf )
     end
@@ -45,6 +46,10 @@ module Momomoto
       @connection = nil
     end
 
+    # Connects to database
+    #   Momomoto::Database.config( :database=>:test, :username => 'test' )
+    #   Momomoto::Database.connect
+    #   # configure and connect
     def connect
       @connection.close if @connection
       @transaction_active = false
@@ -56,6 +61,11 @@ module Momomoto
       raise CriticalError, "Connection to database failed: #{e}"
     end
 
+    # Eases the use of #connect.
+    #
+    #   Momomoto::Database.config( :database=>:test, :username => 'test' )
+    #   Momomoto::Database.connect
+    #   # configure and connect
     def self.connect
       instance.connect
     end
@@ -177,10 +187,12 @@ module Momomoto
       @transaction_active = false
     end
 
+    # escapes the given string +input+
     def self.escape_string( input )
       PGconn.escape( input )
     end
 
+    # escapes the given binary data +input+
     def self.escape_bytea( input )
       PGconn.escape_bytea( input )
     end

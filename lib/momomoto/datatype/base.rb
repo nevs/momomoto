@@ -1,39 +1,63 @@
 
 module Momomoto
 
+  # This module encapsulates all supporteed data types, i.e.:
+  # Numeric, Integer, Bigint, Smallint, Real,
+  # Timestamp_with_time_zone, Timestamp_without_time_zone,
+  # Time_with_time_zone, Time_without_time_zone, Date, Interval,
+  # Character, Character_varying, Bytea, Text, Inet and Boolean.
+  #
+  # Refer to http://www.postgresql.org/docs/8.2/static/datatype.html
+  # for more information on the specific data types.
+  #
   module Datatype
-    # base class for all datatypes
+
+    # Every data type class (see #Datatype) is derived from this class.
     class Base
-      # get the default value for this column
-      # returns false if none exists
+
+      # Gets the default value for this column or returns nil if none
+      # exists.
       def default
         @default
       end
 
-      # is this column a not null column
+      # Returns true if this column can be NULL otherwise false
       def not_null?
         @not_null
       end
 
+      # Creates a new instance of the special data type, setting +@not_null+
+      # and +@default+ according to the values from Information Schema.
       def initialize( row = nil )
-        @not_null = row.respond_to?(:is_nullable) && row.is_nullable == "NO"
-        @default = row.respond_to?( :column_default) && row.column_default
+        @not_null = row.is_nullable == "NO" ? true : false
+        @default = row.column_default
       end
 
-      # values are filtered by this function when being set
+      # Values are filtered by this function when being set. See the
+      # method in the appropriate derived data type class for allowed
+      # values.
       def filter_set( value ) # :nodoc:
         value
       end
 
+      # Compares two values and return true if equal or false otherwise.
+      # It is used to check if a row field has been changed so that only
+      # changed fields are written to database.
       def equal( a, b )
         a == b
       end
 
+      # Escapes +input+ to be saved in database.
+      # If +input+ equals nil, NULL is returned, otherwise Database#escape_string
+      # is called.
+      # See the method in the appropriate derived data type class to know
+      # how these are escaped.
       def escape( input )
         input.nil? ? "NULL" : "'" + Database.escape_string( input.to_s ) + "'"
       end
 
-      # this functions is used for compiling the where clause
+      # This function is used when compiling the where clause. No need
+      # for direct use.
       def compile_rule( field_name, value ) # :nodoc:
         case value
           when nil then
@@ -66,6 +90,9 @@ module Momomoto
         end
       end
 
+      # These are the operators supported by all data types. Note the
+      # special case of instances of Text which can be also compared 
+      # with the two operators +:like+ and +:ilike+.
       def self.operator_sign( op )
         case op
           when :le then '<='

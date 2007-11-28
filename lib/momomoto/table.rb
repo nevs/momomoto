@@ -62,7 +62,7 @@ module Momomoto
         @primary_keys
       end
 
-      # Searches for records and returns an array containing the records
+      # Searches for records and returns an +Array+ containing the records.
       def select( conditions = {}, options = {} )
         initialize_table unless initialized
         row_class = build_row_class( options )
@@ -74,6 +74,8 @@ module Momomoto
         data
       end
 
+      # experimental
+      #
       # Searches for records and returns an array containing the records
       def select_outer_join( conditions = {}, options = {} )
         initialize_table unless initialized
@@ -168,7 +170,7 @@ module Momomoto
         end
       end
 
-      # write row back to database
+      # Write row back to database
       # this function is called by Momomoto::Row#write
       def write( row ) # :nodoc:
         if row.new_record?
@@ -243,7 +245,7 @@ module Momomoto
         classname.split('::').last.downcase.gsub(/[^a-z_0-9]/, '')
       end
 
-      # initialie a table class
+      # initializes a table class
       def initialize_table
 
         @table_name ||= construct_table_name( self.name )
@@ -266,7 +268,17 @@ module Momomoto
 
       end
 
-      # builds the row class for this table
+      # Builds the row class for this table when executing #select.
+      # In the default Row class proper setter and getter are available
+      # for all columns. However, if you only want to select a few
+      # columns as in
+      #
+      #   Feeds.select( {}, {:columns => [:url,:last_changed]} )
+      #
+      # #build_row_class does not return the default Row class for this table
+      # but invokes Base#initialize_row to create a new class without
+      # all setter and getter for the unused columns.
+      # For better performance the newly created class is cached in +@row_cache+.
       def build_row_class( options )
         if options[:columns]
           options[:columns] += primary_keys

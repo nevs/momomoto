@@ -1,6 +1,14 @@
 
 module Momomoto
+
+  # This module is used by Momomoto to access the database's meta
+  # information on the current active database.
   module Information_schema
+
+    # internal use only
+    #
+    # Represents the corresponding view from Information Schema and is
+    # used when getting the data type of a column.
     class Columns < Momomoto::Table
       primary_keys( [] )
       schema_name( "information_schema" )

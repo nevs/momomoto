@@ -4,30 +4,70 @@ module Momomoto
 
   class << self
 
+    # Getter and setter for debugging.
+    # If +debug+ evaluates to +true+ then all SQL queries to the database
+    # are printed to STDOUT.
     attr_accessor :debug
 
+    # Returns an instance of Order::Lower where +args+ is either a single
+    # or array of +Symbol+ representing columns.
+    #
+    # Eases the use of class Order::Lower. You can use it whenever selecting
+    # rows or in #default_order.
+    #
+    #   order_lower = Momomoto.lower( :person )
+    #     => #<Momomoto::Order::Lower:0x5184131c @fields=[:person]>
+    #   Table.select( {}, {:order => order} )
+    #     => returns Table's rows ordered case-insensitively by column person
     def lower( *args )
       Momomoto::Order::Lower.new( *args )
     end
 
+    # Returns an instance of Order::Asc where +args+ is either a single
+    # or array of +Symbol+ representing columns.
+    #
+    # Eases the use of class Order::Asc. You can use it whenever selecting
+    # rows or in #default_order.
+    #
+    #   order_lower = Momomoto.asc( :person )
+    #     => #<Momomoto::Order::Asc:0x5184131c @fields=[:person]>
+    #   Table.select( {}, {:order => order} )
+    #     => returns Table's rows ordered asc by column person
     def asc( *args )
       Momomoto::Order::Asc.new( *args )
     end
 
+    # Returns an instance of Order::Asc where +args+ is either a single
+    # or array of +Symbol+ representing columns.
+    #
+    # Eases the use of class Order::Desc. You can use it whenever selecting
+    # rows or in #default_order.
+    #
+    #   order_lower = Momomoto.lower( :person )
+    #     => #<Momomoto::Order::Desc:0x5184131c @fields=[:person]>
+    #   Table.select( {}, {:order => order} )
+    #     => returns Table's rows ordered desc by column person
     def desc( *args )
       Momomoto::Order::Desc.new( *args )
     end
 
   end
 
-  ## base exception for all exceptions thrown by Momomoto
+  # Base exception for all exceptions thrown by Momomoto
   class Error < StandardError; end
 
-  # thrown when datatype conversion fails
+  # Thrown when datatype conversion fails and if a +block+ given to
+  # Table#select_or_new does not act on all primary keys.
   class ConversionError < Error; end
-  class CriticalError < Error; end
 
+  # Thrown when a critical error occurs.
+  class CriticalError < Error; end
+  
+  # Thrown when multiple values are found in Table#select_or_new or
+  # Table#select_single.
   class Too_many_records < Error; end
+
+  # Thrown when no row was found in Table#select_single.
   class Nothing_found < Error; end
 
 
@@ -36,9 +76,13 @@ module Momomoto
 
     class << self
 
+      # Getter for logical operator. This is used in #compile_where.
+      # See Table#select for usage of logical operators.
       attr_reader :logical_operator
 
-      # set the default logical operator for constraints
+      # Set the default logical operator for constraints. AND and OR are
+      # supported.
+      # See Table#select for usage of logical operators.
       def logical_operator=( value )
         @logical_operator = case value
           when /and/i then "AND"
@@ -47,12 +91,14 @@ module Momomoto
         end
       end
 
-      # set the schema name of the table this class operates on
+      # Set the schema name of the table this class operates on.
       def schema_name=( schema_name )
         @schema_name = schema_name
       end
 
-      # get the schema name of the table this class operates on
+      # Get the schema name of the table this class operates on. Invokes
+      # #schema_name= if +schema_name+ is given as parameter. Returns 
+      # +@schema_name+
       def schema_name( schema_name  = nil )
         return self.schema_name=( schema_name ) if schema_name
         if not instance_variable_defined?( :@schema_name )
@@ -63,9 +109,10 @@ module Momomoto
 
       protected
 
+      # Getter and setter used for marking tables as initialized.
       attr_accessor :initialized
 
-      # guesses the schema name of the table this class works on
+      # Guesses the schema name of the table this class works on.
       def construct_schema_name( classname )
         # Uncomment these lines to derive the schema from the enclosing namespace of the class
         #schema = classname.split('::')[-2]
@@ -73,7 +120,7 @@ module Momomoto
         'public'
       end
 
-      # get the database connection
+      # Get the database connection.
       def database # :nodoc:
         Momomoto::Database.instance
       end
@@ -110,7 +157,7 @@ module Momomoto
       end
 
 
-      # compiles the sql statement defining the limit
+      # Compiles the sql statement defining the limit
       def compile_limit( limit )
         " LIMIT #{Integer(limit)}"
        rescue => e
@@ -140,7 +187,18 @@ module Momomoto
         " ORDER BY #{order.join(',')}"
       end
 
-      # construct the Row class for the table
+      # Constructs the Row class for the given table or procedure +table+.
+      # If +columns+ is given as parameter to this method all setter and getter
+      # for the fields which are not included in columns will be removed.
+      #
+      # See Table#select for how this can be useful when only some columns are
+      # needed.
+      #
+      # module Methods can be used to modify setter and getter methods for columns.
+      # Methods is included to the row class after StandardMethods which holds all
+      # default accessors. That's why you can define your own accessors in Methods.
+      #
+      # See Row#set_column and Row#get_column for more information on this.
       def initialize_row( row, table, columns = table.columns )
 
         const_set( :Methods, Module.new ) if not const_defined?( :Methods )
@@ -173,8 +231,8 @@ module Momomoto
 
       end
 
-      # defines row setter and getter in the module StandardMethods which
-      # is later included in the Row class
+      # Defines row setter and getter in the module StandardMethods which
+      # is later included in the Row class.
       def define_row_accessors( method_module, table, columns )
         columns.each_with_index do | ( field_name, data_type ), index |
           method_module.instance_eval do
