@@ -24,6 +24,16 @@ class TimeInterval
     self.to_i <=> other.to_i
   end
 
+  # add something to a TimeInterval instance
+  def +( other )
+    self.class.new( self.to_i + other.to_i )
+  end
+
+  # subtract something to a TimeInterval instance
+  def -( other )
+    self.class.new( self.to_i - other.to_i )
+  end
+
   # formats timeinterval according to the directives in the give format
   # string
   def strftime( fmt = "%H:%M:%S" )
@@ -56,9 +66,7 @@ class TimeInterval
       when Hash then
         init_from_hash( d )
       when Integer then
-        @hour = d/3600
-        @min = (d/60)%60
-        @sec = d%60
+        init_from_int( d )
       when String then
         parsed = Date._parse( d, false)
         if ( parsed.empty? && d.length > 0 ) || !(parsed.keys - [:hour,:min,:sec,:sec_fraction]).empty?
@@ -74,6 +82,12 @@ class TimeInterval
     @hour = Integer( d[:hour] || 0 )
     @min = Integer( d[:min] || 0 )
     @sec = Integer( d[:sec] || 0 )
+  end
+
+  def init_from_int( d )
+    @hour = d/3600
+    @min = (d/60)%60
+    @sec = d%60
   end
 
 end
