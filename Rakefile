@@ -33,6 +33,11 @@ task :doc do
   sh "rdoc -r lib"
 end
 
+desc "create html documentation"
+task :html do
+  sh "rdoc --inline-source --promiscuous --force-update --webcvs 'http://trac.c3d2.de/momomoto/browser/trunk/%s' lib"
+end
+
 desc "run benchmark"
 task( :bench ) do | t |
   sh "ruby benchmark.rb"
