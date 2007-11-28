@@ -162,9 +162,9 @@ module Momomoto
       def select_single( conditions = {}, options = {} )
         data = select( conditions, options )
         case data.length
-          when 0 then raise Nothing_found, "nothing found in #{table_name}"
+          when 0 then raise Nothing_found, "nothing found in #{full_name}"
           when 1 then return data[0]
-          else raise Too_many_records, "too many records found in #{table_name}"
+          else raise Too_many_records, "too many records found in #{full_name}"
         end
       end
 
