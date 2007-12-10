@@ -3,6 +3,8 @@ require 'time'
 
 module Momomoto
   module Datatype
+
+    # Represents the data type Time without time zone.
     class Time_without_time_zone < Base
 
       # Compares two values and return true if equal or false otherwise.
