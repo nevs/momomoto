@@ -28,6 +28,11 @@ begin
 rescue LoadError
 end
 
+desc "check documentation coverage"
+task :dcov do
+  sh "find lib -name '*.rb' | xargs dcov"
+end
+
 desc "create documentation for ri"
 task :doc do
   sh "rdoc -r lib"
