@@ -1,8 +1,8 @@
 
 module Momomoto
 
-  # this class implements access to tables/views
-  # it must not be used directly but you should inherit from this class
+  # This class implements access to tables/views.
+  # It must not be used directly but you should inherit from this class.
   class Table < Base
 
     class << self
@@ -43,7 +43,7 @@ module Momomoto
         @table_name
       end
 
-      # get the full name of a table including schema if set
+      # get the full name of table including, if set, schema
       def full_name
         "#{ schema_name ? schema_name + '.' : ''}#{table_name}"
       end
@@ -62,7 +62,64 @@ module Momomoto
         @primary_keys
       end
 
-      # Searches for records and returns an +Array+ containing the records.
+      # Searches for records and returns an Array containing the records.
+      # There are a bunch of different use cases as this method is the primary way
+      # to access all rows in the database.
+      #
+      # Selecting rows based on expression:
+      #   #selects the feeds that match both the given url and author fields
+      #   Posts.select(:feed_url => "https://www.c3d2.de/news-atom.xml",:author => "fnord")
+      #
+      # Using order statements:
+      #   See Order#asc, Order#desc and Order#lower
+      #
+      #   #Selects conferences depending on start_date, starting with the oldest date.
+      #   #If two conferences start at the same date(day) use the second order parameter
+      #   #start_time.
+      #   Conference.select({},{:order => Momomoto.asc([:start_date,:start_time])} )
+      #
+      # Using limit statement:
+      #   See Base#compile_limit
+      #
+      #   #selects five feeds
+      #   five_feeds = Feeds.select( {},{:limit => 5} )
+      #
+      # Using offset statement:
+      #   See Base#compile_offset
+      #
+      #   #selects five feeds ommitting the first 23 rows
+      #   five_feeds = Feeds.select( {}, {:offset => 23, :limit => 5} )
+      #
+      # Using logical operators:
+      #   See Datatype::Base#operator_sign for basic comparison operators
+      #   See Base#logical_operator for the supported logical operators
+      #
+      #   #selects the posts where the content field case-insensitevely matches
+      #   #"surveillance".
+      #   Posts.select( :content => {:ilike => 'surveillance'} )
+      #
+      #   #selects all conferences with a start_date before the current time.
+      #   Conferences.select( :start_date => {:le => Time.now} )
+      # 
+      #   feed1 = "https://www.c3d2.de/news-atom.xml"
+      #   feed2 = "http://www.c3d2.de/news-atom.xml"
+      #   #selects the feeds with a field url that matches either feed1 or feed2
+      #   Feeds.select( :OR=>{:url => [feed1,feed2]} )
+      #
+      #   
+      # Selecting only given columns:
+      #   See Base#initialize_row for the implementation
+      #
+      #   #selects title and content for every row found in table Posts.
+      #   posts = Posts.select({},{:columns => [:title,:content]} )
+      #
+      #   The returned rows are special. They do not contain getter and setter
+      #   for the rest of the columns of the row. Only the specified columns
+      #   and all the primary keys of the table have proper accessor methods.
+      #
+      #   However, you can still change the rows and write them back to database:
+      #   posts.first.title = "new title"
+      #   posts.first.write
       def select( conditions = {}, options = {} )
         initialize_table unless initialized
         row_class = build_row_class( options )
@@ -133,10 +190,14 @@ module Momomoto
         new_row
       end
 
-      # Tries to find a specific record and creates a new one if it does not find it.
+      # Tries to select the specified record or creates a new one if it does not find it.
       # Raises an exception if multiple records are found.
       # You can pass a block which has to deliver the respective values for the
-      # primary key fields
+      # primary key fields.
+      #
+      #   # selects the feed row matching the specified URL or creates a new
+      #   # row based on the given URL.
+      #   Feeds.select_or_new( :url => "https://www.c3d2.de/news-atom.xml" )
       def select_or_new( conditions = {}, options = {} )
         begin
           if block_given?
@@ -159,8 +220,8 @@ module Momomoto
       end
 
       # Select a single row from the database
-      # raises Momomoto::Nothing_found if nothing was found, raises
-      # Momomoto::Too_many_records if more than one record was found.
+      # raises Momomoto::Nothing_found if no row matched.
+      # raises Momomoto::Too_many_records if more than one record was found.
       def select_single( conditions = {}, options = {} )
         data = select( conditions, options )
         case data.length
@@ -170,8 +231,8 @@ module Momomoto
         end
       end
 
-      # Write row back to database
-      # this function is called by Momomoto::Row#write
+      # Writes row back to database.
+      # This method is called by Momomoto::Row#write
       def write( row ) # :nodoc:
         if row.new_record?
           insert( row )
@@ -183,8 +244,8 @@ module Momomoto
         true
       end
 
-      # create an insert statement for a row
-      # do not call insert directly use row.write or Table.write( row ) instead
+      # Creates an insert statement for a row.
+      # Do not use it directly but use row.write or Table.write(row) instead.
       def insert( row )
         fields, values = [], []
         columns.each do | field_name, datatype |
@@ -207,8 +268,21 @@ module Momomoto
         database.execute( sql )
       end
 
-      # create an update statement for a row
-      # do not call update directly use row.write or Table.write( row ) instead
+      # Creates an update statement for a row.
+      # Do not call update directly but use row.write or Table.write(row) instead.
+      #
+      # Get the value of row.new_record? before writing to database to find out
+      # if you are updating a row that already exists in the database.
+      #
+      #   feed = Feeds.select_single( :url => "http://www.c3d2.de/news-atom.xml" )
+      #   feed.new_record? => false
+      #   feed[:url] = "https://www.c3d2.de/news-atom.xml"
+      #   feed.new_record? => false
+      #
+      #   feed = Feeds.select_or_new( :url => "http://astroblog.spaceboyz.net/atom.rb" )
+      #   feed.new_record? => true
+      #   feed.write => true
+      #   feed.new_record? => false
       def update( row )
         raise CriticalError, 'Updating is only allowed for tables with primary keys' if primary_keys.empty?
         setter, conditions = [], {}
@@ -224,7 +298,7 @@ module Momomoto
         database.execute( sql )
       end
 
-      # delete _row_ from the database
+      # delete _row_ from table
       def delete( row )
         raise CriticalError, 'Deleting is only allowed for tables with primary keys' if primary_keys.empty?
         raise Error, "this is a new record" if row.new_record?
@@ -277,7 +351,7 @@ module Momomoto
       #
       # #build_row_class does not return the default Row class for this table
       # but invokes Base#initialize_row to create a new class without
-      # all setter and getter for the unused columns.
+      # the setter and getter for the unused columns.
       # For better performance the newly created class is cached in +@row_cache+.
       def build_row_class( options )
         if options[:columns]
@@ -298,7 +372,7 @@ module Momomoto
         end
       end
 
-      # compile the select clause
+      # compiles the select clause
       def compile_select( conditions, options )
         if options[:columns]
           cols = {}

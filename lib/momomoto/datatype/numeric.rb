@@ -2,10 +2,10 @@
 module Momomoto
   module Datatype
 
-    # Represents the data type Numeric
+    # This class represents data type Numeric.
     class Numeric < Base
 
-      # Values are filtered by this function when being set.
+      # Values are filtered by this method when being set.
       # Converts +value+ to Float or returns nil if +value+ is nil or
       # empty.
       def filter_set( value )

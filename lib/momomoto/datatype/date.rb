@@ -8,8 +8,8 @@ module Momomoto
     class Date < Base
 
       # Values are filtered by this function when being set.
-      # Returns ruby's Date or tries to transform a String to Date.
-      # Returns nil if +value+ is empty or nil.
+      # Returns ruby's Date or tries to build a Date from a String.
+      # Raises ConversionError if the given +value+ cannot be parsed.
       def filter_set( value )
         case value
           when nil,'' then nil

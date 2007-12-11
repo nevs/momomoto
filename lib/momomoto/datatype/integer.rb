@@ -1,12 +1,12 @@
 module Momomoto
   module Datatype
 
-    # Represents data type Integer.
+    # This class represents data type Integer.
     class Integer < Base
 
-      # Values are filtered by this function when being set.
-      # Force +value+ to Integer and raise if this fails or return +nil+
-      # if +value+ is nil or empty.
+      # Values are filtered by this method when being set.
+      # Converts +value+ to Integer or return +nil+ if +value+ is nil or empty.
+      # Raises ConversionError if converting fails.
       def filter_set( value )
         case value
           when nil, '' then nil

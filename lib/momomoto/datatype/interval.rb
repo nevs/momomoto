@@ -8,7 +8,7 @@ module Momomoto
       # +value+ can be either 
       #   nil, resulting in 'NULL',
       #   String, which is escaped using Database#escape_string,
-      #   or some escaped Date-like format
+      #   or some Date-like format
       def escape( value )
         case value
           when nil then 'NULL'
@@ -17,9 +17,10 @@ module Momomoto
         end
       end
   
-      # Values are filtered by this function when getting from database.
+      # Values are filtered by this method when getting them from database.
       # Returns an instance of TimeInterval or nil if +value+ is nil or
       # empty.
+      # Raises ConversionError if the given +value+ cannot be parsed.
       def filter_get( value )
         case value
           when nil, '' then nil
@@ -31,7 +32,7 @@ module Momomoto
         raise ConversionError, "Error while parsing interval (#{e.message})"
       end
 
-      # Values are filtered by this function when set.
+      # Values are filtered by this function when being set.
       # See Interval#filter_get
       def filter_set( value )
         filter_get( value )

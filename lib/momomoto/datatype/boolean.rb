@@ -1,13 +1,13 @@
 module Momomoto
   module Datatype
 
-    # Represents values of boolean type
+    # This class represents values of boolean type.
     class Boolean < Base
 
-      # Values are filtered by this function when being set.
+      # Values are filtered by this method when being set.
       # Returns true or false.
-      # If the given +value+ cannot be transformed to true or false
-      # and NULL is not allowed, that again return false. Otherwise
+      # If the given +value+ cannot be converted to true or false
+      # and NULL is not allowed, than again return false. Otherwise
       # return +nil+.
       def filter_set( value )
         case value
@@ -17,7 +17,7 @@ module Momomoto
         end
       end
 
-      # Escapes the given +input+ to true or false if possible.
+      # Converts the given +input+ to true or false if possible.
       # Otherwise returns NULL.
       def escape( input )
         case input

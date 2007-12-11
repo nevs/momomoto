@@ -1,19 +1,18 @@
 
 require 'date'
 
-# The class is used in Momomoto to represent the SQL interval datatype
+# The class is used in Momomoto to represent time intervals.
 class TimeInterval
 
   include Comparable
 
-  # Is raised if a String containing some representation of date cannot
-  # be parsed
+  # Is raised if a String cannot be converted to some representation of
+  # TimeInterval.
   #
   #     TimeInterval.new( {:hour => '42', :min => '23'} )
   #       => #<TimeInterval:0x505c565c @hour="42", @sec=0, @min="23">
   #     TimeInterval.new('invalid')
   #       => TimeInterval::ParseError: Could not parse interval 'invalid'
-  #
   class ParseError < StandardError; end
 
   # Getter methods for hours, minutes and seconds
@@ -22,14 +21,13 @@ class TimeInterval
   #     time.hour => 42
   #     time.min => 23
   #     time.sec => 0
-  #
   attr_reader :hour, :min, :sec
 
   class << self
 
-    # Converts the given +interval+ and returns the correspondind
-    # TimeInterval instane.
+    # Creates and returns a new instance of TimeInterval from the given +interval+
     #   interval = TimeInterval.new( "00:23" )
+    #     => #<TimeInterval:0x5235d458 @hour=0, @sec=0, @min=23>
     def parse( interval )
       TimeInterval.new( interval )
     end
@@ -45,13 +43,13 @@ class TimeInterval
   #   i2 = TimeInterval.new( {:hour => 5, :min => 23, :sec => 2} )
   #     i2.to_i => 19382
   #
-  #   i1 <=> i2 => 1
+  #   i1 <=> i2     #=> 1
   #
   def <=>( other )
     self.to_i <=> other.to_i
   end
 
-  # add something to a TimeInterval instance
+  # add to another TimeInterval instance
   def +( other )
     self.class.new( self.to_i + other.to_i )
   end
@@ -61,10 +59,10 @@ class TimeInterval
     self.class.new( self.to_i - other.to_i )
   end
 
-  # Formats timeinterval according to the directives in the given format
+  # Formats time interval according to the directives in the given format
   # string.
-  #   i = TimeInterval.new(2342)
   #
+  #   i = TimeInterval.new(2342) #2342 seconds
   #   i.strftime( "%H" )  => "00"
   #   i.strftime( "%M" )  => "39"
   #   i.strftime( "%S" )  => "02"
@@ -80,19 +78,21 @@ class TimeInterval
     end
   end
 
-  # Returns the value of timeinterval as number of seconds
+  # Returns the value of time interval as number of seconds
   def to_i
     @hour * 3600 + @min * 60 + @sec
   end
 
   alias_method :to_int, :to_i
 
-  # Returns the value of timeinterval as number of seconds
+  # Returns the value of time interval as number of seconds
+  #   Time.now + TimeInterval.new(2342)
+  #     => Tue Dec 11 21:16:06 +0100 2007
   def to_f
     self.to_i.to_f
   end
 
-  # Returns a string representing timeinterval. Equivalent to calling
+  # Returns a string representing time interval. Equivalent to calling
   # Time#strftime with a format string of '%H:%M:%S'.
   #
   #   i.inspect  => "#<TimeInterval:0x517e36b8 @hour=0, @sec=2, @min=39>"
@@ -134,13 +134,13 @@ class TimeInterval
 
   protected
 
-  def init_from_hash( d )
+  def init_from_hash( d ) #:nodoc:
     @hour = Integer( d[:hour] || 0 )
     @min = Integer( d[:min] || 0 )
     @sec = Integer( d[:sec] || 0 )
   end
 
-  def init_from_int( d )
+  def init_from_int( d ) #:nodoc:
     @hour = d/3600
     @min = (d/60)%60
     @sec = d%60

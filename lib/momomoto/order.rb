@@ -69,7 +69,7 @@ module Momomoto
 
       # Creates a new instance of Lower and flattens the given parameter
       # +fields+. 
-      # Throws Error if presented with fields that are either instances of 
+      # Raises Error if presented with fields that are either instances of 
       # Order::Asc or Order::Desc.
       #
       # Usage:
@@ -82,8 +82,8 @@ module Momomoto
         @fields = fields
       end
 
-      # translates all +argument+s to the SQL statement.
-      # returns the joined arguments.
+      # Translates all +argument+s to the SQL statement.
+      # Returns the joined arguments.
       def function( argument )
         argument = [ argument ] if not argument.kind_of?( Array )
         argument = argument.map{|a| "lower(#{a})"}

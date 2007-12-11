@@ -7,7 +7,7 @@ module Momomoto
     # Represents the data type Time without time zone.
     class Time_without_time_zone < Base
 
-      # Compares two values and return true if equal or false otherwise.
+      # Compares two values and returns true if equal or false otherwise.
       # It is used to check if a row field has been changed so that only
       # changed fields are written to database. 
       # Escapes before comparing.
@@ -15,7 +15,7 @@ module Momomoto
         escape(a) == escape(b)
       end
 
-      # Escapes +input+ to be saved in database.
+      # Escapes +value+ to be saved in database.
       # Returns 'NULL' if +value+ is nil.
       def escape( value )
         case value
@@ -25,7 +25,7 @@ module Momomoto
         end
       end
 
-      # Values are filtered by this function when set.
+      # Values are filtered by this function when being set.
       # Returns an instance of Time or nil if +value+ is nil or empty.
       def filter_set( value )
         case value

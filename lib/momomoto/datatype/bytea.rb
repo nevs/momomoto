@@ -6,7 +6,7 @@ module Momomoto
     class Bytea < Base
 
       # Escapes +input+ using Database#escape_bytea or returns NULL if
-      # +input+ is +nil+.
+      # +input+ is nil.
       def escape( input )
         input.nil? ? "NULL" : "E'" + Database.escape_bytea( input ) + "'"
       end

@@ -7,7 +7,7 @@ module Momomoto
     # Represents the data type Timestamp without time zone.
     class Timestamp_without_time_zone < Base
 
-      # Escapes +input+ to be saved in database.
+      # Escapes +value+ to be saved in database.
       def escape( value )
         case value
           when nil then 'NULL'
@@ -16,7 +16,7 @@ module Momomoto
         end
       end
 
-      # Values are filtered by this function when set.
+      # Values are filtered by this function when being set.
       # Returns an instance of Time or nil if +value+ is nil or empty.
       def filter_set( value )
         case value

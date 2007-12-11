@@ -125,7 +125,7 @@ module Momomoto
       columns
     end
 
-    # fetches the parameter of a stored procedure
+    # fetches parameters of a stored procedure
     def fetch_procedure_parameters( procedure_name, schema_name = nil ) # :nodoc:
       p = []
       conditions = { :procedure_name => procedure_name }
@@ -135,14 +135,14 @@ module Momomoto
       end
       # mark parameters of strict procedures as not null
       if Information_schema::Routines.select_single(:routine_name=>procedure_name).is_null_call == 'YES'
-        p.each do | param | 
-          param[param.keys.first].instance_variable_set(:@not_null,true) 
+        p.each do | param |
+          param[param.keys.first].instance_variable_set(:@not_null,true)
         end
       end
       p
     end
 
-    # fetches the resultset columns of a stored procedure
+    # fetches the result set columns of a stored procedure
     def fetch_procedure_columns( procedure_name, schema_name = nil ) # :nodoc:
       c = {}
       conditions = { :procedure_name => procedure_name }

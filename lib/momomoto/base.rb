@@ -159,6 +159,9 @@ module Momomoto
 
 
       # Compiles the sql statement defining the limit
+      #
+      #   #selects five feeds
+      #   five_feeds = Feeds.select( {},{:limit => 5} )
       def compile_limit( limit )
         " LIMIT #{Integer(limit)}"
        rescue => e
@@ -166,6 +169,9 @@ module Momomoto
       end
 
       # compiles the sql statement defining the offset
+      #
+      #   #selects five feeds ommitting the first 23 rows
+      #   five_feeds = Feeds.select( {}, {:offset => 23, :limit => 5} )
       def compile_offset( offset )
         " OFFSET #{Integer(offset)}"
        rescue => e

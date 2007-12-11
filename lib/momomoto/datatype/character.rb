@@ -1,7 +1,7 @@
 module Momomoto
   module Datatype
 
-    # Represents the character data type.
+    # Represents character data type.
     class Character < Text
     
     end
