@@ -28,8 +28,8 @@ module Momomoto
       # Creates a new instance of the special data type, setting +not_null+
       # and +default+ according to the values from Information Schema.
       def initialize( row = nil )
-        @not_null = row.is_nullable == "NO" ? true : false
-        @default = row.column_default
+        @not_null = row.respond_to?(:is_nullable) && row.is_nullable == "NO" ? true : false
+        @default = row.respond_to?(:column_default) ? row.column_default : nil
       end
 
       # Values are filtered by this function when being set. See the

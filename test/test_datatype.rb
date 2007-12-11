@@ -9,7 +9,7 @@ class TestDatatype < Test::Unit::TestCase
       row.column_default = 'default-value'
       a = type.new( row )
       assert_equal( 'default-value', a.default )
-      assert_equal( false, type.new.default )
+      assert_equal( nil, type.new.default )
     end
 
     define_method( "test_not_null_#{type_name}" ) do
