@@ -96,13 +96,15 @@ module Momomoto
       #
       # This will select all rows from Feeds that are newer than 24 hours.
       # Same with Momomoto's TimeInterval:
-      #   
+      #
       #   one_day_ago = Time.now + TimeInterval.new({:hour => -24})
       #   Feeds.select( :date => {:ge => one_day_ago.to_s} )
       #
       # In case of data type Text also +:like+ and +:ilike+ are supported.
+      # For +:like+ and +:ilike+ operators you may use _ as placeholder for
+      # a single character or % as placeholder for multiple characters.
       #
-      #   # Selects all posts having "surveillance" in their content field 
+      #   # Selects all posts having "surveillance" in their content field
       #   # while ignoring case.
       #   Posts.select( :content => {:ilike => 'surveillance'} )
       def self.operator_sign( op )
