@@ -87,6 +87,11 @@ class TimeInterval
 
   alias_method :to_int, :to_i
 
+  # Returns the value of timeinterval as number of seconds
+  def to_f
+    self.to_i.to_f
+  end
+
   # Returns a string representing timeinterval. Equivalent to calling
   # Time#strftime with a format string of '%H:%M:%S'.
   #

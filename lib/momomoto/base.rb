@@ -132,6 +132,7 @@ module Momomoto
         where.empty? ? '' : " WHERE #{where}"
       end
 
+      # compiles subexpressions of the where-clause
       def compile_expression( conditions, operator )
         where = []
         case conditions
