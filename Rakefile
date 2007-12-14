@@ -40,7 +40,7 @@ end
 
 desc "create html documentation"
 task :html do
-  sh "rdoc --template jamis --main Momomoto::Base --inline-source --force-update --webcvs 'http://trac.c3d2.de/momomoto/browser/trunk/%s' lib"
+  sh "rdoc --template jamis --main Momomoto::Table --inline-source --force-update --webcvs 'http://trac.c3d2.de/momomoto/browser/trunk/%s' lib"
 end
 
 desc "update html documentation on momomoto.rubyforge.org"
