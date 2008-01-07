@@ -1,12 +1,5 @@
 
-begin
-  require 'rubygems'
-  gem 'ruby-postgres', '>= 0.7.1.2006.04.06'
-  require 'postgres'
-rescue LoadError
-  require 'postgres'
-end
-
+require 'postgres'
 require 'singleton'
 
 require 'momomoto/information_schema/columns'
@@ -140,6 +133,8 @@ module Momomoto
         end
       end
       p
+     rescue => e
+      raise Error, "Fetching procedure parameters for #{procedure_name} failed: #{e}"
     end
 
     # fetches the result set columns of a stored procedure
