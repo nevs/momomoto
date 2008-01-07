@@ -4,9 +4,6 @@ module Momomoto
   # Base class for all Rows.
   class Row
 
-    # undefining fields to avoid conflicts
-    undef :id,:type
-
     # Getter for the table this Row is using.
     def self.table
       @table
