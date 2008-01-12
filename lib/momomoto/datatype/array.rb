@@ -23,6 +23,35 @@ module Momomoto
         value
       end
 
+      # This method is used when compiling the where clause. No need
+      # for direct use.
+      def compile_rule( field_name, value ) # :nodoc:
+        case value
+          when nil then
+            raise Error, "nil values not allowed for #{field_name}"
+          when :NULL then
+            field_name.to_s + ' IS NULL'
+          when :NOT_NULL then
+            field_name.to_s + ' IS NOT NULL'
+          when Hash then
+            raise Error, "empty hash conditions are not allowed for #{field_name}" if value.empty?
+            rules = []
+            value.each do | op, v |
+              raise Error, "nil values not allowed in compile_rule for #{field_name}" if v == nil
+              v = [v] if not v.kind_of?( Array )
+              if op == :eq # use IN if comparing for equality
+                rules << compile_rule( field_name, v )
+              else
+                v.each do | v2 |
+                  rules << field_name.to_s + ' ' + self.class.operator_sign(op) + ' ' + escape(filter_set(v2))
+                end
+              end
+            end
+            rules.join( " AND " )
+          else
+            field_name.to_s + ' @> ' + escape(filter_set(value))
+        end
+      end
       # Additional operators for instances of Array.
       # See Base#operator_sign
       def self.operator_sign( op )
