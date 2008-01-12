@@ -386,11 +386,11 @@ module Momomoto
         sql += compile_order( options[:order] ) if options[:order] || default_order
         sql += compile_limit( options[:limit] ) if options[:limit]
         sql += compile_offset( options[:offset] ) if options[:offset]
-        sql
         if options[:distinct]
           raise CriticalError, "condition key '#{options[:distinct]}' not a column in table '#{table_name}'" unless columns.keys.member?( options[:distinct])
           sql = "SELECT DISTINCT ON(\"#{options[:distinct]}\") " + cols.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM (#{sql}) AS t1" 
         end
+        sql
       end
 
       # returns the columns to be used for joining
