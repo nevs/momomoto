@@ -64,5 +64,7 @@ CREATE TABLE test_time_with_time_zone( id SERIAL, data TIME WITH TIME ZONE, PRIM
 CREATE TABLE test_time_without_time_zone( id SERIAL, data TIME WITHOUT TIME ZONE, PRIMARY KEY(id));
 CREATE TABLE test_timestamp_with_time_zone( id SERIAL, data TIMESTAMP WITH TIME ZONE, PRIMARY KEY(id));
 CREATE TABLE test_timestamp_without_time_zone( id SERIAL, data TIMESTAMP WITHOUT TIME ZONE, PRIMARY KEY(id));
+CREATE TABLE test_int_array( id SERIAL, data int[], PRIMARY KEY(id) );
+CREATE TABLE test_text_array( id SERIAL, data text[], PRIMARY KEY(id) );
 
 
