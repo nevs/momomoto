@@ -1,5 +1,6 @@
 
 require 'momomoto/datatype/base'
+require 'momomoto/datatype/array'
 require 'momomoto/datatype/boolean'
 require 'momomoto/datatype/integer'
 require 'momomoto/datatype/smallint'
