@@ -20,6 +20,11 @@ module Momomoto
         @default
       end
 
+      # Get the default value for this Datatype.
+      def default_operator
+        "="
+      end
+
       # Returns true if this column can be NULL otherwise false.
       def not_null?
         @not_null
@@ -64,7 +69,7 @@ module Momomoto
             field_name.to_s + ' IS NULL'
           when :NOT_NULL then
             field_name.to_s + ' IS NOT NULL'
-          when Array then
+          when ::Array then
             raise Error, "empty array conditions are not allowed for #{field_name}" if value.empty?
             raise Error, "nil values not allowed in compile_rule for #{field_name}" if value.member?( nil )
             field_name.to_s + ' IN (' + value.map{ | v | escape(filter_set(v)) }.join(',') + ')'
@@ -73,7 +78,7 @@ module Momomoto
             rules = []
             value.each do | op, v |
               raise Error, "nil values not allowed in compile_rule for #{field_name}" if v == nil
-              v = [v] if not v.kind_of?( Array )
+              v = [v] if not v.kind_of?( ::Array )
               if op == :eq # use IN if comparing for equality
                 rules << compile_rule( field_name, v )
               else
@@ -84,7 +89,7 @@ module Momomoto
             end
             rules.join( " AND " )
           else
-            field_name.to_s + ' = ' + escape(filter_set(value))
+            field_name.to_s + " #{default_operator} " + escape(filter_set(value))
         end
       end
 
