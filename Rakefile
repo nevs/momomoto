@@ -35,12 +35,12 @@ end
 
 desc "create documentation for ri"
 task :doc do
-  sh "rdoc -r lib"
+  sh "rdoc -r lib -A momomoto_attribute=rw,momomoto_attribute_reader=r"
 end
 
 desc "create html documentation"
 task :html do
-  sh "rdoc --template jamis --main Momomoto::Table --inline-source --force-update --webcvs 'http://trac.c3d2.de/momomoto/browser/trunk/%s' lib"
+  sh "rdoc -A momomoto_attribute=rw,momomoto_attribute_reader=r --template jamis --main Momomoto::Table --inline-source --force-update --webcvs 'http://trac.c3d2.de/momomoto/browser/trunk/%s' lib"
 end
 
 desc "update html documentation on momomoto.rubyforge.org"

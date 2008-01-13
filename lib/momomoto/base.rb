@@ -133,8 +133,6 @@ module Momomoto
 
     class << self
 
-      attr_reader :logical_operator
-
       # Set the default logical operator for constraints. AND and OR are
       # supported.
       # See Table#select for usage of logical operators.
