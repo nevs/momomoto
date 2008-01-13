@@ -4,10 +4,10 @@ class TestBase < Test::Unit::TestCase
   def test_logical_operator
     t1 = Class.new( Momomoto::Table )
     t1.table_name = 'person'
-    t1.send( :initialize_table )
+    t1.send( :initialize )
     t2 = Class.new( Momomoto::Table )
     t2.table_name = 'person'
-    t2.send( :initialize_table )
+    t2.send( :initialize )
     assert_equal( "AND", t1.logical_operator )
     assert_equal( "AND", t2.logical_operator )
     t1.logical_operator = "OR"
@@ -25,7 +25,7 @@ class TestBase < Test::Unit::TestCase
   def test_compile_where
     t = Class.new( Momomoto::Table )
     t.table_name = 'person'
-    t.send( :initialize_table )
+    t.send( :initialize )
     assert_equal( " WHERE person_id = '1'" , t.instance_eval do compile_where( :person_id => '1' ) end )
     assert_equal( " WHERE person_id IN ('1')" , t.instance_eval do compile_where( :person_id => ['1'] ) end )
     assert_equal( " WHERE person_id IN ('1','2')" , t.instance_eval do compile_where( :person_id => ['1',2] ) end )
