@@ -2,6 +2,8 @@
 ## Momomoto is a database abstraction layer for PostgreSQL
 module Momomoto
 
+  @debug = false
+
   class << self
 
     # Getter and setter for debugging.
@@ -76,8 +78,57 @@ module Momomoto
 
     class << self
 
-      # Getter for logical operator. This is used in #compile_where.
-      # See Table#select for usage of logical operators.
+      def momomoto_attribute_reader( name )
+        singleton = self.instance_eval{class << self; self; end}
+        varname = "@#{name}"
+        # define getter method
+        singleton.send(:define_method, name) do | *values |
+          if not instance_variable_defined?( varname )
+            initialize
+          end
+          instance_variable_get( varname )
+        end
+      end
+
+      def momomoto_attribute( name )
+        singleton = self.instance_eval{class << self; self; end}
+        varname = "@#{name}"
+        settername = "#{name}="
+        # define getter method
+        singleton.send(:define_method, name) do | *values |
+          if values[0]
+            send( settername, values[0] )
+          else
+            if not instance_variable_defined?( varname )
+              initialize
+            end
+            instance_variable_get( varname )
+          end
+        end
+        # define setter method
+        singleton.send(:define_method, settername) do | value |
+          instance_variable_set( varname, value )
+        end
+      end
+
+      def initialize
+        @schema_name ||= construct_schema_name( self.name )
+        @logical_operator ||= 'AND'
+      end
+
+    end
+
+    # The schema name of the table this class operates on. Invokes
+    # #schema_name= if +schema_name+ is given as parameter. Returns
+    # +@schema_name+
+    momomoto_attribute :schema_name
+
+    # The logical operator is used in #compile_where and defines
+    # the top level logical relation for where clauses.
+    momomoto_attribute_reader :logical_operator
+
+    class << self
+
       attr_reader :logical_operator
 
       # Set the default logical operator for constraints. AND and OR are
@@ -91,23 +142,7 @@ module Momomoto
         end
       end
 
-      # Set the schema name of the table this class operates on.
-      def schema_name=( schema_name )
-        @schema_name = schema_name
-      end
-
-      # Get the schema name of the table this class operates on. Invokes
-      # #schema_name= if +schema_name+ is given as parameter. Returns 
-      # +@schema_name+
-      def schema_name( schema_name  = nil )
-        return self.schema_name=( schema_name ) if schema_name
-        if not instance_variable_defined?( :@schema_name )
-          self.schema_name=( construct_schema_name( self.name ) )
-        end
-        @schema_name
-      end
-
-      protected
+     protected
 
       # Getter and setter used for marking tables as initialized.
       attr_accessor :initialized
