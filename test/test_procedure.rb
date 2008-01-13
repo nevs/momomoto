@@ -17,15 +17,17 @@ class TestProcedure < Test::Unit::TestCase
   end
 
   def test_procedure_name
-    self.class.const_set( :Proc1, Class.new( Momomoto::Procedure ) )
-    assert_equal( 'proc1', Proc1.procedure_name )
-    self.class.const_set( :Proc2, Class.new( Momomoto::Procedure ) )
-    assert_equal( 'proc2', Proc2.procedure_name )
-    Proc2.procedure_name( 'proc3' )
-    assert_equal( 'proc3', Proc2.procedure_name )
-    Proc2.procedure_name = 'proc4'
-    assert_equal( 'proc4', Proc2.procedure_name )
-    assert_equal( 'proc1', Proc1.procedure_name )
+    p1 = Class.new( Momomoto::Procedure )
+    p1.procedure_name = 'test_parameter_sql'
+    assert_equal( 'test_parameter_sql', p1.procedure_name )
+    p2 = Class.new( Momomoto::Procedure )
+    p2.procedure_name = 'test_parameter_sql_strict'
+    assert_equal( 'test_parameter_sql_strict', p2.procedure_name )
+    p2.procedure_name( 'proc3' )
+    assert_equal( 'proc3', p2.procedure_name )
+    p2.procedure_name = 'proc4'
+    assert_equal( 'proc4', p2.procedure_name )
+    assert_equal( 'test_parameter_sql', p1.procedure_name )
   end
 
   def test_columns_fetching
