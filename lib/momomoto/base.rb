@@ -112,8 +112,12 @@ module Momomoto
       end
 
       def initialize
+        return if initialized
+
         @schema_name ||= construct_schema_name( self.name )
         @logical_operator ||= 'AND'
+
+        self.initialized = true
       end
 
     end

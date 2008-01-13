@@ -299,8 +299,6 @@ module Momomoto
         initialize_row( const_get( :Row ), self )
         @row_cache = {}
 
-        self.initialized = true
-
       end
 
       # Builds the row class for this table when executing #select.
