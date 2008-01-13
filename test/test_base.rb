@@ -4,6 +4,7 @@ class TestBase < Test::Unit::TestCase
   def test_logical_operator
     t1 = Class.new( Momomoto::Table )
     t1.table_name = 'person'
+    assert_equal( t1.logical_operator, 'AND' )
     t1.send( :initialize )
     t2 = Class.new( Momomoto::Table )
     t2.table_name = 'person'
