@@ -5,61 +5,23 @@ module Momomoto
   # It must not be used directly but you should inherit from this class.
   class Table < Base
 
+    # controls the default order for selects
+    momomoto_attribute :default_order
+
+    # the columns of this table
+    momomoto_attribute :columns
+
+    # the table name of this table
+    momomoto_attribute :table_name
+
+    # array containing the primary key fields of the table
+    momomoto_attribute :primary_keys
+
     class << self
-
-      # set the default order for selects
-      def default_order=( order )
-        @default_order = order
-      end
-
-      # get the default order for selects
-      def default_order( order = nil )
-        return self.default_order=( order ) if order
-        @default_order
-      end
-
-      # set the columns of the table this class operates on
-      def columns=( columns )
-        @columns = columns
-      end
-
-      # get the columns of the table this class operates on
-      def columns( columns = nil )
-        return self.columns=( columns ) if columns
-        if not instance_variable_defined?( :@columns )
-          initialize_table
-        end
-        @columns
-      end
-
-      # set the table_name of the table this class operates on
-      def table_name=( table_name )
-        @table_name = table_name
-      end
-
-      # get the table_name of the table this class operates on
-      def table_name( table_name = nil )
-        return self.table_name=( table_name ) if table_name
-        @table_name
-      end
 
       # get the full name of table including, if set, schema
       def full_name
         "#{ schema_name ? schema_name + '.' : ''}#{table_name}"
-      end
-
-      # set the primary key fields of the table
-      def primary_keys=( keys )
-        @primary_keys = keys
-      end
-
-      # get the primary key fields of the table
-      def primary_keys( keys = nil )
-        return self.primary_keys=( keys ) if keys
-        if not instance_variable_defined?( :@primary_keys )
-          initialize_table
-        end
-        @primary_keys
       end
 
       # Searches for records and returns an Array containing the records.
@@ -121,7 +83,7 @@ module Momomoto
       #   posts.first.title = "new title"
       #   posts.first.write
       def select( conditions = {}, options = {} )
-        initialize_table unless initialized
+        initialize unless initialized
         row_class = build_row_class( options )
         sql = compile_select( conditions, options )
         data = []
@@ -135,7 +97,7 @@ module Momomoto
       #
       # Searches for records and returns an array containing the records
       def select_outer_join( conditions = {}, options = {} )
-        initialize_table unless initialized
+        initialize unless initialized
         join_table = options[:join]
         fields = columns.keys.map{|field| full_name+'."'+field.to_s+'"'}
         fields += join_table.columns.keys.map{|field| join_table.full_name+'."'+field.to_s+'"'}
@@ -166,7 +128,7 @@ module Momomoto
 
       # constructor for a record in this table accepts a hash with presets for the fields of the record
       def new( fields = {} )
-        initialize_table unless initialized
+        initialize unless initialized
         new_row = const_get(:Row).new( [] )
         new_row.new_record = true
         # set default values
@@ -320,10 +282,11 @@ module Momomoto
       end
 
       # initializes a table class
-      def initialize_table
+      def initialize
+        return if initialized
+        super
 
         @table_name ||= construct_table_name( self.name )
-        @schema_name ||= construct_schema_name( self.name )
 
         @columns ||= database.fetch_table_columns( table_name(), schema_name() )
         raise CriticalError, "No fields in table #{table_name}" if columns.keys.empty?
@@ -331,8 +294,6 @@ module Momomoto
         @primary_keys ||= database.fetch_primary_keys( table_name(), schema_name() )
         @column_order = @columns.keys
         @default_order ||= nil
-
-        @logical_operator ||= "AND"
 
         const_set( :Row, Class.new( Momomoto::Row ) ) if not const_defined?( :Row )
         initialize_row( const_get( :Row ), self )
