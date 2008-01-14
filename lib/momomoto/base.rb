@@ -112,7 +112,7 @@ module Momomoto
       end
 
       def initialize
-        return if initialized
+        return if instance_variable_defined?( :@initialized )
 
         @schema_name ||= construct_schema_name( self.name )
         @logical_operator ||= 'AND'

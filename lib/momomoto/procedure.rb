@@ -15,7 +15,7 @@ module Momomoto
     class << self
 
       def initialize # :nodoc:
-        return if initialized
+        return if instance_variable_defined?( :@initialized )
         super
 
         @procedure_name ||= construct_procedure_name( self.name )

@@ -24,10 +24,9 @@ class TestBytea < Test::Unit::TestCase
     assert_equal( data.length, r.data.length )
     assert_equal( data, r.data )
     r.write
-    r2 = c.select(:id=>r.id)
-    assert_equal( 1, r2.length )
-    assert_equal( data.length , r2[0].data.length )
-    assert_equal( data, r2[0].data )
+    r2 = c.select_single(:id=>r.id)
+    assert_equal( data.length , r2.data.length )
+    assert_equal( data, r2.data )
   end
 
 end

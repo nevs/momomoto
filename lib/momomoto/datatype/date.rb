@@ -17,10 +17,10 @@ module Momomoto
           when String then ::Date.parse( value, '%Y-%m-%d' )
           else raise Error
         end
-       rescue => e 
+       rescue => e
         raise ConversionError, "parse Error in Date #{e}"
       end
-    
+
     end
   end
 end

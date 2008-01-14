@@ -182,6 +182,26 @@ module Momomoto
       @transaction_active = false
     end
 
+    # quotes and escapes the given string +input+
+    def self.quote( input )
+      PGconn.quote( input )
+    end
+
+    # quotes and escapes the given string +input+
+    def self.quote_string( input )
+      "E" + PGconn.quote( input )
+    end
+
+    # escapes the given identifier +input+
+    def self.quote_indent( input )
+      PGconn.quote_indent( input )
+    end
+
+    # quotes and escapes the given string +input+
+    def self.quote_bytea( input )
+      "E'#{PGconn.escape_bytea(input)}'"
+    end
+
     # escapes the given string +input+
     def self.escape_string( input )
       PGconn.escape( input )

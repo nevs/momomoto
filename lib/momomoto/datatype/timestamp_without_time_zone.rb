@@ -11,8 +11,8 @@ module Momomoto
       def escape( value )
         case value
           when nil then 'NULL'
-          when String then "'#{Database.escape_string(value)}'"
-          else "'#{Database.escape_string(value.strftime('%Y-%m-%d %H:%M:%S'))}'"
+          when String then Database.quote(value)
+          else Database.quote(value.strftime('%Y-%m-%d %H:%M:%S'))
         end
       end
 

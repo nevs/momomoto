@@ -4,16 +4,16 @@ module Momomoto
     # Represents the data type Array.
     class Array < Base
 
-      # Escapes +input+ to be saved in database.
-      # Returns 'NULL' if +input+ is nil or empty. Otherwise escapes
-      # using Database#escape_string
+      # Escape and quote +input+ to be saved in database.
+      # Returns 'NULL' if +input+ is nil or empty. Otherwise uses
+      # Database#quote
       def escape( input )
         if input.nil?
           "NULL"
         elsif input.instance_of?( ::Array )
-          "ARRAY[" + input.map{|m| "'" + Database.escape_string(m) + "'"}.join(',') + "]"
+          "ARRAY[" + input.map{|m| Database.quote(m)}.join(',') + "]"
         else
-          "'" + Database.escape_string(m) + "'"
+          Database.quote(m)
         end
       end
 

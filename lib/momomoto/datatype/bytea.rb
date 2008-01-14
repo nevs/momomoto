@@ -5,10 +5,10 @@ module Momomoto
     # This class is used for Binary Data (Byte Array).
     class Bytea < Base
 
-      # Escapes +input+ using Database#escape_bytea or returns NULL if
+      # Escapes +input+ using Database#quote_bytea or returns NULL if
       # +input+ is nil.
       def escape( input )
-        input.nil? ? "NULL" : "E'" + Database.escape_bytea( input ) + "'"
+        input.nil? ? "NULL" : Database.quote_bytea( input )
       end
 
     end

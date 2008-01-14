@@ -12,7 +12,7 @@ module Momomoto
           else value
         end
       end
-    
+
     end
   end
 end

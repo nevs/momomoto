@@ -52,11 +52,11 @@ module Momomoto
       end
 
       # Escapes +input+ to be saved in database.
-      # If +input+ equals nil, NULL is returned, otherwise Database#escape_string
+      # If +input+ equals nil, NULL is returned, otherwise Database#quote
       # is called.
       # This method is overwritten to get data type-specific escaping rules.
       def escape( input )
-        input.nil? ? "NULL" : "'" + Database.escape_string( input.to_s ) + "'"
+        input.nil? ? "NULL" : Database.quote( input.to_s )
       end
 
       # This method is used when compiling the where clause. No need

@@ -9,7 +9,7 @@ module Momomoto
 
       # Compares two values and returns true if equal or false otherwise.
       # It is used to check if a row field has been changed so that only
-      # changed fields are written to database. 
+      # changed fields are written to database.
       # Escapes before comparing.
       def equal( a, b )
         escape(a) == escape(b)
@@ -20,8 +20,8 @@ module Momomoto
       def escape( value )
         case value
           when nil then 'NULL'
-          when String then "'#{Database.escape_string(value)}'"
-          else "'#{Database.escape_string(value.strftime('%H:%M:%S'))}'"
+          when String then Database.quote(value)
+          else Database.quote(value.strftime('%H:%M:%S'))
         end
       end
 

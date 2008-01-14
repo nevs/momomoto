@@ -146,7 +146,9 @@ class TestTable < Test::Unit::TestCase
   end
 
   def test_write_columns
-    p = Person.select({},{:columns=>[:first_name],:limit=>1})[0]
+    t = Class.new( Momomoto::Table )
+    t.table_name( 'person' )
+    p = t.select({},{:columns=>[:first_name],:limit=>1})[0]
     p.first_name = 'test_write_columns'
     p.write
     p2 = Person.select_single(:person_id=>p.person_id)

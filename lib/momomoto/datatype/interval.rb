@@ -5,18 +5,18 @@ module Momomoto
     class Interval < Time_without_time_zone
 
       # Escapes +value+ before storing to database.
-      # +value+ can be either 
+      # +value+ can be either
       #   nil, resulting in 'NULL',
-      #   String, which is escaped using Database#escape_string,
+      #   String, which is escaped using Database#quote,
       #   or some Date-like format
       def escape( value )
         case value
           when nil then 'NULL'
-          when String then "'#{Database.escape_string(value)}'"
-          else "'#{Database.escape_string(value.strftime('%H:%M:%S'))}'"
+          when String then Database.quote(value)
+          else Database.quote(value.strftime('%H:%M:%S'))
         end
       end
-  
+
       # Values are filtered by this method when getting them from database.
       # Returns an instance of TimeInterval or nil if +value+ is nil or
       # empty.

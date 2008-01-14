@@ -83,7 +83,7 @@ module Momomoto
       #   posts.first.title = "new title"
       #   posts.first.write
       def select( conditions = {}, options = {} )
-        initialize unless initialized
+        initialize
         row_class = build_row_class( options )
         sql = compile_select( conditions, options )
         data = []
@@ -128,7 +128,7 @@ module Momomoto
 
       # constructor for a record in this table accepts a hash with presets for the fields of the record
       def new( fields = {} )
-        initialize unless initialized
+        initialize
         new_row = const_get(:Row).new( [] )
         new_row.new_record = true
         # set default values
@@ -283,7 +283,7 @@ module Momomoto
 
       # initializes a table class
       def initialize
-        return if initialized
+        return if instance_variable_defined?( :@initialized )
         super
 
         @table_name ||= construct_table_name( self.name )
@@ -339,7 +339,7 @@ module Momomoto
         else
           cols = columns
         end
-        sql = "SELECT " + cols.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM "
+        sql = "SELECT " + cols.keys.map{ | field | Database.quote_ident( field ) }.join( "," ) + " FROM "
         sql += full_name
         sql += compile_where( conditions )
         sql += compile_order( options[:order] ) if options[:order] || default_order
@@ -347,7 +347,7 @@ module Momomoto
         sql += compile_offset( options[:offset] ) if options[:offset]
         if options[:distinct]
           raise CriticalError, "condition key '#{options[:distinct]}' not a column in table '#{table_name}'" unless columns.keys.member?( options[:distinct])
-          sql = "SELECT DISTINCT ON(\"#{options[:distinct]}\") " + cols.keys.map{ | field | '"' + field.to_s + '"' }.join( "," ) + " FROM (#{sql}) AS t1" 
+          sql = "SELECT DISTINCT ON(#{Database.quote_ident( options[:distinct] )}) " + cols.keys.map{ | field | Database.quote_ident( field ) }.join( "," ) + " FROM (#{sql}) AS t1" 
         end
         sql
       end
