@@ -39,13 +39,14 @@ class TestDatatype < Test::Unit::TestCase
     end
 
     define_method( "test_operator_sign_#{type_name}" ) do
-      assert_equal( '<=', type.operator_sign( :le ) )
-      assert_equal( '<', type.operator_sign( :lt ) )
-      assert_equal( '>=', type.operator_sign( :ge ) )
-      assert_equal( '>', type.operator_sign( :gt ) )
-      assert_equal( '=', type.operator_sign( :eq ) )
-      assert_equal( '<>', type.operator_sign( :ne ) )
-      assert_raise( Momomoto::CriticalError ) { type.operator_sign( :foo ) }
+      t = type.new
+      assert_equal( '<=', t.class.operator_sign( :le ) )
+      assert_equal( '<', t.class.operator_sign( :lt ) )
+      assert_equal( '>=', t.class.operator_sign( :ge ) )
+      assert_equal( '>', t.class.operator_sign( :gt ) )
+      assert_equal( '=', t.class.operator_sign( :eq ) )
+      assert_equal( '<>', t.class.operator_sign( :ne ) )
+      assert_raise( Momomoto::CriticalError ) { t.class.operator_sign( :foo ) }
     end
 
     define_method( "test_escape_#{type_name}" ) do
