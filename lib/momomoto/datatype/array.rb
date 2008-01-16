@@ -1,76 +1,23 @@
+
+require 'momomoto/datatype/array/base'
+require 'momomoto/datatype/array/integer'
+require 'momomoto/datatype/array/text'
+
 module Momomoto
   module Datatype
 
     # Represents the data type Array.
-    class Array < Base
+    class Array
 
-      # Escape and quote +input+ to be saved in database.
-      # Returns 'NULL' if +input+ is nil or empty. Otherwise uses
-      # Database#quote
-      def escape( input )
-        if input.nil?
-          "NULL"
-        elsif input.instance_of?( ::Array )
-          "ARRAY[" + input.map{|m| Database.quote(m)}.join(',') + "]"
-        else
-          Database.quote(m)
+      # Creates a new instance of the special data type, setting +not_null+
+      # and +default+ according to the values from Information Schema.
+      def self.new( row = nil )
+        subtype = nil
+        if row.respond_to?( :udt_name ) && row.udt_name
+          subtype = row.udt_name.gsub(/^_/,"")
         end
-      end
-
-      # Values are filtered by this function when being set. See the
-      # method in the appropriate derived data type class for allowed
-      # values.
-      def filter_get( value ) # :nodoc:
-        case value
-          when ::Array then value
-          when nil,"" then nil
-          when "{}" then []
-          when /^\{[^"]+(,[^"]+)*\}$/
-            m = v.match(/^\{()\}$/)
-            m[1].split(',')
-          when /^\{"[^"]+"(,"[^"]+")*\}$/
-            m = v.match(/^\{()\}$/)
-            m[1].split(',').map{|e| e.gsub(/^"(.*)"$/, "\\1")}
-          else
-            raise Error, "Error parsing array value"
-        end
-
-      end
-
-      # Values are filtered by this function when being set. See the
-      # method in the appropriate derived data type class for allowed
-      # values.
-      def filter_set( value ) # :nodoc:
-        value = [value] unless value.instance_of?( ::Array )
-        value
-      end
-
-      # Get the default value for this Datatype.
-      def default_operator
-        "@>"
-      end
-
-      # This method is used when compiling the where clause. No need
-      # for direct use.
-      def compile_rule( field_name, value ) # :nodoc:
-        case value
-          when ::Array then
-            raise Error, "empty or nil array conditions are not allowed for #{field_name}" if value.empty? or value.member?( nil )
-            field_name.to_s + ' @> ' + escape(filter_set(value))
-          else
-            super
-        end
-      end
-
-      # Additional operators for instances of Array.
-      # See Base#operator_sign
-      def self.operator_sign( op )
-        case op
-          when :contains then '@>'
-          when :contained then '<@'
-          else
-            super( op )
-        end
+        subtype ||= 'text'
+        Momomoto::Datatype::Array.const_get(subtype.capitalize).new( row )
       end
 
     end
