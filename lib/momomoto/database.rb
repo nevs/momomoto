@@ -193,8 +193,8 @@ module Momomoto
     end
 
     # escapes the given identifier +input+
-    def self.quote_indent( input )
-      PGconn.quote_indent( input )
+    def self.quote_ident( input )
+      PGconn.quote_ident( input.to_s )
     end
 
     # quotes and escapes the given string +input+
