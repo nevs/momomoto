@@ -19,7 +19,11 @@ module Momomoto
           if input.nil?
             "NULL"
           elsif input.instance_of?( ::Array )
-            "ARRAY[" + input.map{|m| Database.quote(m)}.join(',') + "]"
+            if input.empty?
+              "'{}'::#{array_type}[]"
+            else
+              "ARRAY[" + input.map{|m| Database.quote(m)}.join(',') + "]::#{array_type}[]"
+            end
           else
             Database.quote(m)
           end
@@ -42,7 +46,6 @@ module Momomoto
             else
               raise Error, "Error parsing array value"
           end
-
         end
 
         # Values are filtered by this function when being set. See the
