@@ -342,14 +342,14 @@ module Momomoto
         sql = "SELECT " + cols.keys.map{ | field | Database.quote_ident( field ) }.join( "," ) + " FROM "
         sql += full_name
         sql += compile_where( conditions )
-        sql = compile_distinct( sql, options[:distinct] ) if options[:distinct]
+        sql = compile_distinct( sql, cols, options[:distinct] ) if options[:distinct]
         sql += compile_order( options[:order] ) if options[:order] || default_order
         sql += compile_limit( options[:limit] ) if options[:limit]
         sql += compile_offset( options[:offset] ) if options[:offset]
         sql
       end
 
-      def compile_distinct( sql, distinct )
+      def compile_distinct( sql, cols, distinct )
         raise CriticalError, "condition key '#{distinct}' not a column in table '#{table_name}'" unless columns.keys.member?( distinct.to_sym )
         "SELECT DISTINCT ON(#{Database.quote_ident( distinct.to_s )}) " + cols.keys.map{ | field | Database.quote_ident( field ) }.join( "," ) + " FROM (#{sql}) AS t1"
       end
