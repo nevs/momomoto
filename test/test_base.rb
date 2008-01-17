@@ -28,7 +28,7 @@ class TestBase < Test::Unit::TestCase
     t.table_name = 'person'
     t.send( :initialize )
     assert_equal( " WHERE person_id = '1'" , t.instance_eval do compile_where( :person_id => '1' ) end )
-    assert_equal( " WHERE person_id IN ('1')" , t.instance_eval do compile_where( :person_id => ['1'] ) end )
+    assert_equal( " WHERE person_id = '1'" , t.instance_eval do compile_where( :person_id => ['1'] ) end )
     assert_equal( " WHERE person_id IN ('1','2')" , t.instance_eval do compile_where( :person_id => ['1',2] ) end )
     assert_equal( " WHERE first_name = E'1'" , t.instance_eval do compile_where( :first_name => '1' ) end )
     assert_equal( " WHERE first_name = E'chu''nky'" , t.instance_eval do compile_where( :first_name => "chu'nky" ) end )
