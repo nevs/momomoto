@@ -70,6 +70,7 @@ module Momomoto
           when :NOT_NULL then
             field_name.to_s + ' IS NOT NULL'
           when ::Array then
+            return compile_rule( field_name, value[0] ) if value.length == 1
             raise Error, "empty array conditions are not allowed for #{field_name}" if value.empty?
             raise Error, "nil values not allowed in compile_rule for #{field_name}" if value.member?( nil )
             field_name.to_s + ' IN (' + value.map{ | v | escape(filter_set(v)) }.join(',') + ')'
