@@ -349,9 +349,17 @@ module Momomoto
         sql
       end
 
-      def compile_distinct( sql, cols, distinct )
-        raise CriticalError, "condition key '#{distinct}' not a column in table '#{table_name}'" unless columns.keys.member?( distinct.to_sym )
-        "SELECT DISTINCT ON(#{Database.quote_ident( distinct.to_s )}) " + cols.keys.map{ | field | Database.quote_ident( field ) }.join( "," ) + " FROM (#{sql}) AS t1"
+      def compile_distinct( inner_sql, cols, distinct )
+        distinct = [distinct] unless distinct.instance_of?( Array )
+        distinct.each do | field |
+          raise CriticalError, "condition key '#{field}' not a column in table '#{table_name}'" unless columns.keys.member?( field.to_sym )
+        end
+        sql = "SELECT DISTINCT ON("
+        sql += distinct.map{|f| Database.quote_ident(f)}.join(',')
+        sql += ") "
+        sql += cols.keys.map{ | field | Database.quote_ident( field ) }.join(',')
+        sql += " FROM (#{inner_sql}) AS t1"
+        sql
       end
 
       # returns the columns to be used for joining
