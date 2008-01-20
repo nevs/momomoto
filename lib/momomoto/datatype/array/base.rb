@@ -25,7 +25,7 @@ module Momomoto
               "ARRAY[" + input.map{|m| Database.quote(m)}.join(',') + "]::#{array_type}[]"
             end
           else
-            Database.quote(m)
+            Database.quote( input )
           end
         end
 
@@ -37,12 +37,17 @@ module Momomoto
             when ::Array then value
             when nil,"" then nil
             when "{}" then []
-            when /^\{[^"]+(,[^"]+)*\}$/
+            when /^\{("[^"]+"|[^",]+)(,("[^"]+"|[^",]+))*\}$/
               m = value.match(/^\{(.*)\}$/)
-              m[1].split(',')
-            when /^\{"[^"]+"(,"[^"]+")*\}$/
-              m = value.match(/^\{()\}$/)
-              m[1].split(',').map{|e| e.gsub(/^"(.*)"$/, "\\1")}
+              values = []
+              m[1].gsub( /("[^"]+"|[^",]+)/ ) do | element |
+                if m = element.match(/^"(.*)"$/)
+                  values << m[1]
+                else
+                  values << element
+                end
+              end
+              values
             else
               raise Error, "Error parsing array value"
           end
