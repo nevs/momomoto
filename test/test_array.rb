@@ -27,5 +27,25 @@ class TestArray < Test::Unit::TestCase
     end
   end
 
+  def test_escape
+    a = Momomoto::Datatype::Array.new
+    assert_equal( a.escape( '{1,2,3}' ), "'{1,2,3}'" )
+  end
+
+  def test_filter_get_text
+    a = Momomoto::Datatype::Array::Text.new
+    assert_equal( a.filter_get( '{1,2,3}' ), ['1','2','3'] )
+    assert_equal( a.filter_get( "{',bacon,chunky}" ), ["'","bacon","chunky"] )
+    assert_equal( a.filter_get( '{",",bacon,chunky}' ), [",","bacon","chunky"] )
+    assert_raise( Momomoto::Error ) do
+      a.filter_get( "{\"}")
+    end
+  end
+
+  def test_filter_get_integer
+    a = Momomoto::Datatype::Array::Integer.new
+    assert_equal( a.filter_get( '{1,2,3}' ), [1,2,3] )
+  end
+
 end
 
