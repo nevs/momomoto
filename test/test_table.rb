@@ -145,6 +145,10 @@ class TestTable < Test::Unit::TestCase
     end
   end
 
+  def test_distinct
+    p = Person.select({},{:distinct=>[:first_name,:nick_name]})
+  end
+
   def test_write_columns
     t = Class.new( Momomoto::Table )
     t.table_name( 'person' )
