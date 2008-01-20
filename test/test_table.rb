@@ -127,7 +127,7 @@ class TestTable < Test::Unit::TestCase
   def test_offset
     p = Person.select( {}, {:limit => 1, :order => :person_id,:offset=>2})
     assert_operator( 2, :<, p[0].person_id )
-    assert_raise( Momomoto::Error ) do 
+    assert_raise( Momomoto::Error ) do
       Person.select( {}, {:limit => 1, :order => :person_id,:offset=>'bacon'})
     end
   end
