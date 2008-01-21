@@ -153,6 +153,8 @@ class TestTable < Test::Unit::TestCase
     t = Class.new( Momomoto::Table )
     t.table_name( 'person' )
     p = t.select({},{:columns=>[:first_name],:limit=>1})[0]
+    assert( p.class.columns.member?(:first_name))
+    assert( p.class.columns.member?(:person_id))
     p.first_name = 'test_write_columns'
     p.write
     p2 = Person.select_single(:person_id=>p.person_id)
