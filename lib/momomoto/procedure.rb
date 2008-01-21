@@ -15,7 +15,7 @@ module Momomoto
     class << self
 
       def initialize # :nodoc:
-        return if instance_variable_defined?( :@initialized )
+        return if initialized
         super
 
         @procedure_name ||= construct_procedure_name( self.name )
@@ -29,7 +29,7 @@ module Momomoto
 
       # guesses the procedure name of the procedure this class works on
       def construct_procedure_name( classname ) # :nodoc:
-        classname.split('::').last.downcase.gsub(/[^a-z_0-9]/, '')
+        classname.to_s.split('::').last.downcase.gsub(/[^a-z_0-9]/, '')
       end
 
       # gets the full name of the procedure including schema if set
@@ -48,7 +48,7 @@ module Momomoto
       # returns an array of hashes with the field names as keys and the datatype as values
       def parameters( *p )
         return self.send( :parameters=, *p ) if not p.empty?
-        initialize if not instance_variable_defined?( :@parameters )
+        initialize if not initialized
         @parameters
       end
 

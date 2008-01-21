@@ -39,20 +39,24 @@ class TestProcedure < Test::Unit::TestCase
 
   def test_columns
     p = Class.new( Momomoto::Procedure )
+    p.procedure_name("test_parameter_plpgsql")
     p2 = Class.new( Momomoto::Procedure )
-    p.columns = :chunky
-    p2.columns = :alice
-    assert_equal( :chunky, p.columns )
+    p2.procedure_name("test_parameter_plpgsql")
+    p.columns = { :chunky => :bacon }
+    p2.columns = { :bacon => :chunky }
+    assert_equal( {:chunky=>:bacon}, p.columns )
     p.columns = :bacon
     assert_equal( :bacon, p.columns )
-    p.columns( :chunky )
-    assert_equal( :chunky, p.columns )
-    assert_equal( :alice, p2.columns )
+    p.columns = { :chunky => :bacon }
+    assert_equal( {:chunky=>:bacon}, p.columns )
+    assert_equal( {:bacon=>:chunky}, p2.columns )
   end
 
   def test_parameters
     p = Class.new( Momomoto::Procedure )
+    p.procedure_name("test_parameter_plpgsql")
     p2 = Class.new( Momomoto::Procedure )
+    p2.procedure_name("test_parameter_plpgsql")
     p.parameters = { :chunky => :bacon }
     p2.parameters = { :bacon => :chunky }
     assert_equal( [{:chunky=>:bacon}], p.parameters )

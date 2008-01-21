@@ -14,12 +14,14 @@ class TestTable < Test::Unit::TestCase
 
   def test_default_order_getter
     c1 = Class.new( Momomoto::Table )
+    c1.table_name('person')
     c1.default_order = [:a,:b]
     assert_equal( [:a,:b], c1.default_order )
   end
 
   def test_default_order_setter
     c1 = Class.new( Momomoto::Table )
+    c1.table_name('person')
     c1.default_order = :a
     assert_equal( :a, c1.default_order )
     c1.default_order = :b
@@ -30,12 +32,14 @@ class TestTable < Test::Unit::TestCase
 
   def test_columns_getter
     c1 = Class.new( Momomoto::Table )
+    c1.table_name('person')
     c1.columns =  {:a=>Momomoto::Datatype::Text}
     assert_equal( {:a=>Momomoto::Datatype::Text}, c1.columns )
   end
 
   def test_columns_setter
     c1 = Class.new( Momomoto::Table )
+    c1.table_name('person')
     c1.columns =  {:a=>Momomoto::Datatype::Text}
     assert_equal( {:a=>Momomoto::Datatype::Text}, c1.columns )
     c1.columns =  {:b=>Momomoto::Datatype::Text}
@@ -46,6 +50,7 @@ class TestTable < Test::Unit::TestCase
 
   def test_primary_key_getter
     a = Class.new( Momomoto::Table )
+    a.table_name('person')
     a.primary_keys( [:pk] )
     assert_equal( [:pk], a.primary_keys )
     p = Class.new( Momomoto::Table )
@@ -56,6 +61,7 @@ class TestTable < Test::Unit::TestCase
 
   def test_primary_key_setter
     a = Class.new( Momomoto::Table )
+    a.table_name('person')
     a.primary_keys( [:pk] )
     assert_equal( [:pk], a.primary_keys )
     a.primary_keys= [:pk2]
@@ -72,26 +78,28 @@ class TestTable < Test::Unit::TestCase
 
   def test_schema_name_setter
     a = Class.new( Momomoto::Table )
+    a.table_name("person")
     b = Class.new( Momomoto::Table )
-    a.schema_name = :chunky
-    b.schema_name = :bacon
-    assert_equal( :chunky, a.schema_name )
-    assert_equal( :bacon, b.schema_name )
+    b.table_name("person")
+    a.schema_name = :public
+    b.schema_name = :public
+    assert_equal( :public, a.schema_name )
+    assert_equal( :public, b.schema_name )
     a.schema_name( :ratbert )
     assert_equal( :ratbert, a.schema_name )
-    assert_equal( :bacon, b.schema_name )
+    assert_equal( :public, b.schema_name )
   end
 
   def test_table_name_getter
     t = Class.new( Momomoto::Table )
-    t.table_name = "chunky"
-    assert_equal( "chunky", t.table_name )
+    t.table_name = "person"
+    assert_equal( "person", t.table_name )
   end
 
   def test_table_name_setter
     t = Class.new( Momomoto::Table )
-    t.table_name = "chunky"
-    assert_equal( "chunky", t.table_name )
+    t.table_name = "person"
+    assert_equal( "person", t.table_name )
     t.table_name = "bacon"
     assert_equal( "bacon", t.table_name )
     t.table_name( "fox" )

@@ -83,9 +83,7 @@ module Momomoto
         varname = "@#{name}"
         # define getter method
         singleton.send(:define_method, name) do | *values |
-          if not instance_variable_defined?( varname )
-            initialize
-          end
+          initialize if not initialized
           instance_variable_get( varname )
         end
       end
@@ -99,9 +97,7 @@ module Momomoto
           if values[0]
             send( settername, values[0] )
           else
-            if not instance_variable_defined?( varname )
-              initialize
-            end
+            initialize if not initialized
             instance_variable_get( varname )
           end
         end
@@ -112,7 +108,7 @@ module Momomoto
       end
 
       def initialize
-        return if instance_variable_defined?( :@initialized )
+        return if initialized
 
         @schema_name ||= construct_schema_name( self.name )
         @logical_operator ||= 'AND'

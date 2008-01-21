@@ -283,7 +283,7 @@ module Momomoto
 
       # initializes a table class
       def initialize
-        return if instance_variable_defined?( :@initialized )
+        return if initialized
         super
 
         @table_name ||= construct_table_name( self.name )
