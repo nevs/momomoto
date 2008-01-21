@@ -83,7 +83,7 @@ module Momomoto
       #   posts.first.title = "new title"
       #   posts.first.write
       def select( conditions = {}, options = {} )
-        initialize
+        initialize unless initialized
         row_class = build_row_class( options )
         sql = compile_select( conditions, options )
         data = []
@@ -128,7 +128,7 @@ module Momomoto
 
       # constructor for a record in this table accepts a hash with presets for the fields of the record
       def new( fields = {} )
-        initialize
+        initialize unless initialized
         new_row = const_get(:Row).new( [] )
         new_row.new_record = true
         # set default values
