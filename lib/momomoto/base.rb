@@ -143,7 +143,24 @@ module Momomoto
      protected
 
       # Getter and setter used for marking tables as initialized.
-      attr_accessor :initialized
+      attr_writer :initialized
+
+      # overwrite initialized with a normal reader once it has been initialized
+      # to get rid of ruby warnings about @initialized not being initialized
+      # this also works for ruby 1.8.5 where instance_variable_defined? is not
+      # available
+      def initialized
+        @initialized ||= false
+        instance_eval do
+          undef :initialized
+          class << self
+            class_eval do
+              attr_reader :initialized
+            end
+          end
+        end
+        @initialized
+      end
 
       # Guesses the schema name of the table this class works on.
       def construct_schema_name( classname )
