@@ -4,7 +4,7 @@ require 'rake'
 Gem::Specification.new do | s |
   s.name = "momomoto"
   s.homepage = "http://pentabarf.org/Momomoto"
-  s.version = '0.1.16'
+  s.version = '0.1.17'
 
   s.author = "Sven Klemm"
   s.email = "sven@c3d2.de"
