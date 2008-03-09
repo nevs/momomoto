@@ -32,6 +32,9 @@ CREATE OR REPLACE FUNCTION test_set_returning( person_id INTEGER ) RETURNS SETOF
   END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION test_returns_void() RETURNS VOID AS $$
+$$ LANGUAGE SQL;
+
 CREATE OR REPLACE FUNCTION test_parameter_inout_sql( IN param1 INTEGER, OUT ret1 INTEGER ) AS $$
   SELECT $1;
 $$ LANGUAGE sql;

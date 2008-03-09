@@ -65,7 +65,11 @@ module Momomoto
 
       # executes the stored procedure
       def call( params = {}, conditions = {}, options = {} )
-        sql = "SELECT #{columns.keys.join(',')} FROM "
+        if columns.length > 0
+          sql = "SELECT #{columns.keys.join(',')} FROM "
+        else
+          sql = "SELECT "
+        end
         sql += "#{full_name}(#{compile_parameter(params)})"
         sql += compile_where( conditions )
         sql += compile_order( options[:order] ) if options[:order]

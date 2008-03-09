@@ -77,6 +77,12 @@ class TestProcedure < Test::Unit::TestCase
     Test_set_returning.call({:person_id => 5},{:person_id => 5},{:order=>:person_id,:limit=>10} )
   end
 
+  def test_returns_void
+    self.class.const_set(:Test_returns_void, Class.new( Momomoto::Procedure ) )
+    assert_equal( "test_returns_void", Test_returns_void.procedure_name )
+    Test_returns_void.call()
+  end
+
   def test_call_strict
     a = Class.new(Momomoto::Procedure)
     a.procedure_name("test_parameter_sql")
