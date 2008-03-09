@@ -41,13 +41,15 @@ BEGIN
       END LOOP;
     ELSIF typ.typtype = 'p' THEN
       -- pseudo type
-      FOR i IN array_lower(proc.proallargtypes, 1) .. array_upper(proc.proallargtypes, 1)
-      LOOP
-        CONTINUE WHEN proc.proargmodes[ i ] = 'i';
-        col.column_name = proc.proargnames[ i ];
-        col.data_type = format_type( proc.proallargtypes[ i ], NULL );
-        RETURN NEXT col;
-      END LOOP;
+      IF typ.typname <> 'void' THEN
+        FOR i IN array_lower(proc.proallargtypes, 1) .. array_upper(proc.proallargtypes, 1)
+        LOOP
+          CONTINUE WHEN proc.proargmodes[ i ] = 'i';
+          col.column_name = proc.proargnames[ i ];
+          col.data_type = format_type( proc.proallargtypes[ i ], NULL );
+          RETURN NEXT col;
+        END LOOP;
+      END IF;
     ELSE
       RAISE EXCEPTION 'Not yet implemented';
     END IF;
