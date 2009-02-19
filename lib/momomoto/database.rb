@@ -161,7 +161,7 @@ module Momomoto
       self.begin
       begin
         yield
-      rescue => e
+      rescue Exception => e
         rollback
         raise e
       end
