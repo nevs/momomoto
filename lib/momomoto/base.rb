@@ -3,6 +3,7 @@
 module Momomoto
 
   @debug = false
+  @verbose = false
 
   class << self
 
