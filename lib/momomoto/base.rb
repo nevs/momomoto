@@ -62,7 +62,16 @@ module Momomoto
   end
 
   # Base exception for all exceptions thrown by Momomoto
-  class Error < StandardError; end
+  class Error < StandardError
+    # contains the sql statement causing the exception
+    attr_accessor :sql 
+
+    def initialize( message = nil, sql = nil )
+      super( message )
+      self.sql = sql
+    end
+
+  end
 
   # Thrown when datatype conversion fails and if a +block+ given to
   # Table#select_or_new does not act on all primary keys.

@@ -82,10 +82,11 @@ module Momomoto
         end
       end
       if Momomoto.verbose
-        raise CriticalError, "#{e}: #{sql}"
+        raise CriticalError.new( "#{e}: #{sql}", sql )
       else
-        raise CriticalError, e.to_s
+        raise CriticalError.new( e.to_s, sql )
       end
+      
     end
 
     # fetch columns which are primary key columns
