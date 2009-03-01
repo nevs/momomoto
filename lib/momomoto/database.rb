@@ -155,8 +155,8 @@ module Momomoto
 
     # begin a transaction
     def begin
-      execute( "BEGIN;" )
       @transaction_active = true
+      execute( "BEGIN;" )
     end
 
     # executes the block and commits the transaction if a block is given
