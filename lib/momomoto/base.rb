@@ -11,6 +11,11 @@ module Momomoto
     # are printed to STDOUT.
     attr_accessor :debug
 
+    # Getter and setter for verbose mode.
+    # If +verbose+ evaluates to +true+ the exception message of exceptions
+    # will include the SQL statement causing the exception.
+    attr_accessor :verbose
+
     # Returns an instance of Order::Lower where +args+ is either a single
     # or array of +Symbol+ representing columns.
     #
