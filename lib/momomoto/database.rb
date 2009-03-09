@@ -2,12 +2,7 @@
 require 'postgres'
 require 'singleton'
 
-require 'momomoto/information_schema/columns'
-require 'momomoto/information_schema/table_constraints'
-require 'momomoto/information_schema/key_column_usage'
-require 'momomoto/information_schema/routines'
-require 'momomoto/information_schema/fetch_procedure_columns'
-require 'momomoto/information_schema/fetch_procedure_parameters'
+require 'momomoto/information_schema'
 
 ## Momomoto is a database abstraction layer
 module Momomoto
@@ -107,6 +102,14 @@ module Momomoto
         end
       end
       pkeys
+    end
+
+    def get_table_type( table_name, schema_name )
+      begin
+        Information_schema::Tables.select_single({:table_name=>table_name,:table_schema=>schema_name}).table_type
+      rescue => e
+        raise CriticalError, "Table #{table_name} does not exist. #{e.to_s}"
+      end
     end
 
     # fetch column definitions from database
