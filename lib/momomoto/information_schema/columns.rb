@@ -12,6 +12,7 @@ module Momomoto
     class Columns < Momomoto::Table
       primary_keys( [] )
       schema_name( "information_schema" )
+      table_type( "VIEW" )
       columns( { :table_catalog             => Momomoto::Datatype::Text.new,
                  :table_schema              => Momomoto::Datatype::Text.new,
                  :table_name                => Momomoto::Datatype::Text.new,
