@@ -17,11 +17,22 @@ module Momomoto
     # array containing the primary key fields of the table
     momomoto_attribute :primary_keys
 
+    # is this a normal table or a view
+    momomoto_attribute :table_type
+
     class << self
 
       # get the full name of table including, if set, schema
       def full_name
         "#{ schema_name ? schema_name + '.' : ''}#{table_name}"
+      end
+
+      def base_table?
+        table_type == "BASE TABLE"
+      end
+
+      def view?
+        table_type == "VIEW"
       end
 
       # Searches for records and returns an Array containing the records.
@@ -289,8 +300,7 @@ module Momomoto
         @table_name ||= construct_table_name( self.name )
 
         @columns ||= database.fetch_table_columns( table_name(), schema_name() )
-        raise CriticalError, "No fields in table #{table_name}" if columns.keys.empty?
-
+        @table_type ||= database.get_table_type( table_name, schema_name )
         @primary_keys ||= database.fetch_primary_keys( table_name(), schema_name() )
         @column_order = @columns.keys
         @default_order ||= nil
