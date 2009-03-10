@@ -67,4 +67,4 @@ CREATE TABLE test_timestamp_without_time_zone( id SERIAL, data TIMESTAMP WITHOUT
 CREATE TABLE test_int_array( id SERIAL, data int[], PRIMARY KEY(id) );
 CREATE TABLE test_text_array( id SERIAL, data text[], PRIMARY KEY(id) );
 
-
+CREATE VIEW view_person AS SELECT * FROM person;

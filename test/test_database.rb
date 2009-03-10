@@ -54,6 +54,14 @@ class TestDatabase < Test::Unit::TestCase
     assert_equal( 1, pk.length )
   end
 
+  def test_get_table_type
+    db = Momomoto::Database.instance
+    type = db.get_table_type( 'person', 'public' )
+    assert_equal( type, 'BASE TABLE' )
+    type = db.get_table_type( 'view_person', 'public' )
+    assert_equal( type, 'VIEW' )
+  end
+
   def test_rollback
     db = Momomoto::Database.instance
     db.begin

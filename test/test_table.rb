@@ -313,5 +313,39 @@ class TestTable < Test::Unit::TestCase
     assert_equal( true, r.dirty? )
   end
 
+  def test_default_order_setter
+    c1 = Class.new( Momomoto::Table )
+    c1.table_name('person')
+    c1.default_order = :a
+    assert_equal( :a, c1.default_order )
+    c1.default_order = :b
+    assert_equal( :b, c1.default_order )
+    c1.default_order( :c )
+    assert_equal( :c, c1.default_order )
+  end
+
+  def test_table_type_getter_and_setter
+    c1 = Class.new( Momomoto::Table )
+    c1.table_name('person')
+    c1.table_type = 'BASE TABLE'
+    assert_equal( 'BASE TABLE', c1.table_type )
+    c1.table_type = 'VIEW'
+    assert_equal( 'VIEW', c1.table_type )
+  end
+
+  def test_table_type
+    a = Class.new( Momomoto::Table )
+    a.table_name('person')
+    assert_equal( "BASE TABLE", a.table_type )
+    assert_equal( true, a.base_table? )
+    assert_equal( false, a.view? )
+
+    b = Class.new( Momomoto::Table )
+    b.table_name('view_person')
+    assert_equal( "VIEW", b.table_type )
+    assert_equal( false, b.base_table? )
+    assert_equal( true, b.view? )
+  end
+
 end
 
