@@ -17,7 +17,7 @@ module Momomoto
     # array containing the primary key fields of the table
     momomoto_attribute :primary_keys
 
-    # is this a normal table or a view
+    # the table type of this table
     momomoto_attribute :table_type
 
     class << self
@@ -27,10 +27,12 @@ module Momomoto
         "#{ schema_name ? schema_name + '.' : ''}#{table_name}"
       end
 
+      # is this a base table
       def base_table?
         table_type == "BASE TABLE"
       end
 
+      # is this a view
       def view?
         table_type == "VIEW"
       end

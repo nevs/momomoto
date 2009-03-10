@@ -104,6 +104,9 @@ module Momomoto
       pkeys
     end
 
+
+    # get table type from database
+    # should work with any SQL2003 compliant DBMS
     def get_table_type( table_name, schema_name )
       begin
         Information_schema::Tables.select_single({:table_name=>table_name,:table_schema=>schema_name}).table_type
