@@ -294,6 +294,15 @@ module Momomoto
         classname.split('::').last.downcase.gsub(/[^a-z_0-9]/, '')
       end
 
+      # get namespace of current class
+      def namespace
+        if self.name.split('::').length > 1
+          const_get( self.name.split('::')[0..-2].join('::') )
+        else
+          Object
+        end
+      end
+
       # initializes a table class
       def initialize
         return if initialized
@@ -313,32 +322,49 @@ module Momomoto
 
         # define helper methods for foreign key relations
         if base_table?
+          
+          # find all columns that reference other tables and add helper methods for those keys
           Information_schema::Table_constraints.select({:table_name=>table_name,:table_schema=>schema_name,:constraint_type=>'FOREIGN KEY'}).each do | fk |
             referenced_columns = Information_schema::Constraint_column_usage.select({:constraint_name=>fk.constraint_name,:constraint_schema=>fk.constraint_schema})
             raise CriticalError, "Foreign key constraint without referenced columns" if referenced_columns.length == 0
             ref_table = referenced_columns[0].table_name
             # check if there is already a method by that name defined on Row
             if !const_get( :Row ).instance_methods.member?( ref_table )
-              # find namespace to look for referenced table class
-              if self.name.split('::').length > 1
-                ns = const_get( self.name.split('::')[0..-2].join('::') )
-              else
-                ns = Object
-              end
               begin
-                klass = ns.const_get( ref_table.capitalize )
+                klass = namespace.const_get( ref_table.capitalize )
               rescue
                 # if there is no such class yet we create one in the appropriate namespace
                 klass = Class.new( Momomoto::Table )
                 klass.table_name = ref_table
                 klass.schema_name = referenced_columns[0].table_schema
-                ns.const_set( ref_table.capitalize, klass )
+                namespace.const_set( ref_table.capitalize, klass )
               end
               ref_columns = referenced_columns.map(&:column_name).map(&:to_sym)
               fk_helper_single( ref_table, klass, ref_columns )
-
             end
           end
+
+          # find other tables that reference this table and add helper methods
+          if primary_keys.length == 1
+            Information_schema::Constraint_column_usage.select({:table_name=>table_name,:table_schema=>schema_name,:column_name=>primary_keys[0]}).each do | fk |
+              constraint = Information_schema::Table_constraints.select({:constraint_name=>fk.constraint_name,:constraint_schema=>fk.constraint_schema,:constraint_type=>'FOREIGN KEY'})[0]
+              # check if there is already a method by that name defined on Row
+              if constraint && !const_get( :Row ).instance_methods.member?( constraint.table_name )
+
+                begin
+                  klass = namespace.const_get( constraint.table_name.capitalize )
+                rescue
+                  # if there is no such class yet we create one in the appropriate namespace
+                  klass = Class.new( Momomoto::Table )
+                  klass.table_name = constraint.table_name
+                  klass.schema_name = constraint.table_schema
+                  namespace.const_set( constraint.table_name.capitalize, klass )
+                end
+                fk_helper_multiple( constraint.table_name, klass, primary_keys )
+              end
+            end
+          end
+
         end
 
       end
