@@ -335,7 +335,7 @@ module Momomoto
                 ns.const_set( ref_table.capitalize, klass )
               end
               ref_columns = referenced_columns.map(&:column_name).map(&:to_sym)
-              fk_helper( ref_table, klass, ref_columns )
+              fk_helper_single( ref_table, klass, ref_columns )
 
             end
           end
@@ -343,13 +343,34 @@ module Momomoto
 
       end
 
-      def fk_helper( method_name, table_class, ref_columns )
+      # Define a helper method +method_name+ for +table_class+ 
+      def fk_helper_single( method_name, table_class, ref_columns )
+        var_name = "@#{method_name}".to_sym
+        const_set(:Methods, Module.new) if not const_defined?(:Methods)
+        const_get(:Methods).send(:define_method, method_name) do | *args |
+          return instance_variable_get( var_name ) if instance_variable_defined?( var_name )
+          conditions = args[0] || {}
+          options = args[1] || {}
+          ref_columns.each do | col | conditions[col] = get_column( col ) end
+          begin
+            value = table_class.select_single( conditions, options )
+          rescue Momomoto::Nothing_found
+            value = nil
+          end
+          instance_variable_set( var_name, value )
+        end
+      end
+
+      # Define a helper method +method_name+ for +table_class+ 
+      def fk_helper_multiple( method_name, table_class, ref_columns )
+        var_name = "@#{method_name}".to_sym
         const_set(:Methods, Module.new) if not const_defined?(:Methods)
         const_get(:Methods).send(:define_method, method_name) do | *args |
           conditions = args[0] || {}
           options = args[1] || {}
           ref_columns.each do | col | conditions[col] = get_column( col ) end
-          table_class.select_single( conditions, options )
+          value = table_class.select( conditions, options )
+          instance_variable_set( var_name, value )
         end
       end
 
