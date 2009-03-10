@@ -62,6 +62,13 @@ class TestDatabase < Test::Unit::TestCase
     assert_equal( type, 'VIEW' )
   end
 
+  def test_non_existant_table
+    db = Momomoto::Database.instance
+    assert_raise( Momomoto::CriticalError ) do
+      db.get_table_type( 'nonexistant_table', 'public' )
+    end
+  end
+
   def test_rollback
     db = Momomoto::Database.instance
     db.begin

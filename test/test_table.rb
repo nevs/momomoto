@@ -347,5 +347,13 @@ class TestTable < Test::Unit::TestCase
     assert_equal( true, b.view? )
   end
 
+  def test_non_existant_table
+    a = Class.new( Momomoto::Table )
+    a.table_name('nonexistant_table')
+    assert_raise( Momomoto::CriticalError ) do
+      a.new
+    end
+  end
+
 end
 
