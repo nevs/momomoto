@@ -344,7 +344,6 @@ module Momomoto
       end
 
       def fk_helper( method_name, table_class, ref_columns )
-        p "setting up #{method_name} in #{table_class}"
         const_set(:Methods, Module.new) if not const_defined?(:Methods)
         const_get(:Methods).send(:define_method, method_name) do | *args |
           conditions = args[0] || {}
