@@ -311,6 +311,47 @@ module Momomoto
         initialize_row( const_get( :Row ), self )
         @row_cache = {}
 
+        # define helper methods for foreign key relations
+        if base_table?
+          Information_schema::Table_constraints.select({:table_name=>table_name,:table_schema=>schema_name,:constraint_type=>'FOREIGN KEY'}).each do | fk |
+            referenced_columns = Information_schema::Constraint_column_usage.select({:constraint_name=>fk.constraint_name,:constraint_schema=>fk.constraint_schema})
+            raise CriticalError, "Foreign key constraint without referenced columns" if referenced_columns.length == 0
+            ref_table = referenced_columns[0].table_name
+            # check if there is already a method by that name defined on Row
+            if !const_get( :Row ).instance_methods.member?( ref_table )
+              # find namespace to look for referenced table class
+              if self.name.split('::').length > 1
+                ns = const_get( self.name.split('::')[0..-2].join('::') )
+              else
+                ns = Object
+              end
+              begin
+                klass = ns.const_get( ref_table.capitalize )
+              rescue
+                # if there is no such class yet we create one in the appropriate namespace
+                klass = Class.new( Momomoto::Table )
+                klass.table_name = ref_table
+                klass.schema_name = referenced_columns[0].table_schema
+                ns.const_set( ref_table.capitalize, klass )
+              end
+              ref_columns = referenced_columns.map(&:column_name).map(&:to_sym)
+              fk_helper( ref_table, klass, ref_columns )
+
+            end
+          end
+        end
+
+      end
+
+      def fk_helper( method_name, table_class, ref_columns )
+        p "setting up #{method_name} in #{table_class}"
+        const_set(:Methods, Module.new) if not const_defined?(:Methods)
+        const_get(:Methods).send(:define_method, method_name) do | *args |
+          conditions = args[0] || {}
+          options = args[1] || {}
+          ref_columns.each do | col | conditions[col] = get_column( col ) end
+          table_class.select_single( conditions, options )
+        end
       end
 
       # Builds the row class for this table when executing #select.
