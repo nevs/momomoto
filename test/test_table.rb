@@ -355,5 +355,45 @@ class TestTable < Test::Unit::TestCase
     end
   end
 
+  def test_foreign_keys
+    c1 = Class.new( Momomoto::Table )
+    c1.table_name('event')
+    c1.columns
+    assert_equal( true, c1::Methods.instance_methods.include?("event_person"))
+    c2 = Class.new( Momomoto::Table )
+    c2.table_name('person')
+    c2.columns
+    assert_equal( true, c2::Methods.instance_methods.include?("event_person"))
+    c3 = Class.new( Momomoto::Table )
+    c3.table_name('event_person')
+    c3.columns
+    assert_equal( true, c3::Methods.instance_methods.include?("event"))
+    assert_equal( true, c3::Methods.instance_methods.include?("person"))
+    event = c1.new
+    event.title = 'foreign key test'
+    event.write
+    person = c2.new
+    person.first_name = 'frank'
+    person.write
+    event_person = c3.new
+    event_person.event_id = event.event_id
+    event_person.person_id = person.person_id
+    event_person.description = 'foreign key test'
+    event_person.write
+
+    assert_equal( event.event_id, event_person.event.event_id )
+    assert_equal( person.person_id, event_person.person.person_id )
+    assert_equal( 1, event.event_person.length )
+    assert_equal( event.event_id, event.event_person[0].event_id )
+    assert_equal( person.person_id, event.event_person[0].person_id )
+    assert_equal( 1, person.event_person.length )
+    assert_equal( event.event_id, person.event_person[0].event_id )
+    assert_equal( person.person_id, person.event_person[0].person_id )
+
+    event_person.delete
+    event.delete
+    person.delete
+  end
+
 end
 
