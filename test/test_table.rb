@@ -313,17 +313,6 @@ class TestTable < Test::Unit::TestCase
     assert_equal( true, r.dirty? )
   end
 
-  def test_default_order_setter
-    c1 = Class.new( Momomoto::Table )
-    c1.table_name('person')
-    c1.default_order = :a
-    assert_equal( :a, c1.default_order )
-    c1.default_order = :b
-    assert_equal( :b, c1.default_order )
-    c1.default_order( :c )
-    assert_equal( :c, c1.default_order )
-  end
-
   def test_table_type_getter_and_setter
     c1 = Class.new( Momomoto::Table )
     c1.table_name('person')
