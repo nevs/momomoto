@@ -373,13 +373,12 @@ module Momomoto
       def fk_helper_single( method_name, table_class, ref_columns )
         var_name = "@#{method_name}".to_sym
         const_set(:Methods, Module.new) if not const_defined?(:Methods)
-        const_get(:Methods).send(:define_method, method_name) do | *args |
+        const_get(:Methods).send(:define_method, method_name) do
           return instance_variable_get( var_name ) if instance_variable_defined?( var_name )
-          conditions = args[0] || {}
-          options = args[1] || {}
+          conditions = {}
           ref_columns.each do | col | conditions[col] = get_column( col ) end
           begin
-            value = table_class.select_single( conditions, options )
+            value = table_class.select_single( conditions )
           rescue Momomoto::Nothing_found
             value = nil
           end
