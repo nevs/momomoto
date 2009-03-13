@@ -391,11 +391,17 @@ module Momomoto
         var_name = "@#{method_name}".to_sym
         const_set(:Methods, Module.new) if not const_defined?(:Methods)
         const_get(:Methods).send(:define_method, method_name) do | *args |
-          conditions = args[0] || {}
-          options = args[1] || {}
+          conditions = args[0] ||= {}
+          options = args[1] ||= {}
+          hash = args.hash
+          if instance_variable_defined?( var_name ) 
+            return instance_variable_get( var_name )[hash] if instance_variable_get( var_name )[hash]
+          else
+            instance_variable_set( var_name, Hash.new )
+          end
           ref_columns.each do | col | conditions[col] = get_column( col ) end
           value = table_class.select( conditions, options )
-          instance_variable_set( var_name, value )
+          instance_variable_get( var_name )[hash] = value
         end
       end
 

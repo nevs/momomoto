@@ -379,6 +379,15 @@ class TestTable < Test::Unit::TestCase
     assert_equal( event.event_id, person.event_person[0].event_id )
     assert_equal( person.person_id, person.event_person[0].person_id )
 
+    # test caching
+    id = event.event_person.object_id
+    assert_equal( id, event.event_person.object_id )
+    id = event.event_person(:person_id=>7).object_id
+    assert_equal( id, event.event_person(:person_id=>7).object_id )
+    id = event_person.event.object_id
+    assert_equal( id, event_person.event.object_id )
+    
+
     event_person.delete
     event.delete
     person.delete
