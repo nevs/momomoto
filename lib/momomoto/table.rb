@@ -360,7 +360,10 @@ module Momomoto
                   klass.schema_name = constraint.table_schema
                   namespace.const_set( constraint.table_name.capitalize, klass )
                 end
-                fk_helper_multiple( constraint.table_name, klass, primary_keys )
+                # double check we really got the right class as the class we got might be in another schema
+                if klass.table_name == constraint.table_name && klass.schema_name == constraint.table_schema
+                  fk_helper_multiple( constraint.table_name, klass, primary_keys )
+                end
               end
             end
           end
