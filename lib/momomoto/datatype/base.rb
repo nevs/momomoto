@@ -73,6 +73,14 @@ module Momomoto
             return compile_rule( field_name, value[0] ) if value.length == 1
             raise Error, "empty array conditions are not allowed for #{field_name}" if value.empty?
             raise Error, "nil values not allowed in compile_rule for #{field_name}" if value.member?( nil )
+            # do the right thing when NULL is part of an array
+            if value.delete( :NULL )
+              if value.length == 0
+                return compile_rule( field_name, :NULL )
+              else
+                return " (#{compile_rule( field_name, :NULL)} OR #{compile_rule( field_name, value )} ) "
+              end
+            end
             field_name.to_s + ' IN (' + value.map{ | v | escape(filter_set(v)) }.join(',') + ')'
           when Hash then
             raise Error, "empty hash conditions are not allowed for #{field_name}" if value.empty?
