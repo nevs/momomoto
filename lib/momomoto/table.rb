@@ -360,7 +360,10 @@ module Momomoto
                   klass.schema_name = constraint.table_schema
                   namespace.const_set( constraint.table_name.capitalize, klass )
                 end
-                fk_helper_multiple( constraint.table_name, klass, primary_keys )
+                # double check we really got the right class as the class we got might be in another schema
+                if klass.table_name == constraint.table_name && klass.schema_name == constraint.table_schema
+                  fk_helper_multiple( constraint.table_name, klass, primary_keys )
+                end
               end
             end
           end
@@ -391,11 +394,17 @@ module Momomoto
         var_name = "@#{method_name}".to_sym
         const_set(:Methods, Module.new) if not const_defined?(:Methods)
         const_get(:Methods).send(:define_method, method_name) do | *args |
-          conditions = args[0] || {}
-          options = args[1] || {}
+          conditions = args[0] ||= {}
+          options = args[1] ||= {}
+          hash = args.hash
+          if instance_variable_defined?( var_name ) 
+            return instance_variable_get( var_name )[hash] if instance_variable_get( var_name )[hash]
+          else
+            instance_variable_set( var_name, Hash.new )
+          end
           ref_columns.each do | col | conditions[col] = get_column( col ) end
           value = table_class.select( conditions, options )
-          instance_variable_set( var_name, value )
+          instance_variable_get( var_name )[hash] = value
         end
       end
 

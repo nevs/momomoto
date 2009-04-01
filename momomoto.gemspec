@@ -5,7 +5,7 @@ Gem::Specification.new do | s |
   s.name = "momomoto"
   s.homepage = "http://pentabarf.org/Momomoto"
   s.rubyforge_project = "momomoto"
-  s.version = '0.2.0'
+  s.version = '0.2.1'
 
   s.author = "Sven Klemm"
   s.email = "sven@c3d2.de"

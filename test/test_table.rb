@@ -313,17 +313,6 @@ class TestTable < Test::Unit::TestCase
     assert_equal( true, r.dirty? )
   end
 
-  def test_default_order_setter
-    c1 = Class.new( Momomoto::Table )
-    c1.table_name('person')
-    c1.default_order = :a
-    assert_equal( :a, c1.default_order )
-    c1.default_order = :b
-    assert_equal( :b, c1.default_order )
-    c1.default_order( :c )
-    assert_equal( :c, c1.default_order )
-  end
-
   def test_table_type_getter_and_setter
     c1 = Class.new( Momomoto::Table )
     c1.table_name('person')
@@ -389,6 +378,15 @@ class TestTable < Test::Unit::TestCase
     assert_equal( 1, person.event_person.length )
     assert_equal( event.event_id, person.event_person[0].event_id )
     assert_equal( person.person_id, person.event_person[0].person_id )
+
+    # test caching
+    id = event.event_person.object_id
+    assert_equal( id, event.event_person.object_id )
+    id = event.event_person(:person_id=>7).object_id
+    assert_equal( id, event.event_person(:person_id=>7).object_id )
+    id = event_person.event.object_id
+    assert_equal( id, event_person.event.object_id )
+    
 
     event_person.delete
     event.delete
